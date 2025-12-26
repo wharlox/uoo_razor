@@ -1,0 +1,19 @@
+
+sysmsg "wait 100ms - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\wait-100"
+
+wait 100
+
+sysmsg "wait 100ms - complete"
+
+
+
+
+
+#### continue script chain
+if listexists _script_chain and list _script_chain > 0
+    poplist _script_chain front
+    foreach _a_script in _script_chain
+        hotkey _a_script
+    endfor
+endif

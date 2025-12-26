@@ -1,0 +1,46 @@
+
+
+if timerexists _id_loop_timer and varexist _id_loop_msg_timer 
+   if timer _id_loop_timer >= _id_loop_msg_timer
+        sysmsg "hide if not hidden - start"
+    endif
+endif
+#@setvar! _this_script "Play Script: deposit-loadout\functions\hide-if-not-hidden"
+
+
+if not dead 
+    while not hidden
+        skill "hiding"
+        @getlabel! _tmp self
+        if hidden
+            break
+        else
+            if insysmsg "you must wait a few moments to use another skill"
+                sysmsg "HIDE: you must wait a few moments to use another skill" 44
+            endif
+            wait 1000
+        endif
+    endwhile
+endif
+
+
+
+
+if timerexists _id_loop_timer and varexist _id_loop_msg_timer 
+   if timer _id_loop_timer >= _id_loop_msg_timer
+        sysmsg "hide if not hidden - complete"
+    endif
+endif
+
+
+#### continue script chain
+if listexists _script_chain 
+   if list _script_chain > 0
+        poplist _script_chain front
+        foreach _a_script in _script_chain
+            #sysmsg _a_script 44
+            #overhead _a_script 44
+            hotkey _a_script
+        endfor
+    endif
+endif

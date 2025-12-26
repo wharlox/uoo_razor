@@ -1,0 +1,51 @@
+
+@setvar! _this_stockpile_serial 0x56E3DC06
+@setvar _max_time_for_deposit_stockpile_loop_ms 20000
+
+
+sysmsg "deposit stockpile - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\deposit-shelf"
+
+## deposit resource stockpile
+#clearsysmsg 
+@settimer! _restock_timer 0
+while timer _restock_timer <= _max_time_for_deposit_stockpile_loop_ms
+    #overhead "rsr stockpile deposit"
+    menu _this_stockpile_serial 0
+    waitfortarget 500
+    target 'self'
+    #@getlabel! _this_stockpile_serial _tmp_label
+    #wait 150
+
+    @getlabel! _this_stockpile_serial _tmp_label
+
+    while 1 == 1
+        if insysmsg "You do not find any items that could be added to a Resource Stockpile"
+            @settimer! _restock_timer _max_time_for_deposit_stockpile_loop_ms
+            break
+        elseif insysmsg "to the Resource Stockpile"
+            break
+        endif
+        #wait 50
+    endwhile    
+
+#    if insysmsg  "You do not find any items that could be added to a Resource Stockpile"
+#        break
+#    endif
+    #wait 200
+endwhile
+@removetimer! _restock_timer
+#@getlabel! _this_stockpile_serial _this_label
+#wait 600
+sysmsg "deposit stockpile - complete"
+
+
+
+
+#### continue script chain
+if listexists _script_chain and list _script_chain > 0
+    poplist _script_chain front
+    foreach _a_script in _script_chain
+        hotkey _a_script
+    endfor
+endif

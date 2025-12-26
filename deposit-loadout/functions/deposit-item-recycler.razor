@@ -1,0 +1,105 @@
+
+sysmsg "deposit item recycler - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\deposit-item-recycler"
+
+if not varexist _id_loop_recycler_lantern
+    ## same var as-used in the SUPER ID-Recycler-looper
+    setvar _id_loop_recycler_lantern 0x5630D248
+endif
+
+## recycle items IF and ONLY IF lantern is off - and MAYBE only if enable-var is set`
+##   after ping-check (getlabel) [one per]
+##     then magic-item-vault deposit items from reycle-container
+##     then stockpile items from recycle-container
+##     then shelf items from recycle-container
+## then [light on or off] deposit all items (menu) into recycler
+## then turn lantern on if it is off
+
+## if cav lantern-serial is set and lantern is OFF - recycle items and close gump
+if varexist _id_loop_recycler_lantern
+    if findtype 2597 ground 2338 any 4 as _tmp
+        ## if cav lantern is OFF then  ... recycle items
+        ## 2594 is ID of light-on cav-lantern 2338 is hue
+        ## 2597 is ID of light-off cav-lantern 2338 is hue
+        if _tmp == _id_loop_recycler_lantern 
+            if name = "_toon_name_"
+                ## recycle items
+                dclick 0x4DF8B23E
+                waitforgump 4045111101
+                gumpresponse 6 4045111101
+                waitforgump 4045111101
+                gumpresponse 6 4045111101
+                @getlabel! _tmp _tmp_label
+                gumpclose 4045111101
+                @getlabel! _tmp _tmp_label
+                ## magic item vault
+                menu 0x5988F431 0
+                waitfortarget 0x5988F431
+                target 0x4DF8B23E
+                @getlabel! _tmp _tmp_label
+            endif
+            ## stockpile add items from recycle-container
+            menu 0x56E3DC06 0
+            waitfortarget 500
+            target 0x4DF8B23E
+            @getlabel! _tmp _tmp_label
+            ## shelf add items
+            menu 0x4B41ED97 0
+            waitfortarget 500
+            target 0x4DF8B23E
+            waitforgump 3232825965
+            gumpclose 3232825965
+            @getlabel! _tmp _tmp_label
+        endif
+    endif
+endif
+
+
+## deposit ALL magic items
+menu 0x4DF8B23E 0
+#wait 200
+@getlabel! 0x4DF8B23E _this
+if "125 items" in _this
+    overhead "item recycler is full" 38
+endif
+## deposit unid magic items
+#menu 0x4DF8B23E 1
+@getlabel! 0x4DF8B23E _this
+#wait 600
+
+
+
+
+## if cav lantern-serial is set and lantern is OFF - turn lantern on
+if varexist _id_loop_recycler_lantern
+    if findtype 2597 ground 2338 any 4 as _tmp
+        ## if cav lantern is OFF then  ... recycle item
+        ## 2594 is ID of light-on cav-lantern 2338 is hue
+        ## 2597 is ID of light-off cav-lantern 2338 is hue
+        if _tmp == _id_loop_recycler_lantern 
+            dclick _id_loop_recycler_lantern
+            @getlabel! _tmp _tmp_label
+        endif
+    endif
+endif
+
+
+
+
+
+
+
+
+sysmsg "deposit item recycler - complete"
+
+
+
+
+
+#### continue script chain
+if listexists _script_chain and list _script_chain > 0
+    poplist _script_chain front
+    foreach _a_script in _script_chain
+        hotkey _a_script
+    endfor
+endif
