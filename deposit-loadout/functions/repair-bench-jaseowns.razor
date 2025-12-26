@@ -1,0 +1,34 @@
+
+sysmsg "repair bench - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\repair-bench-jaseowns"
+
+## from https://outlands.uorazorscripts.com/script/11fd0082-1e79-4aa8-8015-b62fac929481
+if findtype "repair bench" ground -1 -1 2 as bench
+    clearsysmsg 
+    dclick bench
+    getlabel backpack jaseowns_PingCheck
+    if insysmsg "You do not have any items equipped or in your backpack in need of repairs."
+        // continue
+    else
+        settimer lilJaseTimer 0
+        while timer lilJaseTimer <= 5000 
+            if insysmsg "Repair"
+                break
+            endif
+        endwhile
+        overhead "Repair took: {{lilJaseTimer}}"
+        removetimer lilJaseTimer
+    endif
+endif
+sysmsg "repair bench - complete"
+
+
+
+
+#### continue script chain
+if listexists _script_chain and list _script_chain > 0
+    poplist _script_chain front
+    foreach _a_script in _script_chain
+        hotkey _a_script
+    endfor
+endif

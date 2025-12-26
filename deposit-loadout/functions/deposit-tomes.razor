@@ -1,0 +1,107 @@
+
+sysmsg "deposit tomes - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\deposit-tomes"
+
+## TO ADD: carpet rack, cards
+
+@setvar! _disable_mastery_link_tome 1
+    
+@setvar! _tome_use_context_menu 1
+@setvar _tome_cont_ext_menu_wait 200
+
+
+@settimer! _this_run 0
+
+@removelist! _tome_list
+@createlist! _tome_list
+@removelist! _tome_gumps
+@createlist! _tome_gumps
+
+#### tome serials
+## mastery chain tome
+@pushlist! _tome_list 0x4628B560 
+## rare cloth tome
+@pushlist! _tome_list 0x46286390 
+## aspect tome
+@pushlist! _tome_list 0x40ADE551 
+## skill mastery tome
+@pushlist! _tome_list 0x463EDDFA 
+## dyes tome
+@pushlist! _tome_list 0x5988996E 
+#### maps
+## ore tome
+@pushlist! _tome_list 0x4280DB48 
+## fishing tome
+@pushlist! _tome_list 0x62FAB5B3 
+## skinning tome
+@pushlist! _tome_list 0x630A4772 
+## treasure tome
+@pushlist! _tome_list 0x5988645D 
+## lumber tome
+@pushlist! _tome_list 0x433FC326 
+
+
+
+
+#### tome gumps - needs to match the same order as _tome_list
+## mastery chain gump
+@pushlist! _tome_gumps 1567675535
+## rare cloth tome
+@pushlist! _tome_gumps 1264641135
+## aspect tome
+@pushlist! _tome_gumps 265325939
+## skill mastery tome
+@pushlist! _tome_gumps 2125225775
+## dyes tome
+@pushlist! _tome_gumps 2931798699
+#### maps
+## ore tome
+@pushlist! _tome_gumps 1667380559
+## fishing tome
+@pushlist! _tome_gumps 3448468591
+## skinning tome
+@pushlist! _tome_gumps 4027121519
+## treasure tome
+@pushlist! _tome_gumps 1863945839
+## lumber tome
+@pushlist! _tome_gumps 3576069391
+
+
+
+if _disable_mastery_link_tome == 1
+    poplist _tome_list front
+    poplist _tome_gumps front
+endif
+
+if _tome_use_context_menu == 1
+    foreach _a_tome in _tome_list
+        menu _a_tome 0
+        #wait _tome_context_menu_wait
+        @getlabel! _a_tome _tmp_label
+    endfor
+else
+    foreach _a_tome in _tome_list
+        dclick _a_tome
+        if poplist _tome_gumps front as _a_tome_gump
+            waitforgump _a_tome_gump
+            gumpresponse 2 _a_tome_gump
+            waitforgump _a_tome_gump
+            gumpclose _a_tome_gump
+        endif
+    endfor
+endif
+
+
+#wait 600
+sysmsg "deposit tomes - complete, time {{_this_run}}"
+
+
+
+
+#### continue script chain
+if listexists _script_chain and list _script_chain > 0
+    poplist _script_chain front
+    foreach _a_script in _script_chain
+        hotkey _a_script
+    endfor
+endif
