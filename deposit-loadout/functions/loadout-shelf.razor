@@ -14,6 +14,7 @@ sysmsg "loadout shelf - start"
 @setvar! _loadout_shelf_pouch_in_backpack__x 91
 @setvar! _loadout_shelf_pouch_in_backpack__y 64
 
+drop backpack 0 0 0
 
 ## shelf Resupply
 menu _this_shelf_serial 1
@@ -25,18 +26,20 @@ if varexist _this_shelf_serial_other
     @getlabel! _this_shelf_serial_other _tmp_label
 endif
 
+@getlabel! _this_shelf_serial _tmp_label
+@getlabel! _this_shelf_serial _tmp_label
 
-@getlabel! _this_shelf_serial _tmp_label
-@getlabel! _this_shelf_serial _tmp_label
 
 if findtype "pouch" backpack  0 as _loot_pouch
+    @getlabel! _loot_pouch _tmp_label
+    overhead _tmp_label 
     setvar  _deposit_loadout_chain_loot_pouch  _loot_pouch
     # sysmsg "pouch"
     ## drop loot-pouch in packpack
     lift _loot_pouch
-    # drop 'backpack' 91 64 0
-    drop 'backpack' _loadout_shelf_pouch_in_backpack__x _loadout_shelf_pouch_in_backpack__y 0
-    # wait 100
+
+    # drop backpack 91 64 0
+    drop backpack _loadout_shelf_pouch_in_backpack__x  _loadout_shelf_pouch_in_backpack__y  0
     @getlabel! backpack _tmp_label
     dclick _loot_pouch
     
@@ -46,6 +49,7 @@ if findtype "pouch" backpack  0 as _loot_pouch
     @createlist! _trap_pouch_spares
     @pushlist!  _trap_pouch_spares "1"
     @pushlist!  _trap_pouch_spares "2"
+    @pushlist!  _trap_pouch_spares "3"
     @clearignore!
     while findtype "pouch" backpack 38 as _trap_pouch
         if list _trap_pouch_spares > 0
@@ -53,10 +57,13 @@ if findtype "pouch" backpack  0 as _loot_pouch
             # sysmsg _tmp
             if _tmp = "1"
                 lift _trap_pouch
-                drop _loot_pouch 94 64 0
+                drop _loot_pouch 94 152 0
             elseif _tmp = "2"
                 lift _trap_pouch
-                drop _loot_pouch 110 64 0
+                drop _loot_pouch 110 152 0
+            elseif _tmp = "3"
+                lift _trap_pouch
+                drop _loot_pouch 102 152 0
             endif
             @getlabel! backpack _tmp_label
             #wait 200
