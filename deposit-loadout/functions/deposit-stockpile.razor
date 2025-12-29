@@ -13,7 +13,7 @@ while timer _restock_timer <= _max_time_for_deposit_stockpile_loop_ms
     #overhead "rsr stockpile deposit"
     menu _this_stockpile_serial 0
     waitfortarget 500
-    target 'self'
+    target self
     #@getlabel! _this_stockpile_serial _tmp_label
     #wait 150
 

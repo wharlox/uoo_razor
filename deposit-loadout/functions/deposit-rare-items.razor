@@ -2,15 +2,18 @@
 sysmsg "deposit rare items - start"
 #@setvar! _this_script "Play Script: deposit-loadout\functions\deposit-rare-items"
 
+## @clearignore!
 
 
 # 22336 :: skill mastery orb
 # 24434 :: research materials
 @setvar! _skill_orb_and_rm__crate  0x43D6430D 
 while findtype 22336|24434  backpack as _this
+    @ignore! _this
     getlabel _this _this_label
-    sysmsg _this_label
+    sysmsg _this_label 11
 
+    ### slow - consider checking insysmsg and overhead+sysmsg
     getlabel _skill_orb_and_rm__crate  _this_label
     if "125 items" in _this_label
         overhead "rare items crate full"
@@ -20,7 +23,9 @@ while findtype 22336|24434  backpack as _this
 
     lift _this 60000
     drop _skill_orb_and_rm__crate -1 -1 -1
-    getlabel _this _this_label
+    while queued
+    endwhile
+    #getlabel _this _this_label
     #wait 350
 endwhile
 
@@ -28,8 +33,9 @@ endwhile
 
 @setvar! _seed_of_renewal__crate  0x43D6430D 
 while findtype "seed of renewal"  backpack as _this
+    @ignore! _this
     getlabel _this _this_label
-    sysmsg _this_label
+    sysmsg _this_label 11
 
     getlabel _seed_of_renewal__crate  _this_label
     if "125 items" in _this_label
@@ -40,10 +46,11 @@ while findtype "seed of renewal"  backpack as _this
 
     lift _this 60000
     drop _seed_of_renewal__crate  -1 -1 -1
-    getlabel _this _this_label
+    while queued
+    endwhile
+    #getlabel _this _this_label
     #wait 350
 endwhile
-
 
 
 @setvar! _paragon_chest__crate  0x57BC498C
@@ -55,16 +62,16 @@ endwhile
 @pushlist!  _paragon_chest_text_labels  "wooden chest"
 @pushlist!  _paragon_chest_text_labels  "strong box"
 
-@clearignore!
 foreach _itr in _paragon_chest_text_labels
     while findtype _itr  backpack as _this
+        @ignore! _this
         getlabel _this _this_label
         if "sealed"  in _this_label
         else
             @ignore! _this
             continue
         endif
-        sysmsg _this_label
+        sysmsg _this_label 11
 
         getlabel _paragon_chest__crate  _this_label
         if "125 items" in _this_label
@@ -75,16 +82,21 @@ foreach _itr in _paragon_chest_text_labels
 
         lift _this 60000
         drop _paragon_chest__crate 175 152 0
+        while queued
+        endwhile
         # -1 -1 -1
-        getlabel _this _this_label
+        #getlabel _this _this_label
         #wait 350
     endwhile
 endfor
 @clearignore!
 
+while queued
+endwhile
 
+@clearignore!
 
-@getlabel! 'backpack' _this_label
+@getlabel! backpack _this_label
 #wait 100
 sysmsg "deposit rare items - complete"
 

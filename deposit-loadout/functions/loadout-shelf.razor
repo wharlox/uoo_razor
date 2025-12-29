@@ -99,6 +99,9 @@ if findtype "pouch" backpack  0 as _loot_pouch
 endif
 @getlabel! backpack _tmp_label
 
+while queued
+endwhile
+
 #wait 600
 sysmsg "loadout shelf - complete"
 
