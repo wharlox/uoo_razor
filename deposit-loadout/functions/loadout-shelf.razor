@@ -52,6 +52,7 @@ if findtype "pouch" backpack  0 as _loot_pouch
     @pushlist!  _trap_pouch_spares "3"
     @clearignore!
     while findtype "pouch" backpack 38 as _trap_pouch
+        @getlabel! _trap_pouch _tmp_label
         if list _trap_pouch_spares > 0
         foreach _tmp in _trap_pouch_spares
             # sysmsg _tmp
@@ -86,6 +87,7 @@ if findtype "pouch" backpack  0 as _loot_pouch
 
     ## potion satchel
     if findtype "alchemists satchel" backpack as _potion_satchel
+        @getlabel! _potion_satchel _tmp_label
         lift _potion_satchel 1
         drop _loot_pouch 64 64 0
         @getlabel! backpack _tmp_label
