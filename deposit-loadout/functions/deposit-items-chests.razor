@@ -21,7 +21,8 @@ while findtype "rune"  backpack as _this
 endwhile
 
 
-
+while queued
+endwhile
 sysmsg "deposit items to chests - complete"
 
 
@@ -105,7 +106,7 @@ while findtype "seed of renewal" as _this
 endwhile
 
 
-@getlabel! 'backpack' _this_label
+@getlabel! backpack _this_label
 #wait 200
 sysmsg "deposit items to chests - complete"
 

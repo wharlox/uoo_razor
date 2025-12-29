@@ -2,6 +2,10 @@
 sysmsg "deposit-loadout-time-summary - start"
 #@setvar! _this_script "Play Script: deposit-loadout\functions\deposit-loadout-time-summary"
 
+while queued
+    overhead "queued in final chain - add queue checks somewhere else"
+endwhile
+
 sysmsg "deposit-loadout cmplete time: {{_deposit_loadout_time_summary}}" 18
 overhead "deposit-loadout complete time: {{_deposit_loadout_time_summary}}" 18
 sysmsg "deposit-loadout-time-summary - complete"

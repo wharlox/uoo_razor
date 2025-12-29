@@ -13,10 +13,10 @@ sysmsg "deposit shelf - start"
 while timer _restock_timer <= _max_time_for_deposit_shelf_loop_ms
     menu _this_shelf_serial 0
     waitfortarget 500
-    target 'self'
+    target self
     waitforgump 3232825965
     gumpclose 3232825965
-    #@getlabel! 'backpack' _tmp_label
+    #@getlabel! backpack _tmp_label
     #wait 150
     @getlabel! _this_shelf_serial _tmp_label
 
@@ -37,7 +37,7 @@ while timer _restock_timer <= _max_time_for_deposit_shelf_loop_ms
         #wait 50
     endwhile
 
-    #@getlabel! 'backpack' _tmp_label
+    #@getlabel! backpack _tmp_label
     #wait 200
 endwhile
 @removetimer! _restock_timer
