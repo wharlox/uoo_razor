@@ -1,0 +1,58 @@
+
+sysmsg "loadout shelf-resupply - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\loadout-shelf"
+
+
+@removelist! _this_self_serials
+@createlist! _this_self_serials
+
+@pushlist!  _this_self_serials  0x4B41ED97
+@pushlist!  _this_self_serials  _this_shelf_serial_other
+
+
+
+#### check if a Wilderness lantern is on or off - if on disable resupply
+#### TODO- variablize ID and HUE
+@setvar!  _this_shelf__do_resupply  1
+if varexist _deposit_loadout__lantern__shelf_resupply
+    if findtype 2594 ground 1182 any 4 as _tmp
+        ## findtype  ID  ground  HUE  any  4
+        if _tmp == _deposit_loadout__lantern__shelf_resupply 
+            @setvar!  _this_shelf__do_resupply  0
+            sysmsg "resupply disabled, to enable turn off the lantern" 11
+            overhead "resupply disabled, to enable turn off the lantern" 11
+        endif
+    endif
+endif
+
+
+
+#### call menu resupply on each shelf if in range
+if _this_shelf__do_resupply == 1
+    foreach _a_shelf in _this_self_serials
+        ## shelf Resupply
+        if find _a_shelf ground  -1 -1 2
+            menu _a_shelf 1
+            @getlabel!  _a_shelf  _tmp_label
+        endif
+    endfor
+    @getlabel! backpack _tmp_label
+endif
+
+
+
+while queued
+endwhile
+
+
+
+sysmsg "loadout shelf-resupply - complete"
+
+
+#### continue script chain
+if listexists _script_chain and list _script_chain > 0
+    poplist _script_chain front
+    foreach _a_script in _script_chain
+        hotkey _a_script
+    endfor
+endif

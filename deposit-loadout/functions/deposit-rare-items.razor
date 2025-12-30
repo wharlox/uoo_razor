@@ -52,6 +52,7 @@ while findtype "seed of renewal"  backpack as _this
 endwhile
 
 
+
 @setvar! _paragon_chest__crate  0x57BC498C
 
 @removelist!  _paragon_chest_text_labels
@@ -66,33 +67,40 @@ foreach _itr in _paragon_chest_text_labels
         @ignore! _this
         getlabel _this _this_label
         if "sealed"  in _this_label
-        else
-            continue
-        endif
-        sysmsg _this_label 11
+            sysmsg _this_label 11
 
-        getlabel _paragon_chest__crate  _this_label
-        if "125 items" in _this_label
-            overhead "paragon-chest crate full"
-            dclick  _paragon_chest__crate
-            break
-        endif
+            getlabel _paragon_chest__crate  _this_label
+            if "125 items" in _this_label
+                overhead "paragon-chest crate full"
+                dclick  _paragon_chest__crate
+                break
+            endif
 
-        lift _this 60000
-        drop _paragon_chest__crate 175 152 0
-        while queued
-        endwhile
-        # -1 -1 -1
-        #getlabel _this _this_label
-        #wait 350
+            lift _this 60000
+            drop _paragon_chest__crate 175 152 0
+            while queued
+            endwhile
+            # -1 -1 -1
+            #getlabel _this _this_label
+            #wait 350
+        elseif "locksmith training box" in _this_label
+            sysmsg _this_label 11
+            lift _this 60000
+            drop backpack -1 -1 -1
+            while queued
+            endwhile
+        endif
     endwhile
 endfor
-@clearignore!
+
+
 
 while queued
 endwhile
 
 @clearignore!
+
+
 
 @getlabel! backpack _this_label
 #wait 100

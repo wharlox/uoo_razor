@@ -1,11 +1,27 @@
 settimer _deposit_loadout_time_summary 0
 overhead "_chain start"
 
+#### hotkey: set to control + F8
+
 ## requires Razor options Filters (tab), Texts & Messages (sub-tab), uncheck Filter repeating system messages
 
 removelist _script_chain
 createlist _script_chain
 pushlist _script_chain "Play Script: deposit-loadout\functions\hide-if-not-hidden"
+
+pushlist _script_chain "Play Script: deposit-loadout\deposit-loadout-config-home"
+
+#pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-item-recycler"
+##### continue script chain
+#if listexists _script_chain
+#    # poplist _script_chain front
+#    foreach _a_script in _script_chain
+#        hotkey _a_script
+#    endfor
+#endif
+
+
+
 pushlist _script_chain "Play Script: deposit-loadout\functions\repair-bench-jaseowns"
 # pushlist _script_chain "Play Script: deposit-loadout\functions\wait-100"
 pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-items-chests"
@@ -16,8 +32,14 @@ pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-tomes"
 pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-stockpile"
 pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-shelf-all"
 pushlist _script_chain "Play Script: deposit-loadout\functions\wait-100"
-pushlist _script_chain "Play Script: deposit-loadout\functions\loadout-shelf"
+
+#pushlist _script_chain "Play Script: deposit-loadout\functions\loadout-shelf"
 #pushlist _script_chain "Play Script: deposit-loadout\functions\loadout-food"
+
+pushlist _script_chain "Play Script: deposit-loadout\functions\loadout-shelf-resupply"
+pushlist _script_chain "Play Script: deposit-loadout\functions\loadout-organizer"
+
+
 pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-loadout-time-summary"
 
 
