@@ -4,7 +4,7 @@ sysmsg "deposit item recycler - start"
 
 if not varexist _id_loop_recycler_lantern
     ## same var as-used in the SUPER ID-Recycler-looper
-    setvar _id_loop_recycler_lantern 0x5630D248
+    setvar _id_loop_recycler_lantern  _deposit_loadout__lantern__trigger_recycle
 endif
 
 ## recycle items IF and ONLY IF lantern is off - and MAYBE only if enable-var is set`
@@ -22,9 +22,12 @@ if varexist _id_loop_recycler_lantern
         ## 2594 is ID of light-on cav-lantern 2338 is hue
         ## 2597 is ID of light-off cav-lantern 2338 is hue
         if _tmp == _id_loop_recycler_lantern 
-            if name = "_toon_name_"
+            #@setvar!  _whoami  name
+            #if _whoami == _deposit_loadout__user_to_recycle
+            if _deposit_loadout__recycle_with_current_user == 1
+                overhead "inner"
                 ## recycle items
-                dclick 0x4DF8B23E
+                dclick _deposit_loadout__recycler
                 waitforgump 4045111101
                 gumpresponse 6 4045111101
                 waitforgump 4045111101
@@ -33,20 +36,20 @@ if varexist _id_loop_recycler_lantern
                 gumpclose 4045111101
                 @getlabel! _tmp _tmp_label
                 ## magic item vault
-                menu 0x5988F431 0
-                waitfortarget 0x5988F431
-                target 0x4DF8B23E
+                menu _deposit_loadout__magic_item_vault 0
+                waitfortarget _deposit_loadout__magic_item_vault
+                target _deposit_loadout__recycler
                 @getlabel! _tmp _tmp_label
             endif
             ## stockpile add items from recycle-container
-            menu 0x56E3DC06 0
+            menu _deposit_loadout__stockpile 0
             waitfortarget 500
-            target 0x4DF8B23E
+            target _deposit_loadout__recycler
             @getlabel! _tmp _tmp_label
             ## shelf add items
-            menu 0x4B41ED97 0
+            menu _deposit_loadout__shelf 0
             waitfortarget 500
-            target 0x4DF8B23E
+            target _deposit_loadout__recycler
             waitforgump 3232825965
             gumpclose 3232825965
             @getlabel! _tmp _tmp_label
@@ -56,15 +59,15 @@ endif
 
 
 ## deposit ALL magic items
-menu 0x4DF8B23E 0
+menu _deposit_loadout__recycler 0
 #wait 200
-@getlabel! 0x4DF8B23E _this
+@getlabel! _deposit_loadout__recycler _this
 if "125 items" in _this
     overhead "item recycler is full" 38
 endif
 ## deposit unid magic items
-#menu 0x4DF8B23E 1
-@getlabel! 0x4DF8B23E _this
+#menu _deposit_loadout__recycler 1
+@getlabel! _deposit_loadout__recycler _this
 #wait 600
 
 

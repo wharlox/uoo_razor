@@ -1,0 +1,50 @@
+
+sysmsg "deposit-loadout config - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\deposit-loadout-config"
+
+## requires Razor options Filters (tab), Texts & Messages (sub-tab), uncheck Filter repeating system messages
+
+
+
+setvar  _deposit_loadout__safe  0x463F715B
+
+## cavernam lantern hard-coded
+setvar  _deposit_loadout__lantern__trigger_recycle  0x5630D248
+## wilderness lantern hard-coded
+setvar  _deposit_loadout__lantern__shelf_resupply  0x50883542
+
+setvar  _deposit_loadout__recycler  0x4DF8B23E
+setvar  _deposit_loadout__magic_item_vault  0x5988F431
+setvar  _deposit_loadout__stockpile  0x56E3DC06
+setvar  _deposit_loadout__shelf  0x4B41ED97
+
+#setvar  _deposit_loadout__user_to_recycle  "_toon_name_"
+setvar _deposit_loadout__recycle_with_current_user 0
+if name == "_toon_name_"
+    setvar _deposit_loadout__recycle_with_current_user 1
+endif
+
+
+setvar _deposit_loadout__chest__arcane_rune  0x41A976BC
+
+
+
+
+
+
+
+
+
+sysmsg "deposit-loadout config - complete"
+
+
+
+
+
+#### continue script chain
+if listexists _script_chain and list _script_chain > 0
+    poplist _script_chain front
+    foreach _a_script in _script_chain
+        hotkey _a_script
+    endfor
+endif
