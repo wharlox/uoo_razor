@@ -1,0 +1,140 @@
+
+sysmsg "loadout loadout-shelf-manual-withdrawal - start" 165
+#@setvar! _this_script "Play Script: deposit-loadout\functions\loadout-shelf-manual-withdrawal"
+
+#### run after shelf-resupply
+#### use skills to pull items if not in inventory
+
+
+
+@setvar!  _this_self_serial  _deposit_loadout__shelf
+#@pushlist!  _this_self_serials  _this_shelf_serial_other
+
+
+
+#### check if a Wilderness lantern is on or off - if on disable resupply
+#### TODO- variablize ID and HUE
+@setvar!  _this_shelf__do_resupply  1
+if varexist _deposit_loadout__lantern__shelf_resupply
+    if findtype 2594 ground 1182 any 4 as _tmp
+        ## findtype  ID  ground  HUE  any  4
+        if _tmp == _deposit_loadout__lantern__shelf_resupply 
+            @setvar!  _this_shelf__do_resupply  0
+            sysmsg "resupply disabled, to enable turn off the lantern" 11
+            overhead "resupply disabled, to enable turn off the lantern" 11
+        endif
+    endif
+endif
+
+
+
+
+
+#### call menu resupply on each shelf if in range
+if _this_shelf__do_resupply == 1  and  find  _this_self_serial  ground  -1 -1 2
+
+
+
+
+    #### conditionally get 1,2,3 commodities if skinning skill exists and none in backpack
+    @setvar! _this  __deposit_loadout__shelf_withdrawal__skinning__commodities__1_2_3
+    if skill "forensic evaluation" > 0
+        if findtype 7715 backpack as _found
+        elseif _this == 1 or _this == 2 or _this == 3
+                ### get one blank commodity
+                dclick  _this_self_serial
+                waitforgump  _common_gumps__shelf
+                ## scroll right
+                gumpresponse 21
+                waitforgump  _common_gumps__shelf
+                ## select tools
+                gumpresponse 53
+                waitforgump  _common_gumps__shelf
+                ## retrieve one
+                gumpresponse 23
+                waitforgump  _common_gumps__shelf
+                ## get blank commodity
+                gumpresponse 139
+                waitforgump  _common_gumps__shelf
+                if _this == 2 or _this == 3
+                    ## get blank commodity
+                    gumpresponse 139
+                    waitforgump  _common_gumps__shelf
+                endif
+                if _this == 3
+                    ## get blank commodity
+                    gumpresponse 139
+                    waitforgump  _common_gumps__shelf
+                endif
+                gumpclose  _common_gumps__shelf
+        endif
+    endif 
+
+
+
+    
+    @getlabel! backpack _tmp_label
+endif
+
+
+
+
+
+while queued
+endwhile
+
+
+
+
+
+sysmsg "loadout loadout-shelf-manual-withdrawal - complete" 165
+
+
+#### continue script chain
+if listexists _script_chain and list _script_chain > 0
+    poplist _script_chain front
+    foreach _a_script in _script_chain
+        hotkey _a_script
+    endfor
+endif
+
+
+
+stop
+
+### get one blank commodity
+dclick  _this_self_serial
+waitforgump  _common_gumps__shelf
+## scroll right
+gumpresponse 21
+waitforgump  _common_gumps__shelf
+## select tools
+gumpresponse 53
+waitforgump  _common_gumps__shelf
+## retrieve one
+gumpresponse 23
+waitforgump  _common_gumps__shelf
+## blank commodity
+gumpresponse 139
+waitforgump  _common_gumps__shelf
+
+
+
+
+###
+
+### get two blank commodities - with retrieve many - cannot easily variablize 2
+dclick _this_self_serial
+waitforgump  _common_gumps__shelf
+gumpresponse 21
+waitforgump  _common_gumps__shelf
+gumpresponse 53
+waitforgump  _common_gumps__shelf
+gumpresponse 139
+waitforgump  _common_gumps__shelf
+waitforgump  _common_gumps__shelf_retrieve_many
+gumpresponse 2
+waitforgump  _common_gumps__shelf
+
+
+#

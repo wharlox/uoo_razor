@@ -5,23 +5,47 @@ sysmsg "deposit rare items - start"
 ## @clearignore!
 
 
-# 22336 :: skill mastery orb
-# 24434 :: research materials
-@setvar! _skill_orb_and_rm__crate  0x43D6430D 
-while findtype 22336|24434  backpack as _this
+
+## 22336 :: skill mastery orb
+## 24434 :: research materials
+#@setvar! _skill_orb_and_rm__crate  0x43D6430D 
+#while findtype 22336|24434  backpack as _this
+#    @ignore! _this
+#    getlabel _this _this_label
+#    sysmsg _this_label 11
+#
+#    getlabel _skill_orb_and_rm__crate  _this_label
+#    if "125 items" in _this_label
+#        overhead "rare items crate full"
+#        dclick  _skill_orb_and_rm__crate
+#        break
+#    endif
+#
+#    lift _this 60000
+#    drop _skill_orb_and_rm__crate -1 -1 -1
+#    while queued
+#    endwhile
+#    #getlabel _this _this_label
+#    #wait 350
+#endwhile
+
+
+
+@setvar! _skill_orb__crate  _deposit_loadout__chest__skill_orbs
+while findtype 22336  backpack as _this
     @ignore! _this
     getlabel _this _this_label
     sysmsg _this_label 11
 
-    getlabel _skill_orb_and_rm__crate  _this_label
+    getlabel _skill_orb__crate  _this_label
     if "125 items" in _this_label
-        overhead "rare items crate full"
-        dclick  _skill_orb_and_rm__crate
+        overhead "skill orb crate full"
+        dclick  _skill_orb__crate
         break
     endif
 
     lift _this 60000
-    drop _skill_orb_and_rm__crate -1 -1 -1
+    drop _skill_orb__crate  -1 -1 -1
     while queued
     endwhile
     #getlabel _this _this_label
@@ -30,7 +54,30 @@ endwhile
 
 
 
-@setvar! _seed_of_renewal__crate  0x43D6430D 
+@setvar! _rsrsh_mats__crate  _deposit_loadout__chest__research_materials
+while findtype 24434  backpack as _this
+    @ignore! _this
+    getlabel _this _this_label
+    sysmsg _this_label 11
+
+    getlabel _rsrsh_mats__crate  _this_label
+    if "125 items" in _this_label
+        overhead "resource materials crate full"
+        dclick  _rsrsh_mats__crate
+        break
+    endif
+
+    lift _this 60000
+    drop _rsrsh_mats__crate  -1 -1 -1
+    while queued
+    endwhile
+    #getlabel _this _this_label
+    #wait 350
+endwhile
+
+
+
+@setvar! _seed_of_renewal__crate  _deposit_loadout__chest__seeds
 while findtype "seed of renewal"  backpack as _this
     @ignore! _this
     getlabel _this _this_label
@@ -50,6 +97,32 @@ while findtype "seed of renewal"  backpack as _this
     #getlabel _this _this_label
     #wait 350
 endwhile
+
+
+
+#### only send carpets to chest if carpet-rack is 0
+if _deposit_loadout__chest__carpets == 0
+    @setvar! _carpet__crate  _deposit_loadout__chest__carpets
+    while findtype "carpet"  backpack as _this
+        @ignore! _this
+        getlabel _this _this_label
+        sysmsg _this_label 11
+
+        getlabel _carpet__crate  _this_label
+        if "125 items" in _this_label
+            overhead "carpet crate full"
+            dclick  _carpet__crate
+            break
+        endif
+
+        lift _this 60000
+        drop _carpet__crate  -1 -1 -1
+        while queued
+        endwhile
+        #getlabel _this _this_label
+        #wait 350
+    endwhile
+endif
 
 
 

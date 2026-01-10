@@ -6,26 +6,76 @@ sysmsg "deposit-loadout config - start"
 
 
 
-setvar  _deposit_loadout__safe  0x463F715B
+
+#### conditional shelf-withdrawal based on skills
+## can get exactly 1 or a custom hard-coded quantity
+## 0 to disable, 1 to enable
+
+## 0, 1, 2, 3 
+@setvar __deposit_loadout__shelf_withdrawal__skinning__commodities__1_2_3  2
+
+
+
+
+
+@setvar  _deposit_loadout__safe  0x463F715B
 
 ## cavernam lantern hard-coded
-setvar  _deposit_loadout__lantern__trigger_recycle  0x5630D248
+@setvar  _deposit_loadout__lantern__trigger_recycle  0x5630D248
 ## wilderness lantern hard-coded
-setvar  _deposit_loadout__lantern__shelf_resupply  0x50883542
+@setvar  _deposit_loadout__lantern__shelf_resupply  0x50883542
 
-setvar  _deposit_loadout__recycler  0x4DF8B23E
-setvar  _deposit_loadout__magic_item_vault  0x5988F431
-setvar  _deposit_loadout__stockpile  0x56E3DC06
-setvar  _deposit_loadout__shelf  0x4B41ED97
+@setvar  _deposit_loadout__recycler  0x4DF8B23E
+@setvar  _deposit_loadout__magic_item_vault  0x5988F431
+@setvar  _deposit_loadout__stockpile  0x56E3DC06
+@setvar  _deposit_loadout__shelf  0x4B41ED97
 
 #setvar  _deposit_loadout__user_to_recycle  "_toon_name_"
-setvar _deposit_loadout__recycle_with_current_user 0
+@setvar _deposit_loadout__recycle_with_current_user 0
 if name == "_toon_name_"
-    setvar _deposit_loadout__recycle_with_current_user 1
+    @setvar _deposit_loadout__recycle_with_current_user 1
 endif
 
 
-setvar _deposit_loadout__chest__arcane_rune  0x41A976BC
+
+
+
+#### pro-tip - set the serial once and use the var-name in other settings
+@setvar  _deposit_loadout__chest__skill_orbs 0x43D6430D
+@setvar  _deposit_loadout__chest__research_materials  _deposit_loadout__chest__skill_orbs
+@setvar  _deposit_loadout__chest__seeds  _deposit_loadout__chest__skill_orbs
+
+
+@setvar  _deposit_loadout__tomes__mastery_chain  0x4628B560
+@setvar  _deposit_loadout__tomes__cloth  0x46286390
+@setvar  _deposit_loadout__tomes__aspect  0x40ADE551
+@setvar  _deposit_loadout__tomes__skill_scrolls  0x463EDDFA
+@setvar  _deposit_loadout__tomes__dyes  0x5988996E
+@setvar  _deposit_loadout__tomes__maps__lumber  0x433FC326
+@setvar  _deposit_loadout__tomes__maps__ore  0x4280DB48
+@setvar  _deposit_loadout__tomes__maps__fishing  0x62FAB5B3
+@setvar  _deposit_loadout__tomes__maps__skinning  0x630A4772
+@setvar  _deposit_loadout__tomes__maps__treasure  0x5988645D
+
+
+@setvar  _deposit_loadout__tomes__rune_tome  0x0
+## TODO  RUNE_TOME added to runes-script - add conditional to chest
+@setvar _deposit_loadout__chest__arcane_runes  0x41A976BC
+
+
+## if set to 0 then use chest-serial
+@setvar  _deposit_loadout__menuable__carpet_rack  0x0
+#### TODO FUTURE if any chest-serial to 0 skip
+@setvar  _deposit_loadout__chest__carpets  0x40EC35BA
+
+#### TODO FUTURE
+# black market goods
+# fishing shit
+#   fishing net, fish, broken-stuff, colonial marks, bag of gems - aka booty, 
+# plant shit
+#   water, other-seeds, farm-food
+
+
 
 
 
