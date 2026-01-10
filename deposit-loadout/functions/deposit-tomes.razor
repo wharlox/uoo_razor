@@ -6,65 +6,74 @@ sysmsg "deposit tomes - start"
 
 @setvar! _disable_mastery_link_tome 1
     
-@setvar! _tome_use_context_menu 1
-@setvar _tome_cont_ext_menu_wait 200
+@setvar!  _tome_use_context_menu 1
+@setvar!  _tome_cont_ext_menu_wait 200
 
 
-@settimer! _this_run 0
+@settimer!  _this_run 0
 
-@removelist! _tome_list
-@createlist! _tome_list
-@removelist! _tome_gumps
-@createlist! _tome_gumps
+@removelist!  _tome_list
+@createlist!  _tome_list
+@removelist!  _tome_gumps
+@createlist!  _tome_gumps
+
+
 
 #### tome serials
 ## mastery chain tome
-@pushlist! _tome_list 0x4628B560 
+@pushlist!  _tome_list  _deposit_loadout__tomes__mastery_chain
 ## rare cloth tome
-@pushlist! _tome_list 0x46286390 
+@pushlist!  _tome_list  _deposit_loadout__tomes__cloth
 ## aspect tome
-@pushlist! _tome_list 0x40ADE551 
-## skill mastery tome
-@pushlist! _tome_list 0x463EDDFA 
+@pushlist!  _tome_list  _deposit_loadout__tomes__aspect
+## skill scrolls skill mastery tome
+@pushlist!  _tome_list  _deposit_loadout__tomes__skill_scrolls 
 ## dyes tome
-@pushlist! _tome_list 0x5988996E 
+@pushlist!  _tome_list  _deposit_loadout__tomes__dyes 
+## carpet rack
+@pushlist!  _tome_list  _deposit_loadout__menuable__carpet_rack
+
 #### maps
 ## ore tome
-@pushlist! _tome_list 0x4280DB48 
+@pushlist!  _tome_list  _deposit_loadout__tomes__maps__ore
 ## fishing tome
-@pushlist! _tome_list 0x62FAB5B3 
+@pushlist!  _tome_list  _deposit_loadout__tomes__maps__fishing
 ## skinning tome
-@pushlist! _tome_list 0x630A4772 
+@pushlist!  _tome_list  _deposit_loadout__tomes__maps__skinning
 ## treasure tome
-@pushlist! _tome_list 0x5988645D 
+@pushlist!  _tome_list  _deposit_loadout__tomes__maps__treasure
 ## lumber tome
-@pushlist! _tome_list 0x433FC326 
+@pushlist!  _tome_list  _deposit_loadout__tomes__maps__lumber
 
 
 
 
 #### tome gumps - needs to match the same order as _tome_list
 ## mastery chain gump
-@pushlist! _tome_gumps 1567675535
-## rare cloth tome
-@pushlist! _tome_gumps 1264641135
+@pushlist!  _tome_gumps  _common_gumps__tome__mastery_chain
+## cloth tome
+@pushlist!  _tome_gumps  _common_gumps__tome__cloth
 ## aspect tome
-@pushlist! _tome_gumps 265325939
-## skill mastery tome
-@pushlist! _tome_gumps 2125225775
+@pushlist!  _tome_gumps  _common_gumps__tome__aspect
+## skill scrolls skill mastery tome
+@pushlist!  _tome_gumps  _common_gumps__tome__skill_scroll
 ## dyes tome
-@pushlist! _tome_gumps 2931798699
+@pushlist!  _tome_gumps  _common_gumps__tome__dye
+## carpet rack
+@pushlist!  _tome_gumps  _common_gumps__tome__carpet
+
 #### maps
 ## ore tome
-@pushlist! _tome_gumps 1667380559
+@pushlist!  _tome_gumps  _common_gumps__maps__ore
 ## fishing tome
-@pushlist! _tome_gumps 3448468591
+@pushlist!  _tome_gumps  _common_gumps__maps__fishing
 ## skinning tome
-@pushlist! _tome_gumps 4027121519
+@pushlist!  _tome_gumps  _common_gumps__maps__skinning
 ## treasure tome
-@pushlist! _tome_gumps 1863945839
+@pushlist!  _tome_gumps  _common_gumps__maps__treasure
 ## lumber tome
-@pushlist! _tome_gumps 3576069391
+@pushlist!  _tome_gumps  _common_gumps__maps__lumber
+
 
 
 
@@ -75,18 +84,22 @@ endif
 
 if _tome_use_context_menu == 1
     foreach _a_tome in _tome_list
-        menu _a_tome 0
-        #wait _tome_context_menu_wait
-        @getlabel! _a_tome _tmp_label
+        if _a_time != 0
+            menu _a_tome 0
+            #wait _tome_context_menu_wait
+            @getlabel! _a_tome _tmp_label
+        endif
     endfor
 else
     foreach _a_tome in _tome_list
-        dclick _a_tome
-        if poplist _tome_gumps front as _a_tome_gump
-            waitforgump _a_tome_gump
-            gumpresponse 2 _a_tome_gump
-            waitforgump _a_tome_gump
-            gumpclose _a_tome_gump
+        if _a_time != 0
+            dclick _a_tome
+            if poplist _tome_gumps front as _a_tome_gump
+                waitforgump _a_tome_gump
+                gumpresponse 2 _a_tome_gump
+                waitforgump _a_tome_gump
+                gumpclose _a_tome_gump
+            endif
         endif
     endfor
 endif

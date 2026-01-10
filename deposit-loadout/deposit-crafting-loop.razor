@@ -1,24 +1,23 @@
 settimer _deposit_loadout_time_summary 0
 overhead "_chain start"
 
-#### hotkey: set to F8
-
 ## requires Razor options Filters (tab), Texts & Messages (sub-tab), uncheck Filter repeating system messages
 
 removelist _script_chain
 createlist _script_chain
+pushlist _script_chain "Play Script: deposit-loadout\functions\hide-if-not-hidden"
 
 pushlist _script_chain "Play Script: deposit-loadout\deposit-loadout-config-home"
 
 
-
-pushlist _script_chain "Play Script: deposit-loadout\functions\loadout-shelf-resupply"
-pushlist _script_chain "Play Script: deposit-loadout\functions\loadout-shelf-manual-withdrawal"
-pushlist _script_chain "Play Script: deposit-loadout\functions\loadout-organizer"
-
+pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-stockpile"
+pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-shelf-all"
 
 
 pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-loadout-time-summary"
+setvar _wait_dynamic 60000
+pushlist _script_chain "Play Script: deposit-loadout\functions\wait-dynamic"
+pushlist _script_chain "Play Script: deposit-loadout\deposit-crafting-loop"
 
 
 

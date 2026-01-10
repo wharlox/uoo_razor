@@ -1,11 +1,13 @@
 
-sysmsg "loadout organizer - start"
+sysmsg "loadout organizer - start" 165
 #@setvar! _this_script "Play Script: deposit-loadout\functions\loadout-organizer"
 
 
 ##### TODO - if pouch is more than 0 items 0 stones, then place it in loot-pouch
 ##### OR - new function- determine trapped-pouches in loot-pouch and skip moving
 ###           only move trapped pouches in backpack
+##### TODO - move all other non-trapped pouches found in backpack depth 1 into loot-pouch
+
 
 ## x 44-175  y 65 152
 ## top left: 44 65 0
@@ -16,21 +18,69 @@ sysmsg "loadout organizer - start"
 @setvar! _loadout_shelf_pouch_in_backpack__x 91
 @setvar! _loadout_shelf_pouch_in_backpack__y 64
 
-drop backpack 0 0 0
+
+
+@drop backpack 0 0 0
 
 
 
-if findtype "pouch" backpack  0 as _loot_pouch
+#### test shit - delete me
+if 1 == 2 and findtype "pouch" backpack  0 -1 1 as _loot_pouch
+    if varexists __test_pouch and  find __test_pouch backpack 0 as _loot_pouch
+        @setvar!  _loot_pouch  __test_pouch
+    else
+        @setvar  __test_pouch  _loot_pouch
+    endif
+    @ignore  _loot_pouch
+    while findtype "pouch"  backpack 0 -1 1 as _other_pouch
+        @getlabel! _other_pouch _tmp_label
+        lift _other_pouch
+        drop _loot_pouch 44 65 0
+        @getlabel! _other_pouch _tmp_label
+    endwhile
+endif
+
+
+
+
+if findtype "pouch" backpack  0 -1 1 as _loot_pouch
     @getlabel! _loot_pouch _tmp_label
-    overhead _tmp_label 
-    setvar  _deposit_loadout_chain_loot_pouch  _loot_pouch
+    overhead "{{_loot_pouch}} :: {{_tmp_label}}"
+
+    #####@setvar  _deposit_loadout_chain_loot_pouch  _loot_pouch
+
+    ## check if the global-var loot-pouch is in backpack someplace
+    ## if it exists then assume re-run, otherwise not re-run
+    ## re-run means: do not re-order trapped-pouches within loot-pouch - only order trapped pouches directly in backpack, not nested
+    if varexist  _deposit_loadout_chain_loot_pouch  and _deposit_loadout_chain_loot_pouch  != 0 and  find _deposit_loadout_chain_loot_pouch  backpack 0
+        @setvar!  _is_re_run 1
+        @setvar!  _loot_pouch  _deposit_loadout_chain_loot_pouch
+    else
+        @setvar!  _is_re_run 0
+        @setvar  _deposit_loadout_chain_loot_pouch  _loot_pouch
+    endif
+    @ignore  _loot_pouch
+    ##  move all other untrapped pouches within loot-pouch
+    ## onl applies to untrapped pouches direclty within backpack, not nested
+    while findtype "pouch"  backpack 0 -1 1 as _other_pouch
+        @getlabel! _other_pouch _tmp_label
+        lift _other_pouch
+        drop _loot_pouch 44 65 0
+        #@getlabel! _other_pouch _tmp_label
+        while queued
+        endwhile
+    endwhile
+
+
     # sysmsg "pouch"
     ## drop loot-pouch in packpack
     lift _loot_pouch
 
     # drop backpack 91 64 0
     drop backpack _loadout_shelf_pouch_in_backpack__x  _loadout_shelf_pouch_in_backpack__y  0
-    @getlabel! backpack _tmp_label
+    #@getlabel! backpack _tmp_label
+    while queued
+    endwhile
     dclick _loot_pouch
     
     ## build a list of which represents number of spare trapped-pouches
@@ -40,54 +90,129 @@ if findtype "pouch" backpack  0 as _loot_pouch
     @pushlist!  _trap_pouch_spares "1"
     @pushlist!  _trap_pouch_spares "2"
     @pushlist!  _trap_pouch_spares "3"
-    @clearignore!
-    while findtype "pouch" backpack 38 as _trap_pouch
-        @getlabel! _trap_pouch _tmp_label
-        if list _trap_pouch_spares > 0
-        foreach _tmp in _trap_pouch_spares
-            # sysmsg _tmp
-            if _tmp = "1"
+    @clearignore
+
+    ## if re-run but no trapped pouches, still look in nested containers for trapped pouches
+    @setvar! _trapped_in_root 0
+    if counttype "pouch" backpack 38  1 as _this
+        @setvar! _trapped_in_root 1
+    endif
+    if _is_re_run == 0 or _trapped_in_root == 0
+        while findtype "pouch" backpack 38 as _trap_pouch
+            @getlabel! _trap_pouch _tmp_label
+            if "pouch (0 items, 0 stones)" in _tmp_label
+ 
+                if list _trap_pouch_spares > 0
+                    foreach _tmp in _trap_pouch_spares
+                        # sysmsg _tmp
+                        if _tmp = "1"
+                            lift _trap_pouch
+                            drop _loot_pouch 94 152 0
+                        elseif _tmp = "2"
+                            lift _trap_pouch
+                            drop _loot_pouch 110 152 0
+                        elseif _tmp = "3"
+                            lift _trap_pouch
+                            drop _loot_pouch 102 152 0
+                        endif
+
+                        while queued
+                        endwhile
+                        #@getlabel! backpack _tmp_label
+                        #wait 200
+                        @ignore! _trap_pouch
+                        poplist _trap_pouch_spares front
+                        break
+                    endfor
+                else
+                    ## drop trapped pouches in backpack over same pixel as loot-pouch
+                    lift _trap_pouch
+                    #drop backpack 91 64 0
+                    drop  backpack  _loadout_shelf_pouch_in_backpack__x  _loadout_shelf_pouch_in_backpack__y  0
+                    @ignore! _trap_pouch
+                    while queued
+                    endwhile
+                endif
+                #@getlabel! backpack _tmp_label
+            else
+                ### if a t-pouch has some shit in it
                 lift _trap_pouch
-                drop _loot_pouch 94 152 0
-            elseif _tmp = "2"
-                lift _trap_pouch
-                drop _loot_pouch 110 152 0
-            elseif _tmp = "3"
-                lift _trap_pouch
-                drop _loot_pouch 102 152 0
+                drop _loot_pouch 90 152 0
+                while queued
+                endwhile
+                #@getlabel! backpack _tmp_label
+                @ignore! _trap_pouch
             endif
-            @getlabel! backpack _tmp_label
             #wait 200
-            @ignore! _trap_pouch
-            poplist _trap_pouch_spares front
-            break
-        endfor
-        else
-            ## drop trapped pouches in backpack over same pixel as loot-pouch
-            lift _trap_pouch
-            #drop backpack 91 64 0
-            drop backpack _loadout_shelf_pouch_in_backpack__x _loadout_shelf_pouch_in_backpack__y 0
-            @ignore! _trap_pouch
-        endif
-        @getlabel! backpack _tmp_label
-        #wait 200
-    endwhile
-    @clearignore!
-    
+        endwhile
+    elseif _is_re_run == 1
+        while findtype "pouch" backpack 38 -1 1 as _trap_pouch
+            @getlabel! _trap_pouch _tmp_label
+                #if "pouch (0 items, 0 stones)" in _tmp_label
+                    ## drop trapped pouches in backpack over same pixel as loot-pouch
+                    lift  _trap_pouch
+                    #drop backpack 91 64 0
+                    drop  backpack  _loadout_shelf_pouch_in_backpack__x  _loadout_shelf_pouch_in_backpack__y  0
+                #else
+                #endif
+                @ignore! _trap_pouch
+
+            while queued
+            endwhile
+            #@getlabel! backpack _tmp_label
+            #wait 200
+        endwhile
+    endif
+    @clearignore
+
+
+
+
 
     ## potion satchel
-    if findtype "alchemists satchel" backpack as _potion_satchel
-        @getlabel! _potion_satchel _tmp_label
-        lift _potion_satchel 1
+    while findtype "alchemists satchel" backpack as _this
+        @ignore _this
+        @getlabel! _this _tmp_label
+        lift _this 1
         drop _loot_pouch 64 64 0
-        @getlabel! backpack _tmp_label
+        while queued
+        endwhile
+        #@getlabel! backpack _tmp_label
         #wait 100
-        dclick _potion_satchel
-    endif
+        dclick _this
+    endwhile
+
+
+
+
+
+    ## reagent satchel
+    while findtype "reagent satchel" backpack as _this
+        @ignore _this
+        @getlabel! _this _tmp_label
+        lift _this 1
+        drop _loot_pouch 60 85 0
+        while queued
+        endwhile
+        #@getlabel! backpack _tmp_label
+        #wait 100
+        dclick _this
+    endwhile
+
+
+
+
 
     ## split band-aids
     ## split potions
 
+
+
+
+
+else
+    sysmsg "no untrapped pouch directly within backpack" 55
+    overhead "no untrapped pouch directly within backpack" 55
 endif
 @getlabel! backpack _tmp_label
 
@@ -95,7 +220,7 @@ while queued
 endwhile
 
 #wait 600
-sysmsg "loadout organizer - complete"
+sysmsg "loadout organizer - complete" 165
 
 
 
