@@ -1,0 +1,104 @@
+#sysmsg "cast gate to gh - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\cast-gate-to-gh"
+
+
+@setvar! _this_lantern_serial 0x47D04560
+@setvar! _this_lantern_off_id 2597
+@setvar! _this_lantern_on_id 2594
+@setvar! _this_lantern_hue 1909
+## Inferno OFF id 2597 hue 1909
+## Inferno ON  id 2594 hue 1909
+
+
+@setvar! _this_tome_serial 0x63CC0115
+@setvar! _this_tome_page 202
+
+
+
+
+
+#### check if a lantern is on or off
+if varexist _this_lantern_serial
+    if findtype _this_lantern_on_id ground _this_lantern_hue any 4 as _tmp
+        ## findtype  ID  ground  HUE  any  4
+        if _tmp == _this_lantern_serial
+            @setvar!  _this_lantern_on  1
+        endif
+    endif
+    if findtype _this_lantern_off_id ground _this_lantern_hue any 4 as _tmp
+        ## findtype  ID  ground  HUE  any  4
+        if _tmp == _this_lantern_serial
+            @setvar!  _this_lantern_on  0
+        endif
+    endif
+endif
+
+#### todo add meditation in here someplace
+#while mana < 90
+#    skill 'meditation'
+#endwhile
+#    
+# if mana > 14  dispel
+# mana 40 gate
+
+## gate or chiv gate
+@setvar!  _this_gate_exists  0
+#### if caster detects a moongate at CLOSE-TO player-location - range 0 and 1 are broken
+if mana > 54 and _this_lantern_on == 1 
+    if findtype "blue moongate" ground 0 1 1  or  findtype 30528 ground 2091 1 1 as _gate
+        if targetexists
+            hotkey 'cancel current target'
+        endif
+        cast 'dispel field'
+
+        @getlabel! backpack _tmp
+        while casting
+            @getlabel! backpack _tmp
+        endwhile
+        @getlabel! backpack _tmp
+
+        target _gate
+        @getlabel! _this_tome_serial _tmp
+        #@setvar!  _this_gate_exists  1
+    endif
+endif
+
+if mana > 40 and _this_lantern_on == 1  and  _this_gate_exists == 0
+    sysmsg "casting gate to GH" 11
+    overhead "casting gate to GH" 11
+    
+    dclick _this_tome_serial
+    waitforgump 167090027 650
+    ## tome page
+    gumpresponse _this_tome_page
+    waitforgump 167090027 650
+    ## cast gate
+    gumpresponse 12
+
+    @getlabel! backpack _tmp
+    while casting
+        @getlabel! backpack _tmp
+    endwhile
+    @getlabel! backpack _tmp
+
+    if insysmsg "A moongate already exists at your location"
+    else
+        dclick _this_lantern_serial
+    endif
+endif
+
+while queued
+endwhile
+
+
+#sysmsg "cast gate to gh - complete"
+
+
+
+#### continue script chain
+if listexists _script_chain and list _script_chain > 0
+    poplist _script_chain front
+    foreach _a_script in _script_chain
+        hotkey _a_script
+    endfor
+endif
