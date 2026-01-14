@@ -37,10 +37,10 @@ if _this_shelf__do_resupply == 1  and  find  _this_self_serial  ground  -1 -1 2
 
 
     #### conditionally get 1,2,3 commodities if skinning skill exists and none in backpack
-    @setvar! _this  __deposit_loadout__shelf_withdrawal__skinning__commodities__1_2_3
+    @setvar!  _this  __deposit_loadout__shelf_withdrawal__skinning__commodities__1_2_3_4_5_6
     if skill "forensic evaluation" > 0
         if findtype 7715 backpack as _found
-        elseif _this == 1 or _this == 2 or _this == 3
+        elseif _this == 1 or _this == 2 or _this == 3 or _this == 4 or _this == 5 or _this == 6
                 ### get one blank commodity
                 dclick  _this_self_serial
                 waitforgump  _common_gumps__shelf
@@ -56,12 +56,27 @@ if _this_shelf__do_resupply == 1  and  find  _this_self_serial  ground  -1 -1 2
                 ## get blank commodity
                 gumpresponse 139
                 waitforgump  _common_gumps__shelf
-                if _this == 2 or _this == 3
+                if _this == 6 or _this == 5 or _this == 4 or _this == 3 or _this == 2
                     ## get blank commodity
                     gumpresponse 139
                     waitforgump  _common_gumps__shelf
                 endif
-                if _this == 3
+                if _this == 6 or _this == 5 or _this == 4 or _this == 3
+                    ## get blank commodity
+                    gumpresponse 139
+                    waitforgump  _common_gumps__shelf
+                endif
+                if _this == 6 or _this == 5 or _this == 4
+                    ## get blank commodity
+                    gumpresponse 139
+                    waitforgump  _common_gumps__shelf
+                endif
+                if _this == 6 or _this == 5
+                    ## get blank commodity
+                    gumpresponse 139
+                    waitforgump  _common_gumps__shelf
+                endif
+                if _this == 6
                     ## get blank commodity
                     gumpresponse 139
                     waitforgump  _common_gumps__shelf
