@@ -45,6 +45,12 @@ endif
 @setvar  _deposit_loadout__chest__research_materials  _deposit_loadout__chest__skill_orbs
 @setvar  _deposit_loadout__chest__seeds  _deposit_loadout__chest__skill_orbs
 
+@setvar  _deposit_loadout__chest__paragon_chests  0x57BC498C
+@setvar  _deposit_loadout__chest__melloweed_leaves  0x5BDE958E
+@setvar  _deposit_loadout__chest__spell_hue_deeds  0x5BDE958E
+@setvar  _deposit_loadout__chest__black_market_goods  0x4B45216B
+
+
 
 @setvar  _deposit_loadout__tomes__mastery_chain  0x4628B560
 @setvar  _deposit_loadout__tomes__cloth  0x46286390
@@ -57,23 +63,27 @@ endif
 @setvar  _deposit_loadout__tomes__maps__skinning  0x630A4772
 @setvar  _deposit_loadout__tomes__maps__treasure  0x5988645D
 
-
-@setvar  _deposit_loadout__tomes__rune_tome  0x0
-## TODO  RUNE_TOME added to runes-script - add conditional to chest
+#### if set to 0 then use chest-serial
+## arcane runes
+@setvar  _deposit_loadout__tomes__arcane_rune_tome  0x0
 @setvar _deposit_loadout__chest__arcane_runes  0x41A976BC
-
-
-## if set to 0 then use chest-serial
+## carpets
 @setvar  _deposit_loadout__menuable__carpet_rack  0x0
-#### TODO FUTURE if any chest-serial to 0 skip
 @setvar  _deposit_loadout__chest__carpets  0x40EC35BA
 
+
+
 #### TODO FUTURE
-# black market goods
 # fishing shit
 #   fishing net, fish, broken-stuff, colonial marks, bag of gems - aka booty, 
 # plant shit
 #   water, other-seeds, farm-food
+# trophy hutch
+# prev trunk
+# carpet rack
+# arcane rune tome
+# card tome
+# planter-box-thing
 
 
 

@@ -14,7 +14,7 @@
 @setvar! _this_tome_page 202
 
 
-
+@setvar! _this_mode_dispel_existing_gate 1
 
 
 #### check if a lantern is on or off
@@ -44,7 +44,7 @@ endif
 ## gate or chiv gate
 @setvar!  _this_gate_exists  0
 #### if caster detects a moongate at CLOSE-TO player-location - range 0 and 1 are broken
-if mana > 54 and _this_lantern_on == 1 
+if mana > 53 and _this_lantern_on == 1 and _this_mode_dispel_existing_gate == 1
     if findtype "blue moongate" ground 0 1 1  or  findtype 30528 ground 2091 1 1 as _gate
         if targetexists
             hotkey 'cancel current target'
@@ -63,7 +63,7 @@ if mana > 54 and _this_lantern_on == 1
     endif
 endif
 
-if mana > 40 and _this_lantern_on == 1  and  _this_gate_exists == 0
+if mana > 39 and _this_lantern_on == 1  and  _this_gate_exists == 0
     sysmsg "casting gate to GH" 11
     overhead "casting gate to GH" 11
     
