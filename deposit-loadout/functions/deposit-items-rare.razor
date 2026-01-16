@@ -2,32 +2,7 @@
 sysmsg "deposit rare items - start"
 #@setvar! _this_script "Play Script: deposit-loadout\functions\deposit-rare-items"
 
-## @clearignore!
 
-
-
-## 22336 :: skill mastery orb
-## 24434 :: research materials
-#@setvar! _skill_orb_and_rm__crate  0x43D6430D 
-#while findtype 22336|24434  backpack as _this
-#    @ignore! _this
-#    getlabel _this _this_label
-#    sysmsg _this_label 11
-#
-#    getlabel _skill_orb_and_rm__crate  _this_label
-#    if "125 items" in _this_label
-#        overhead "rare items crate full"
-#        dclick  _skill_orb_and_rm__crate
-#        break
-#    endif
-#
-#    lift _this 60000
-#    drop _skill_orb_and_rm__crate -1 -1 -1
-#    while queued
-#    endwhile
-#    #getlabel _this _this_label
-#    #wait 350
-#endwhile
 
 
 
@@ -46,11 +21,14 @@ while findtype 22336  backpack as _this
 
     lift _this 60000
     drop _skill_orb__crate  -1 -1 -1
+    #getlabel backpack _this_label
     while queued
+        #getlabel backpack _this_label
     endwhile
-    #getlabel _this _this_label
-    #wait 350
+    #getlabel backpack _this_label
 endwhile
+
+
 
 
 
@@ -69,11 +47,14 @@ while findtype 24434  backpack as _this
 
     lift _this 60000
     drop _rsrsh_mats__crate  -1 -1 -1
+    #getlabel backpack _this_label
     while queued
+        #getlabel backpack _this_label
     endwhile
-    #getlabel _this _this_label
-    #wait 350
+    #getlabel backpack _this_label
 endwhile
+
+
 
 
 
@@ -92,41 +73,97 @@ while findtype "seed of renewal"  backpack as _this
 
     lift _this 60000
     drop _seed_of_renewal__crate  -1 -1 -1
+    #getlabel backpack _this_label
     while queued
+        #getlabel backpack _this_label
     endwhile
-    #getlabel _this _this_label
-    #wait 350
+    #getlabel backpack _this_label
 endwhile
 
 
 
-#### only send carpets to chest if carpet-rack is 0
-if _deposit_loadout__chest__carpets == 0
-    @setvar! _carpet__crate  _deposit_loadout__chest__carpets
-    while findtype "carpet"  backpack as _this
-        @ignore! _this
-        getlabel _this _this_label
-        sysmsg _this_label 11
 
-        getlabel _carpet__crate  _this_label
-        if "125 items" in _this_label
-            overhead "carpet crate full"
-            dclick  _carpet__crate
-            break
-        endif
 
-        lift _this 60000
-        drop _carpet__crate  -1 -1 -1
-        while queued
-        endwhile
-        #getlabel _this _this_label
-        #wait 350
+@setvar!  _this_chest  _deposit_loadout__chest__melloweed_leaves
+while findtype "dried melloweed"  backpack as _this
+    @ignore! _this
+    getlabel _this _this_label
+    sysmsg _this_label 11
+
+    getlabel  _this_chest  _this_label
+    if "125 items" in _this_label
+        overhead "melloweed crate full"
+        dclick  _this_chest
+        break
+    endif
+
+
+    lift  _this 60000
+    drop  _this_chest  -1 -1 -1
+    #getlabel backpack _this_label
+    while queued
+        #getlabel backpack _this_label
     endwhile
-endif
+    #getlabel backpack _this_label
+endwhile
 
 
 
-@setvar! _paragon_chest__crate  0x57BC498C
+
+
+@setvar!  _this_chest  _deposit_loadout__chest__spell_hue_deeds
+while findtype "spell hue deed"  backpack as _this
+    @ignore! _this
+    getlabel _this _this_label
+    sysmsg _this_label 11
+
+    getlabel  _this_chest  _this_label
+    if "125 items" in _this_label
+        overhead "spell hue deed crate full"
+        dclick  _this_chest
+        break
+    endif
+
+    lift  _this 60000
+    drop  _this_chest  -1 -1 -1
+    #getlabel backpack _this_label
+    while queued
+        #getlabel backpack _this_label
+    endwhile
+    #getlabel backpack _this_label
+endwhile
+
+
+
+
+
+@setvar!  _this_chest  _deposit_loadout__chest__black_market_goods
+while findtype "black market goods"  backpack as _this
+    @ignore! _this
+    getlabel _this _this_label
+    sysmsg _this_label 11
+
+    getlabel  _this_chest  _this_label
+    if "125 items" in _this_label
+        overhead "black market goods crate full"
+        dclick  _this_chest
+        break
+    endif
+
+    lift  _this 60000
+    drop  _this_chest  -1 -1 -1
+    #getlabel backpack _this_label
+    while queued
+        #getlabel backpack _this_label
+    endwhile
+    #getlabel backpack _this_label
+endwhile
+
+
+
+
+
+@setvar! _paragon_chest__crate  _deposit_loadout__chest__paragon_chests
 
 @removelist!  _paragon_chest_text_labels
 @createlist!  _paragon_chest_text_labels
@@ -151,8 +188,11 @@ foreach _itr in _paragon_chest_text_labels
 
             lift _this 60000
             drop _paragon_chest__crate 175 152 0
+            #getlabel backpack _this_label
             while queued
+                #getlabel backpack _this_label
             endwhile
+            #getlabel backpack _this_label
             # -1 -1 -1
             #getlabel _this _this_label
             #wait 350
@@ -160,18 +200,24 @@ foreach _itr in _paragon_chest_text_labels
             sysmsg _this_label 11
             lift _this 60000
             drop backpack -1 -1 -1
+            #getlabel backpack _this_label
             while queued
+                #getlabel backpack _this_label
             endwhile
+            #getlabel backpack _this_label
         endif
     endwhile
 endfor
 
 
 
-while queued
-endwhile
 
-@clearignore!
+
+#getlabel backpack _this_label
+while queued
+    #getlabel backpack _this_label
+endwhile
+#getlabel backpack _this_label
 
 
 
