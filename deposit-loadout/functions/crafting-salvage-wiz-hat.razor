@@ -1,0 +1,86 @@
+
+
+
+
+
+sysmsg "crafting-salvage-wiz-hat - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\crafting-salvage-wiz-hat"
+
+
+
+
+@clearignore
+
+
+
+@removelist! _dropit
+@createlist! _dropit
+
+@setvar! _stop_script__none_ground 0
+@setvar! _stop_script__none_backpack 0
+
+
+
+
+    if findtype 0x0F9F backpack as _scis
+        @setvar! _scisors _scis
+    endif
+
+    while findtype 5912|5911|5440|5901|8059|5908|5431|5422|7939|5397|5899|5433|5916|7933|5441|7935|5914|5898|5905   backpack as _item
+        @getlabel _item _item_label
+        if "blessed"  in _item_label
+            ignore _item
+        else
+            #if "[locked down]" in _descr
+            dclick _scisors backpack
+            waitfortarget 600
+            target _item 
+            wait 540
+            #@getlabel! 'backpack' _tmp_label
+            if insysmsg "items of low quality"
+                ignore _item
+                lift _item 1
+                drop 'ground'
+                @getlabel backpack _this_label
+                while queued
+                    getlabel backpack _this_label
+                endwhile
+                @getlabel backpack _this_label
+            endif
+        endif
+    endwhile
+
+
+
+    while findtype 5912|5911|5440|5901|8059|5908|5431|5422|7939|5397|5899|5433|5916|7933|5441|7935|5914|5898|5905   ground  -1 -1 2 as _item
+        @getlabel backpack _this_label
+        lift _item 1  
+        drop  backpack -1 -1 -1
+        @getlabel backpack _this_label
+        while queued
+            getlabel backpack _this_label
+        endwhile
+        @getlabel backpack _this_label
+    endwhile
+
+
+
+
+
+sysmsg "crafting-salvage-wiz-hat - complete"
+
+
+
+#### continue script chain
+if listexists _script_chain and list _script_chain > 0
+    poplist _script_chain front
+    foreach _a_script in _script_chain
+        hotkey _a_script
+    endfor
+endif
+
+
+
+
+
+

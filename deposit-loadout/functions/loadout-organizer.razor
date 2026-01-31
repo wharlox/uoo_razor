@@ -78,9 +78,11 @@ if findtype "pouch" backpack  0 -1 1 as _loot_pouch
 
     # drop backpack 91 64 0
     drop backpack _loadout_shelf_pouch_in_backpack__x  _loadout_shelf_pouch_in_backpack__y  0
-    #@getlabel! backpack _tmp_label
+    @getlabel! backpack _tmp_label
     while queued
+        @getlabel! backpack _tmp_label
     endwhile
+    @getlabel! backpack _tmp_label
     dclick _loot_pouch
     
     ## build a list of which represents number of spare trapped-pouches

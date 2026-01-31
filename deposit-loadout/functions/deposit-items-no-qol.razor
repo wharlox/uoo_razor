@@ -14,12 +14,12 @@ sysmsg "deposit items no qol - start"
 if _deposit_loadout__tomes__arcane_rune_tome == 0
     @setvar!  _this_chest  _deposit_loadout__chest__arcane_runes
     while findtype "rune"  backpack as _this
-        @ignore! _this
+        #@ignore! _this
         getlabel _this _this_label
         sysmsg _this_label 11
 
-        getlabel  _this_chest  _this_label
-        if "125 items" in _this_label
+        getlabel  _this_chest  _this_chest_label
+        if "125 items" in _this_chest_label
             overhead "arcane rune crate full"
             dclick  _this_chest
             break
@@ -45,12 +45,12 @@ endif
 if _deposit_loadout__menuable__carpet_rack == 0
     @setvar!  _this_chest  _deposit_loadout__chest__carpets
     while findtype "carpet"  backpack as _this
-        @ignore! _this
+        #@ignore! _this
         getlabel _this _this_label
         sysmsg _this_label 11
 
-        getlabel  _this_chest  _this_label
-        if "125 items" in _this_label
+        getlabel  _this_chest  _this_chest_label
+        if "125 items" in _this_chest_label
             overhead "carpet crate full"
             dclick  _this_chest
             break

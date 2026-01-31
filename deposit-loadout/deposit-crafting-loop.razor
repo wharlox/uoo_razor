@@ -9,13 +9,15 @@ pushlist _script_chain "Play Script: deposit-loadout\functions\hide-if-not-hidde
 
 pushlist _script_chain "Play Script: deposit-loadout\deposit-loadout-config-home"
 
+pushlist _script_chain "Play Script: deposit-loadout\functions\crafting-salvage-wiz-hat"
 
 pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-stockpile"
 pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-shelf-all"
 
 
 pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-loadout-time-summary"
-setvar _wait_dynamic 30000
+@setvar _wait_dynamic 30000
+@setvar _wait_dynamic 15000
 pushlist _script_chain "Play Script: deposit-loadout\functions\wait-dynamic"
 pushlist _script_chain "Play Script: deposit-loadout\deposit-crafting-loop"
 
