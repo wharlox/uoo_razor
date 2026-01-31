@@ -1,0 +1,94 @@
+
+sysmsg "deposit items minor alchemist - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\deposit-items-minor-alchemist"
+
+#### for use after shelf- if any kegs or potions are left in inventory
+
+
+
+
+  
+##### kegs
+@setvar!  _this_chest  _deposit_loadout__chest__minor_kegs
+while findtype "keg"  backpack as _this
+    #@ignore! _this
+    getlabel _this _this_label
+    sysmsg _this_label 11
+
+    getlabel  _this_chest  _this_chest_label
+    if "125 items" in _this_chest_label
+        overhead "keg container full"
+        dclick  _this_chest
+        break
+    endif
+
+    lift  _this 60000
+    drop  _this_chest  -1 -1 -1
+    #getlabel backpack _this_label
+    while queued
+        #getlabel backpack _this_label
+    endwhile
+    #getlabel backpack _this_label
+endwhile
+
+
+
+
+
+##### potions
+@setvar!  _this_chest  _deposit_loadout__chest__minor_potions
+while findtype  3851|3849|3852|3847|3850|3854|3846|3848|3853  backpack as _this
+    #@ignore! _this
+    getlabel _this _this_label
+    sysmsg _this_label 11
+
+    getlabel  _this_chest  _this_chest_label
+    if "125 items" in _this_chest_label
+        overhead "potion container full"
+        dclick  _this_chest
+        break
+    endif
+
+    lift  _this 60000
+    drop  _this_chest  -1 -1 -1
+    #getlabel backpack _this_label
+    while queued
+        #getlabel backpack _this_label
+    endwhile
+    #getlabel backpack _this_label
+endwhile
+
+
+#    red potion 3851
+#    white potion 3849
+#    yellow potion 3852
+#    orange potion 3847
+#    Green Potion 3850
+#    empty bottle 3854
+#    Black Potion 3846
+#    Blue Potion 3848
+#    Purple Potion 3853
+
+
+
+
+
+while queued
+endwhile
+
+
+
+@getlabel! backpack _this_label
+#wait 100
+sysmsg "deposit items minor alchemist - complete"
+
+
+
+
+#### continue script chain
+if listexists _script_chain and list _script_chain > 0
+    poplist _script_chain front
+    foreach _a_script in _script_chain
+        hotkey _a_script
+    endfor
+endif

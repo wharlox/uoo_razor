@@ -9,6 +9,14 @@ removelist _script_chain
 createlist _script_chain
 pushlist _script_chain "Play Script: deposit-loadout\functions\hide-if-not-hidden"
 
+
+### check if home-coordinates
+### if home, check recycler for recall-rune-serial- check label look for: solo, omni, guild - or use lanters
+### if home, and lantern-mode is set to solo-farm, enable all deposits+loadouts
+### if home, and lantern-mode is set to omni, disable only links
+### if home, and lantern-mode is set to guild-farm, deposit only (slow method): leather, gems, unid-gear, select-seeds
+##### set mode globally
+### if gh, and mode is guild-farm, manual deposit of items
 pushlist _script_chain "Play Script: deposit-loadout\deposit-loadout-config-home"
 
 #pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-item-recycler"
@@ -43,6 +51,10 @@ pushlist _script_chain "Play Script: deposit-loadout\functions\wait-100"
 
 ## deprecated ## pushlist _script_chain "Play Script: deposit-loadout\functions\loadout-shelf"
 ## deprecated ## pushlist _script_chain "Play Script: deposit-loadout\functions\loadout-food"
+
+
+pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-items-minor-alchemist"
+
 
 pushlist _script_chain "Play Script: deposit-loadout\functions\loadout-shelf-resupply"
 pushlist _script_chain "Play Script: deposit-loadout\functions\loadout-shelf-manual-withdrawal"

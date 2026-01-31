@@ -8,12 +8,12 @@ sysmsg "deposit rare items - start"
 
 @setvar! _skill_orb__crate  _deposit_loadout__chest__skill_orbs
 while findtype 22336  backpack as _this
-    @ignore! _this
+    #@ignore! _this
     getlabel _this _this_label
     sysmsg _this_label 11
 
-    getlabel _skill_orb__crate  _this_label
-    if "125 items" in _this_label
+    getlabel _skill_orb__crate  _this_chest_label
+    if "125 items" in _this_chest_label
         overhead "skill orb crate full"
         dclick  _skill_orb__crate
         break
@@ -34,12 +34,12 @@ endwhile
 
 @setvar! _rsrsh_mats__crate  _deposit_loadout__chest__research_materials
 while findtype 24434  backpack as _this
-    @ignore! _this
+    #@ignore! _this
     getlabel _this _this_label
     sysmsg _this_label 11
 
-    getlabel _rsrsh_mats__crate  _this_label
-    if "125 items" in _this_label
+    getlabel _rsrsh_mats__crate  _this_chest_label
+    if "125 items" in _this_chest_label
         overhead "resource materials crate full"
         dclick  _rsrsh_mats__crate
         break
@@ -60,12 +60,12 @@ endwhile
 
 @setvar! _seed_of_renewal__crate  _deposit_loadout__chest__seeds
 while findtype "seed of renewal"  backpack as _this
-    @ignore! _this
+    #@ignore! _this
     getlabel _this _this_label
     sysmsg _this_label 11
 
-    getlabel _seed_of_renewal__crate  _this_label
-    if "125 items" in _this_label
+    getlabel _seed_of_renewal__crate  _this_chest_label
+    if "125 items" in _this_chest_label
         overhead "seed of renwal crate full"
         dclick  _seed_of_renewal__crate
         break
@@ -86,12 +86,12 @@ endwhile
 
 @setvar!  _this_chest  _deposit_loadout__chest__melloweed_leaves
 while findtype "dried melloweed"  backpack as _this
-    @ignore! _this
+    #@ignore! _this
     getlabel _this _this_label
     sysmsg _this_label 11
 
-    getlabel  _this_chest  _this_label
-    if "125 items" in _this_label
+    getlabel  _this_chest  _this_chest_label
+    if "125 items" in _this_chest_label
         overhead "melloweed crate full"
         dclick  _this_chest
         break
@@ -113,12 +113,12 @@ endwhile
 
 @setvar!  _this_chest  _deposit_loadout__chest__spell_hue_deeds
 while findtype "spell hue deed"  backpack as _this
-    @ignore! _this
+    #@ignore! _this
     getlabel _this _this_label
     sysmsg _this_label 11
 
-    getlabel  _this_chest  _this_label
-    if "125 items" in _this_label
+    getlabel  _this_chest  _this_chest_label
+    if "125 items" in _this_chest_label
         overhead "spell hue deed crate full"
         dclick  _this_chest
         break
@@ -139,12 +139,12 @@ endwhile
 
 @setvar!  _this_chest  _deposit_loadout__chest__black_market_goods
 while findtype "black market goods"  backpack as _this
-    @ignore! _this
+    #@ignore! _this
     getlabel _this _this_label
     sysmsg _this_label 11
 
-    getlabel  _this_chest  _this_label
-    if "125 items" in _this_label
+    getlabel  _this_chest  _this_chest_label
+    if "125 items" in _this_chest_label
         overhead "black market goods crate full"
         dclick  _this_chest
         break
@@ -174,13 +174,13 @@ endwhile
 
 foreach _itr in _paragon_chest_text_labels
     while findtype _itr  backpack as _this
-        @ignore! _this
+        #@ignore! _this
         getlabel _this _this_label
         if "sealed"  in _this_label
             sysmsg _this_label 11
 
-            getlabel _paragon_chest__crate  _this_label
-            if "125 items" in _this_label
+            getlabel _paragon_chest__crate  _this_chest_label
+            if "125 items" in _this_chest_label
                 overhead "paragon-chest crate full"
                 dclick  _paragon_chest__crate
                 break
@@ -197,7 +197,20 @@ foreach _itr in _paragon_chest_text_labels
             #getlabel _this _this_label
             #wait 350
         elseif "locksmith training box" in _this_label
+            @ignore! _this
             sysmsg _this_label 11
+            lift _this 60000
+            drop backpack -1 -1 -1
+            #getlabel backpack _this_label
+            while queued
+                #getlabel backpack _this_label
+            endwhile
+            #getlabel backpack _this_label
+        else
+            @ignore! _this
+            sysmsg "found some box and destination location undefined - moving to backpack" 55
+            sysmsg _this_label 55
+            overhead _this_label 55
             lift _this 60000
             drop backpack -1 -1 -1
             #getlabel backpack _this_label

@@ -18,6 +18,7 @@ sysmsg "deposit-loadout config - start"
 
 
 
+
 @setvar  _deposit_loadout__safe  0x463F715B
 
 ## cavernam lantern hard-coded
@@ -50,6 +51,9 @@ endif
 @setvar  _deposit_loadout__chest__spell_hue_deeds  0x5BDE958E
 @setvar  _deposit_loadout__chest__black_market_goods  0x4B45216B
 
+#### for minor alchemist items - or items not grabbed by shelf
+@setvar  _deposit_loadout__chest__minor_kegs  0x49E2F0AE
+@setvar  _deposit_loadout__chest__minor_potions  _deposit_loadout__chest__minor_kegs
 
 
 @setvar  _deposit_loadout__tomes__mastery_chain  0x4628B560
@@ -77,14 +81,15 @@ endif
 # fishing shit
 #   fishing net, fish, broken-stuff, colonial marks, bag of gems - aka booty, 
 # plant shit
-#   water, other-seeds, farm-food
+#   water, other-seeds, farm-food, dirt
 # trophy hutch
 # prev trunk
 # carpet rack
 # arcane rune tome
 # card tome
 # planter-box-thing
-
+# bolts of cloth
+## list of serials to alway ignore (blessed items for instance)
 
 
 

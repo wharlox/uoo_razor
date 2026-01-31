@@ -32,6 +32,7 @@ endif
 
 #### call menu resupply on each shelf if in range
 if _this_shelf__do_resupply == 1  and  find  _this_self_serial  ground  -1 -1 2
+    @getlabel! backpack _tmp_label
 
 
 
@@ -41,6 +42,7 @@ if _this_shelf__do_resupply == 1  and  find  _this_self_serial  ground  -1 -1 2
     if skill "forensic evaluation" > 0
         if findtype 7715 backpack as _found
         elseif _this == 1 or _this == 2 or _this == 3 or _this == 4 or _this == 5 or _this == 6
+                @getlabel! backpack _tmp_label
                 ### get one blank commodity
                 dclick  _this_self_serial
                 waitforgump  _common_gumps__shelf
