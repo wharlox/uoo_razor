@@ -1,0 +1,16 @@
+
+#sysmsg "_util_debug_msg - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\_util_debug_msg"
+
+
+sysmsg "_util_debug_msg"
+
+
+#sysmsg "_util_debug_msg - end"
+
+
+#### continue script chain
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+foreach _itr in _util_continue_script_chain 
+    hotkey _itr
+endfor

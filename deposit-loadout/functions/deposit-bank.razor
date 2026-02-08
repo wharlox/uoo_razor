@@ -29,9 +29,13 @@ menu  _deposit_loadout__safe  0
 
 
 #### continue script chain
-if listexists _script_chain and list _script_chain > 0
-    poplist _script_chain front
-    foreach _a_script in _script_chain
-        hotkey _a_script
-    endfor
-endif
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+foreach _itr in _util_continue_script_chain 
+    hotkey _itr
+endfor
+#if listexists _script_chain and list _script_chain > 0
+#    poplist _script_chain front
+#    foreach _a_script in _script_chain
+#        hotkey _a_script
+#    endfor
+#endif

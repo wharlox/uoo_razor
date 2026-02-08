@@ -22,12 +22,12 @@ sysmsg "crafting-salvage-wiz-hat - start"
 
 
 
-    if findtype 0x0F9F backpack as _scis
+    if @findtype! 0x0F9F backpack as _scis
         @setvar! _scisors _scis
     endif
 
-    while findtype 5912|5911|5440|5901|8059|5908|5431|5422|7939|5397|5899|5433|5916|7933|5441|7935|5914|5898|5905   backpack as _item
-        @getlabel _item _item_label
+    while @findtype! 5912|5911|5440|5901|8059|5908|5431|5422|7939|5397|5899|5433|5916|7933|5441|7935|5914|5898|5905   backpack as _item
+        @getlabel! _item _item_label
         if "blessed"  in _item_label
             ignore _item
         else
@@ -41,26 +41,26 @@ sysmsg "crafting-salvage-wiz-hat - start"
                 ignore _item
                 lift _item 1
                 drop 'ground'
-                @getlabel backpack _this_label
+                @getlabel! backpack _this_label
                 while queued
-                    getlabel backpack _this_label
+                    @getlabel! backpack _this_label
                 endwhile
-                @getlabel backpack _this_label
+                @getlabel! backpack _this_label
             endif
         endif
     endwhile
 
 
 
-    while findtype 5912|5911|5440|5901|8059|5908|5431|5422|7939|5397|5899|5433|5916|7933|5441|7935|5914|5898|5905   ground  -1 -1 2 as _item
-        @getlabel backpack _this_label
+    while @findtype! 5912|5911|5440|5901|8059|5908|5431|5422|7939|5397|5899|5433|5916|7933|5441|7935|5914|5898|5905   ground  -1 -1 2 as _item
+        @getlabel! backpack _this_label
         lift _item 1  
         drop  backpack -1 -1 -1
-        @getlabel backpack _this_label
+        @getlabel! backpack _this_label
         while queued
-            getlabel backpack _this_label
+            @getlabel! backpack _this_label
         endwhile
-        @getlabel backpack _this_label
+        @getlabel! backpack _this_label
     endwhile
 
 
@@ -72,15 +72,14 @@ sysmsg "crafting-salvage-wiz-hat - complete"
 
 
 #### continue script chain
-if listexists _script_chain and list _script_chain > 0
-    poplist _script_chain front
-    foreach _a_script in _script_chain
-        hotkey _a_script
-    endfor
-endif
-
-
-
-
-
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+foreach _itr in _util_continue_script_chain 
+    hotkey _itr
+endfor
+#if listexists _script_chain and list _script_chain > 0
+#    poplist _script_chain front
+#    foreach _a_script in _script_chain
+#        hotkey _a_script
+#    endfor
+#endif
 

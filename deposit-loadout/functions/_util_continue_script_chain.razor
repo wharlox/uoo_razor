@@ -1,0 +1,30 @@
+
+#sysmsg "continue script chain" 33
+
+while queued
+endwhile
+
+#### continue script chain
+if listexists _script_chain
+    if list _script_chain > 0
+        if _script_chain__loop_mode == 1
+            foreach _a_script in _script_chain
+                if _a_script == "_script_chain_stub"
+                    break
+                endif
+                pushlist _script_chain _a_script
+                break
+            endfor
+        endif
+
+        poplist _script_chain front
+        foreach _a_script in _script_chain
+            if not varexist _util_continue_script_chain_delay_ms
+                @setvar! _util_continue_script_chain_delay_ms 0
+            endif
+            wait _util_continue_script_chain_delay_ms
+            #sysmsg _a_script 22
+            hotkey _a_script
+        endfor
+    endif
+endif

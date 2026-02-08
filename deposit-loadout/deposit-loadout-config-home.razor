@@ -1,9 +1,12 @@
 
-sysmsg "deposit-loadout config - start"
-#@setvar! _this_script "Play Script: deposit-loadout\functions\deposit-loadout-config"
+#sysmsg "deposit-loadout config home - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\deposit-loadout-config-home"
 
 ## requires Razor options Filters (tab), Texts & Messages (sub-tab), uncheck Filter repeating system messages
 
+
+
+@setvar! _util__msg_delay_ms 10000
 
 
 
@@ -12,29 +15,29 @@ sysmsg "deposit-loadout config - start"
 ## 0 to disable, 1 to enable
 
 ## 0, 1, 2, 3, 4, 5, 6 
-@setvar __deposit_loadout__shelf_withdrawal__skinning__commodities__1_2_3_4_5_6  2
+@setvar! __deposit_loadout__shelf_withdrawal__skinning__commodities__1_2_3_4_5_6  2
 
 
 
 
 
 
-@setvar  _deposit_loadout__safe  0x463F715B
+@setvar!  _deposit_loadout__safe  0x463F715B
 
 ## cavernam lantern hard-coded
-@setvar  _deposit_loadout__lantern__trigger_recycle  0x5630D248
+@setvar!  _deposit_loadout__lantern__trigger_recycle  0x5630D248
 ## wilderness lantern hard-coded
-@setvar  _deposit_loadout__lantern__shelf_resupply  0x50883542
+@setvar!  _deposit_loadout__lantern__shelf_resupply  0x50883542
 
-@setvar  _deposit_loadout__recycler  0x4DF8B23E
-@setvar  _deposit_loadout__magic_item_vault  0x5988F431
-@setvar  _deposit_loadout__stockpile  0x56E3DC06
-@setvar  _deposit_loadout__shelf  0x4B41ED97
+@setvar!  _deposit_loadout__recycler  0x4DF8B23E
+@setvar!  _deposit_loadout__magic_item_vault  0x5988F431
+@setvar!  _deposit_loadout__stockpile  0x56E3DC06
+@setvar!  _deposit_loadout__shelf  0x4B41ED97
 
-#setvar  _deposit_loadout__user_to_recycle  "_toon_name_"
-@setvar _deposit_loadout__recycle_with_current_user 0
+#@setvar!  _deposit_loadout__user_to_recycle  "_toon_name_"
+@setvar! _deposit_loadout__recycle_with_current_user 0
 if name == "_toon_name_"
-    @setvar _deposit_loadout__recycle_with_current_user 1
+    @setvar! _deposit_loadout__recycle_with_current_user 1
 endif
 
 
@@ -42,38 +45,38 @@ endif
 
 
 #### pro-tip - set the serial once and use the var-name in other settings
-@setvar  _deposit_loadout__chest__skill_orbs 0x43D6430D
-@setvar  _deposit_loadout__chest__research_materials  _deposit_loadout__chest__skill_orbs
-@setvar  _deposit_loadout__chest__seeds  _deposit_loadout__chest__skill_orbs
+@setvar!  _deposit_loadout__chest__skill_orbs 0x43D6430D
+@setvar!  _deposit_loadout__chest__research_materials  _deposit_loadout__chest__skill_orbs
+@setvar!  _deposit_loadout__chest__seeds  _deposit_loadout__chest__skill_orbs
 
-@setvar  _deposit_loadout__chest__paragon_chests  0x57BC498C
-@setvar  _deposit_loadout__chest__melloweed_leaves  0x5BDE958E
-@setvar  _deposit_loadout__chest__spell_hue_deeds  0x5BDE958E
-@setvar  _deposit_loadout__chest__black_market_goods  0x4B45216B
+@setvar!  _deposit_loadout__chest__paragon_chests  0x57BC498C
+@setvar!  _deposit_loadout__chest__melloweed_leaves  0x5BDE958E
+@setvar!  _deposit_loadout__chest__spell_hue_deeds  0x5BDE958E
+@setvar!  _deposit_loadout__chest__black_market_goods  0x4B45216B
 
 #### for minor alchemist items - or items not grabbed by shelf
-@setvar  _deposit_loadout__chest__minor_kegs  0x49E2F0AE
-@setvar  _deposit_loadout__chest__minor_potions  _deposit_loadout__chest__minor_kegs
+@setvar!  _deposit_loadout__chest__minor_kegs  0x49E2F0AE
+@setvar!  _deposit_loadout__chest__minor_potions  _deposit_loadout__chest__minor_kegs
 
 
-@setvar  _deposit_loadout__tomes__mastery_chain  0x4628B560
-@setvar  _deposit_loadout__tomes__cloth  0x46286390
-@setvar  _deposit_loadout__tomes__aspect  0x40ADE551
-@setvar  _deposit_loadout__tomes__skill_scrolls  0x463EDDFA
-@setvar  _deposit_loadout__tomes__dyes  0x5988996E
-@setvar  _deposit_loadout__tomes__maps__lumber  0x433FC326
-@setvar  _deposit_loadout__tomes__maps__ore  0x4280DB48
-@setvar  _deposit_loadout__tomes__maps__fishing  0x62FAB5B3
-@setvar  _deposit_loadout__tomes__maps__skinning  0x630A4772
-@setvar  _deposit_loadout__tomes__maps__treasure  0x5988645D
+@setvar!  _deposit_loadout__tomes__mastery_chain  0x4628B560
+@setvar!  _deposit_loadout__tomes__cloth  0x46286390
+@setvar!  _deposit_loadout__tomes__aspect  0x40ADE551
+@setvar!  _deposit_loadout__tomes__skill_scrolls  0x463EDDFA
+@setvar!  _deposit_loadout__tomes__dyes  0x5988996E
+@setvar!  _deposit_loadout__tomes__maps__lumber  0x433FC326
+@setvar!  _deposit_loadout__tomes__maps__ore  0x4280DB48
+@setvar!  _deposit_loadout__tomes__maps__fishing  0x62FAB5B3
+@setvar!  _deposit_loadout__tomes__maps__skinning  0x630A4772
+@setvar!  _deposit_loadout__tomes__maps__treasure  0x5988645D
 
 #### if set to 0 then use chest-serial
 ## arcane runes
-@setvar  _deposit_loadout__tomes__arcane_rune_tome  0x0
-@setvar _deposit_loadout__chest__arcane_runes  0x41A976BC
+@setvar!  _deposit_loadout__tomes__arcane_rune_tome  0x0
+@setvar! _deposit_loadout__chest__arcane_runes  0x41A976BC
 ## carpets
-@setvar  _deposit_loadout__menuable__carpet_rack  0x0
-@setvar  _deposit_loadout__chest__carpets  0x40EC35BA
+@setvar!  _deposit_loadout__menuable__carpet_rack  0x0
+@setvar!  _deposit_loadout__chest__carpets  0x40EC35BA
 
 
 
@@ -100,16 +103,25 @@ endif
 
 
 
-sysmsg "deposit-loadout config - complete"
+#sysmsg "deposit-loadout config home - complete"
 
 
 
 
 
 #### continue script chain
-if listexists _script_chain and list _script_chain > 0
+if listexists _script_chain
     poplist _script_chain front
-    foreach _a_script in _script_chain
-        hotkey _a_script
-    endfor
 endif
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+foreach _itr in _util_continue_script_chain
+    hotkey _itr
+endfor
+#if listexists _script_chain
+#    if list _script_chain > 0
+#        poplist _script_chain front
+#        foreach _a_script in _script_chain
+#            hotkey _a_script
+#        endfor
+#    endif
+#endif

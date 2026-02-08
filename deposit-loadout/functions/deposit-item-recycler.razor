@@ -17,7 +17,7 @@ endif
 
 ## if cav lantern-serial is set and lantern is OFF - recycle items and close gump
 if varexist _id_loop_recycler_lantern
-    if findtype 2597 ground 2338 any 4 as _tmp
+    if @findtype! 2597 ground 2338 any 4 as _tmp
         ## if cav lantern is OFF then  ... recycle items
         ## 2594 is ID of light-on cav-lantern 2338 is hue
         ## 2597 is ID of light-off cav-lantern 2338 is hue
@@ -75,7 +75,7 @@ endif
 
 ## if cav lantern-serial is set and lantern is OFF - turn lantern on
 if varexist _id_loop_recycler_lantern
-    if findtype 2597 ground 2338 any 4 as _tmp
+    if @findtype! 2597 ground 2338 any 4 as _tmp
         ## if cav lantern is OFF then  ... recycle item
         ## 2594 is ID of light-on cav-lantern 2338 is hue
         ## 2597 is ID of light-off cav-lantern 2338 is hue
@@ -100,9 +100,13 @@ sysmsg "deposit item recycler - complete"
 
 
 #### continue script chain
-if listexists _script_chain and list _script_chain > 0
-    poplist _script_chain front
-    foreach _a_script in _script_chain
-        hotkey _a_script
-    endfor
-endif
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+foreach _itr in _util_continue_script_chain 
+    hotkey _itr
+endfor
+#if listexists _script_chain and list _script_chain > 0
+#    poplist _script_chain front
+#    foreach _a_script in _script_chain
+#        hotkey _a_script
+#    endfor
+#endif

@@ -1,0 +1,83 @@
+#sysmsg "_util_id_lantern_controller - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\_util_id_lantern_controller"
+
+
+#### shared timer with _util_id_* scripts
+#### idea is to determine all items IDd if timer is greater than 5 seconds
+if not timerexists _util_id_lantern__time_since_last_id
+    @settimer  _util_id_lantern__time_since_last_id  0
+endif
+
+
+
+
+
+
+
+if @findtype! 2594 ground 2338 any 4 as _tmp
+    @getlabel! backpack _this_label
+    #sysmsg "lantern ON"
+    ## if cav lantern is ON then  ... id-items of recycler
+    ## 2594 is ID of light-on cav-lantern 2338 is hue
+    ## 2597 is ID of light-off cav-lantern 2338 is hue
+    if _tmp == _id_loop_recycler_lantern 
+        #sysmsg "ID items queued - timer {{_util_id_lantern__time_since_last_id}}" 110
+
+        ### stack
+        ## controller-on
+        ## hide-if-not-hidden
+        ## loadout-shelf-resup
+        ## cast-gate-gh
+
+        ## id-things
+        ## controller-off [light is on]
+        ## hide-if-not-hidden
+        ## loadout-shelf-resup
+        ## cast-gate-gh
+        ## controller-on [light is on] [see if no change to id-things state]
+    
+        
+    
+        @poplist!   _script_chain  "Play Script: deposit-loadout\functions\_util_id_lantern_controller"
+        @poplist!   _script_chain  "Play Script: deposit-loadout\functions\_util_id_lantern_controller_off"
+        @poplist!   _script_chain  "Play Script: deposit-loadout\functions\_util_id_minimal"
+
+        @pushlist!  _script_chain  "Play Script: deposit-loadout\functions\_util_id_lantern_controller_off" front
+        @pushlist!  _script_chain  "Play Script: deposit-loadout\functions\_util_id_minimal" front
+        @pushlist!  _script_chain  "Play Script: deposit-loadout\functions\_util_id_lantern_controller" front
+        #hotkey  "Play Script: deposit-loadout\functions\_util_id_minimal" 
+        
+        #foreach _wtf in _script_chain
+        #    sysmsg _wtf 11
+        #endfor
+        
+        # dclicktype '2594' ground 2338 any 4
+        # wait 2000
+    else
+        sysmsg "ERROR set variable _id_loop_recycler_lantern to your cav lantern" 33
+    #wait 1000
+        
+    endif
+    
+endif
+
+
+
+
+
+
+
+
+while queued
+endwhile
+
+
+#sysmsg "_util_id_minimal - complete"
+
+
+
+#### continue script chain
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+#foreach _itr in _util_continue_script_chain 
+#    hotkey _itr
+#endfor
