@@ -48,9 +48,9 @@ removelist _util_continue_script_chain
 
 
 
-if _script_chain__loop_mode == 1
-    pushlist _script_chain "_script_chain_stub" front
-endif
+@unsetvar _script_chain_start 
+@pushlist _script_chain 69 front
+#@setvar _script_chain_start 6
 hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
 removelist _util_continue_script_chain
 #createlist _util_continue_script_chain

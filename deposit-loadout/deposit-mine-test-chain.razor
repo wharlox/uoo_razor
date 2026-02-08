@@ -9,9 +9,8 @@ overhead "_chain start"
 
 removelist _script_chain
 createlist _script_chain
-#pushlist _script_chain "_script_chain_stub"
+#pushlist _script_chain 69
 
-pushlist _script_chain "Play Script: deposit-loadout\functions\hide-if-not-hidden"
 
 
 ### check if home-coordinates
@@ -22,6 +21,11 @@ pushlist _script_chain "Play Script: deposit-loadout\functions\hide-if-not-hidde
 ##### set mode globally
 ### if gh, and mode is guild-farm, manual deposit of items
 pushlist _script_chain "Play Script: deposit-loadout\deposit-loadout-config-home"
+
+
+
+
+pushlist _script_chain "Play Script: deposit-loadout\functions\hide-if-not-hidden"
 
 #pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-item-recycler"
 ##### continue script chain
@@ -87,9 +91,7 @@ removelist _util_continue_script_chain
 #pushlist   _util_continue_script_chain "Play Script: deposit-loadout\functions\_util_continue_script_chain"
 
 
-if _script_chain__loop_mode == 1
-    pushlist _script_chain "_script_chain_stub" front
-endif
+@pushlist _script_chain 69 front
 hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
 
 
@@ -106,7 +108,7 @@ hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
 
 #### continue script chain
 if _script_chain__loop_mode == 1
-    pushlist _script_chain "_script_chain_stub" front
+    pushlist _script_chain 69 front
 endif
 removelist _util_continue_script_chain
 createlist _util_continue_script_chain
