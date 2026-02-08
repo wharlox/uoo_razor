@@ -1,6 +1,6 @@
 
 #sysmsg "deposit-loadout config home - start"
-#@setvar! _this_script "Play Script: deposit-loadout\functions\deposit-loadout-config-home"
+#@setvar! _this_script "Play Script: deposit-loadout\deposit-loadout-config-home"
 
 ## requires Razor options Filters (tab), Texts & Messages (sub-tab), uncheck Filter repeating system messages
 
@@ -111,7 +111,9 @@ endif
 
 #### continue script chain
 if listexists _script_chain
-    poplist _script_chain front
+    #@poplist _script_chain "Play Script: deposit-loadout\deposit-loadout-config-home"
+    @poplist _script_chain "Play Script: deposit-loadout\deposit-loadout-config-home"
+    @pushlist _script_chain 69 front
 endif
 hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
 foreach _itr in _util_continue_script_chain

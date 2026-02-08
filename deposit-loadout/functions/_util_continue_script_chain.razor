@@ -7,17 +7,17 @@ endwhile
 #### continue script chain
 if listexists _script_chain
     if list _script_chain > 0
+
         if _script_chain__loop_mode == 1
             foreach _a_script in _script_chain
-                if _a_script == "_script_chain_stub"
+                if _a_script == 69
                     break
                 endif
                 pushlist _script_chain _a_script
                 break
             endfor
         endif
-
-        poplist _script_chain front
+        @poplist _script_chain front
         foreach _a_script in _script_chain
             if not varexist _util_continue_script_chain_delay_ms
                 @setvar! _util_continue_script_chain_delay_ms 0
