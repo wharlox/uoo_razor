@@ -3,8 +3,15 @@ overhead "_chain start"
 
 ## requires Razor options Filters (tab), Texts & Messages (sub-tab), uncheck Filter repeating system messages
 
+
+
+@setvar! _script_chain__loop_mode 0
+
 removelist _script_chain
 createlist _script_chain
+#pushlist _script_chain "_script_chain_stub"
+
+
 pushlist _script_chain "Play Script: deposit-loadout\functions\hide-if-not-hidden"
 
 pushlist _script_chain "Play Script: deposit-loadout\deposit-loadout-config-home"
@@ -16,15 +23,21 @@ pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-shelf-all
 
 
 pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-loadout-time-summary"
-@setvar _wait_dynamic 30000
-@setvar _wait_dynamic 15000
-pushlist _script_chain "Play Script: deposit-loadout\functions\wait-dynamic"
+@setvar! _wait_dynamic 30000
+@setvar! _wait_dynamic 15000
+#pushlist _script_chain "Play Script: deposit-loadout\functions\wait-dynamic"
 pushlist _script_chain "Play Script: deposit-loadout\deposit-crafting-loop"
 
 
 
 
 #### continue script chain
+removelist _util_continue_script_chain
+createlist _util_continue_script_chain
+pushlist   _util_continue_script_chain "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+#foreach _itr in _util_continue_script_chain
+#    hotkey _itr
+#endfor
 if listexists _script_chain
     # poplist _script_chain front
     foreach _a_script in _script_chain

@@ -25,14 +25,14 @@ sysmsg "loadout organizer - start" 165
 
 
 #### test shit - delete me
-if 1 == 2 and findtype "pouch" backpack  0 -1 1 as _loot_pouch
+if 1 == 2 and @findtype! "pouch" backpack  0 -1 1 as _loot_pouch
     if varexists __test_pouch and  find __test_pouch backpack 0 as _loot_pouch
         @setvar!  _loot_pouch  __test_pouch
     else
-        @setvar  __test_pouch  _loot_pouch
+        @setvar! __test_pouch  _loot_pouch
     endif
     @ignore  _loot_pouch
-    while findtype "pouch"  backpack 0 -1 1 as _other_pouch
+    while @findtype! "pouch"  backpack 0 -1 1 as _other_pouch
         @getlabel! _other_pouch _tmp_label
         lift _other_pouch
         drop _loot_pouch 44 65 0
@@ -43,11 +43,11 @@ endif
 
 
 
-if findtype "pouch" backpack  0 -1 1 as _loot_pouch
+if @findtype! "pouch" backpack  0 -1 1 as _loot_pouch
     @getlabel! _loot_pouch _tmp_label
     overhead "{{_loot_pouch}} :: {{_tmp_label}}"
 
-    #####@setvar  _deposit_loadout_chain_loot_pouch  _loot_pouch
+    #####@setvar!  _deposit_loadout_chain_loot_pouch  _loot_pouch
 
     ## check if the global-var loot-pouch is in backpack someplace
     ## if it exists then assume re-run, otherwise not re-run
@@ -57,12 +57,12 @@ if findtype "pouch" backpack  0 -1 1 as _loot_pouch
         @setvar!  _loot_pouch  _deposit_loadout_chain_loot_pouch
     else
         @setvar!  _is_re_run 0
-        @setvar  _deposit_loadout_chain_loot_pouch  _loot_pouch
+        @setvar!  _deposit_loadout_chain_loot_pouch  _loot_pouch
     endif
     @ignore  _loot_pouch
     ##  move all other untrapped pouches within loot-pouch
     ## onl applies to untrapped pouches direclty within backpack, not nested
-    while findtype "pouch"  backpack 0 -1 1 as _other_pouch
+    while @findtype! "pouch"  backpack 0 -1 1 as _other_pouch
         @getlabel! _other_pouch _tmp_label
         lift _other_pouch
         drop _loot_pouch 44 65 0
@@ -100,7 +100,7 @@ if findtype "pouch" backpack  0 -1 1 as _loot_pouch
         @setvar! _trapped_in_root 1
     endif
     if _is_re_run == 0 or _trapped_in_root == 0
-        while findtype "pouch" backpack 38 as _trap_pouch
+        while @findtype! "pouch" backpack 38 as _trap_pouch
             @getlabel! _trap_pouch _tmp_label
             if "pouch (0 items, 0 stones)" in _tmp_label
  
@@ -148,7 +148,7 @@ if findtype "pouch" backpack  0 -1 1 as _loot_pouch
             #wait 200
         endwhile
     elseif _is_re_run == 1
-        while findtype "pouch" backpack 38 -1 1 as _trap_pouch
+        while @findtype! "pouch" backpack 38 -1 1 as _trap_pouch
             @getlabel! _trap_pouch _tmp_label
                 #if "pouch (0 items, 0 stones)" in _tmp_label
                     ## drop trapped pouches in backpack over same pixel as loot-pouch
@@ -172,7 +172,7 @@ if findtype "pouch" backpack  0 -1 1 as _loot_pouch
 
 
     ## potion satchel
-    while findtype "alchemists satchel" backpack as _this
+    while @findtype! "alchemists satchel" backpack as _this
         @ignore _this
         @getlabel! _this _tmp_label
         lift _this 1
@@ -189,7 +189,7 @@ if findtype "pouch" backpack  0 -1 1 as _loot_pouch
 
 
     ## reagent satchel
-    while findtype "reagent satchel" backpack as _this
+    while @findtype! "reagent satchel" backpack as _this
         @ignore _this
         @getlabel! _this _tmp_label
         lift _this 1
@@ -228,12 +228,26 @@ sysmsg "loadout organizer - complete" 165
 
 
 #### continue script chain
-if listexists _script_chain and list _script_chain > 0
-    poplist _script_chain front
-    foreach _a_script in _script_chain
-        hotkey _a_script
-    endfor
-endif
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+foreach _itr in _util_continue_script_chain 
+    hotkey _itr
+endfor
+#if listexists _script_chain and list _script_chain > 0
+#    poplist _script_chain front
+#    foreach _a_script in _script_chain
+#        hotkey _a_script
+#    endfor
+#endif
+
+
+
+
+
+
+
+
+
+
 
 
 

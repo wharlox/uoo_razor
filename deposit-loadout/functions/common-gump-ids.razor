@@ -5,7 +5,10 @@ if not varexist _common_gumps__shelf
 endif
 if not varexist _common_gumps__shelf
     @setvar  _common_gumps__shelf_retrieve_many  3200655738
-
+endif
+if not varexist _common_gumps__magic_item_recycler
+    @setvar  _common_gumps__magic_item_recycler  0xF11B7F3D
+endif
 
 
 #### tomes
@@ -48,3 +51,4 @@ endif
 if not varexist _common_gumps__maps__treasure
     @setvar  _common_gumps__maps__treasure 1863945839
 endif
+

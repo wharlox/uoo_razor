@@ -17,21 +17,37 @@
 @setvar! _this_mode_dispel_existing_gate 1
 
 
+if not varexist _util__msg_delay_ms
+    @setvar! _util__msg_delay_ms 10000
+endif
+if not timerexists _timer__cast_gate_to_gh
+    @settimer!  _timer__cast_gate_to_gh  _util__msg_delay_ms
+endif
+if  timer  _timer__cast_gate_to_gh >= _util__msg_delay_ms
+    @setvar! _allow_messages_this_run 1
+    @settimer!  _timer__cast_gate_to_gh  0
+else
+    @setvar! _allow_messages_this_run 0
+endif
+
+
 #### check if a lantern is on or off
 if varexist _this_lantern_serial
-    if findtype _this_lantern_on_id ground _this_lantern_hue any 4 as _tmp
+    if @findtype! _this_lantern_on_id ground _this_lantern_hue any 4 as _this
+        @getlabel! backpack _tmp
         ## findtype  ID  ground  HUE  any  4
-        if _tmp == _this_lantern_serial
+        if _this == _this_lantern_serial
             @setvar!  _this_lantern_on  1
         endif
-    endif
-    if findtype _this_lantern_off_id ground _this_lantern_hue any 4 as _tmp
+    elseif @findtype! _this_lantern_off_id ground _this_lantern_hue any 4 as _this
+        @getlabel! backpack _tmp
         ## findtype  ID  ground  HUE  any  4
-        if _tmp == _this_lantern_serial
+        if _this == _this_lantern_serial
             @setvar!  _this_lantern_on  0
         endif
     endif
 endif
+
 
 #### todo add meditation in here someplace
 #while mana < 90
@@ -44,8 +60,15 @@ endif
 ## gate or chiv gate
 @setvar!  _this_gate_exists  0
 #### if caster detects a moongate at CLOSE-TO player-location - range 0 and 1 are broken
-if mana > 53 and _this_lantern_on == 1 and _this_mode_dispel_existing_gate == 1
-    if findtype "blue moongate" ground 0 1 1  or  findtype 30528 ground 2091 1 1 as _gate
+if @findtype! "blue moongate" ground 0 1 1 as _this or  @findtype! 30528 ground 2091 1 1 as _that
+    @getlabel! backpack _tmp
+    #sysmsg "this1 {{_this}}"
+    #sysmsg "that1 {{_that}}"
+    if mana > 53 and _this_lantern_on == 1 and _this_mode_dispel_existing_gate == 1
+        if _allow_messages_this_run == 1
+            sysmsg "casting dispel" 11
+            overhead "casting dispel" 11
+        endif
         if targetexists
             hotkey 'cancel current target'
         endif
@@ -56,16 +79,31 @@ if mana > 53 and _this_lantern_on == 1 and _this_mode_dispel_existing_gate == 1
             @getlabel! backpack _tmp
         endwhile
         @getlabel! backpack _tmp
-
-        target _gate
+        
+        #sysmsg "this2 {{_this}}"
+        #sysmsg "that2 {{_that}}"
+        if _this != 0
+            target _this
+        else
+            target _that
+        endif
         @getlabel! _this_tome_serial _tmp
         #@setvar!  _this_gate_exists  1
+    else
+        #sysmsg "this3 {{_this}}"
+        #sysmsg "that3 {{_that}}"
+        if _this_lantern_on == 1 and  _allow_messages_this_run == 1
+            sysmsg "no mana to cast dispel gate" 44
+            say "gate exists - no mana to cast dispel and gate"
+        endif
     endif
 endif
 
 if mana > 39 and _this_lantern_on == 1  and  _this_gate_exists == 0
-    sysmsg "casting gate to GH" 11
-    overhead "casting gate to GH" 11
+    if _allow_messages_this_run == 1
+        sysmsg "casting gate to GH" 11
+        overhead "casting gate to GH" 11
+    endif
     
     dclick _this_tome_serial
     waitforgump 167090027 650
@@ -81,9 +119,15 @@ if mana > 39 and _this_lantern_on == 1  and  _this_gate_exists == 0
     endwhile
     @getlabel! backpack _tmp
 
-    if insysmsg "A moongate already exists at your location"
-    else
+    if insysmsg "You open a magical gate to another location"
         dclick _this_lantern_serial
+    endif
+else
+    if mana > 39 and _this_lantern_on == 1 
+        if _allow_messages_this_run == 1
+            sysmsg "no mana to cast gate" 44
+            say "waiting on mana to cast gate"
+        endif
     endif
 endif
 
@@ -91,14 +135,24 @@ while queued
 endwhile
 
 
-#sysmsg "cast gate to gh - complete"
 
+
+#sysmsg "cast gate to gh - complete"
+#if _allow_messages_this_run == 1
+#    @settimer!  _timer__cast_gate_to_gh  0
+#endif
 
 
 #### continue script chain
-if listexists _script_chain and list _script_chain > 0
-    poplist _script_chain front
-    foreach _a_script in _script_chain
-        hotkey _a_script
-    endfor
-endif
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+foreach _itr in _util_continue_script_chain 
+    hotkey _itr
+endfor
+#if listexists _script_chain
+#    if list _script_chain > 0
+#        poplist _script_chain front
+#        foreach _a_script in _script_chain
+#            hotkey _a_script
+#        endfor
+#    endif
+#endif

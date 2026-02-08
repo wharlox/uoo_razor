@@ -10,12 +10,12 @@ sysmsg "deposit items minor alchemist - start"
   
 ##### kegs
 @setvar!  _this_chest  _deposit_loadout__chest__minor_kegs
-while findtype "keg"  backpack as _this
+while @findtype! "keg"  backpack as _this
     #@ignore! _this
-    getlabel _this _this_label
+    @getlabel! _this _this_label
     sysmsg _this_label 11
 
-    getlabel  _this_chest  _this_chest_label
+    @getlabel!  _this_chest  _this_chest_label
     if "125 items" in _this_chest_label
         overhead "keg container full"
         dclick  _this_chest
@@ -24,11 +24,11 @@ while findtype "keg"  backpack as _this
 
     lift  _this 60000
     drop  _this_chest  -1 -1 -1
-    #getlabel backpack _this_label
+    #@getlabel! backpack _this_label
     while queued
-        #getlabel backpack _this_label
+        #@getlabel! backpack _this_label
     endwhile
-    #getlabel backpack _this_label
+    #@getlabel! backpack _this_label
 endwhile
 
 
@@ -37,12 +37,12 @@ endwhile
 
 ##### potions
 @setvar!  _this_chest  _deposit_loadout__chest__minor_potions
-while findtype  3851|3849|3852|3847|3850|3854|3846|3848|3853  backpack as _this
+while @findtype!  3851|3849|3852|3847|3850|3854|3846|3848|3853  backpack as _this
     #@ignore! _this
-    getlabel _this _this_label
+    @getlabel! _this _this_label
     sysmsg _this_label 11
 
-    getlabel  _this_chest  _this_chest_label
+    @getlabel!  _this_chest  _this_chest_label
     if "125 items" in _this_chest_label
         overhead "potion container full"
         dclick  _this_chest
@@ -51,11 +51,11 @@ while findtype  3851|3849|3852|3847|3850|3854|3846|3848|3853  backpack as _this
 
     lift  _this 60000
     drop  _this_chest  -1 -1 -1
-    #getlabel backpack _this_label
+    #@getlabel! backpack _this_label
     while queued
-        #getlabel backpack _this_label
+        #@getlabel! backpack _this_label
     endwhile
-    #getlabel backpack _this_label
+    #@getlabel! backpack _this_label
 endwhile
 
 
@@ -86,9 +86,13 @@ sysmsg "deposit items minor alchemist - complete"
 
 
 #### continue script chain
-if listexists _script_chain and list _script_chain > 0
-    poplist _script_chain front
-    foreach _a_script in _script_chain
-        hotkey _a_script
-    endfor
-endif
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+foreach _itr in _util_continue_script_chain 
+    hotkey _itr
+endfor
+#if listexists _script_chain and list _script_chain > 0
+#    poplist _script_chain front
+#    foreach _a_script in _script_chain
+#        hotkey _a_script
+#    endfor
+#endif

@@ -1,0 +1,441 @@
+#sysmsg "_util_id_minimal - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\_util_id_minimal"
+
+
+// container identification wand
+//   name: wand
+//   id:   20495
+// identification wand
+//   name: wand
+//   id:   20496
+// skill "Item Identification" >= 80
+// skill "Item Identification" == 120
+# sysmsg "___start"
+
+//// ID operational-mode / prescidence:
+//     : _util_id__force_skill 0,1
+//    1: skill-120
+//    2: container-id-wand: 20495
+//    3: skill-80+
+//    4: item-wand: 20496
+// optional: if WAND has 1 use remaining, do not use (find another)
+//// source-container-mode / presidence:
+//    1: magic-item-recycler-serial
+//    2: backpack (if enabled)
+//    3: target (if enabled)
+
+
+#### fast-as-fuck mode- 0 disable - 1 enable
+## adds a 2 second delay if no items are found before running script again
+@setvar!  _util_id__mode_faf 1
+
+@setvar!  _util_id__force_skill  0    
+
+# 1800000 == 30 mins
+# 3600000 == 60 mins
+@setvar!  _util_id__ignore_timer__ms 3600000
+#3600000 
+#1800000
+
+
+
+// _util_id__source_container_mode
+//    1: selection mode
+//    2: player-backpack
+//    3: use value from _deposit_loadout__recycler, or if unset use player-backpack
+@setvar!  _util_id__source_container_mode  3
+
+
+
+#### fast-as-fuck mode timer
+if not timerexists _id_util__mode_faf__timer
+    #sysmsg "faf mode timer dne, set to 2k" 44
+    @settimer  _id_util__mode_faf__timer  5000
+endif
+#sysmsg "faf-timer {{_id_util__mode_faf__timer}}" 11
+#@poplist!   _script_chain  "Play Script: deposit-loadout\functions\_util_id_minimal"
+if _util_id__mode_faf == 0 and timer _id_util__mode_faf__timer <= 5000
+    sysmsg "faf mode disabled - will skip whole script - TMP set timer to 0" 44
+    #@settimer _id_util__mode_faf__timer 0
+    #### continue script chain
+    hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+    foreach _itr in _util_continue_script_chain 
+        hotkey _itr
+    endfor
+endif
+#sysmsg "id time" 55
+
+
+#### shared timer with _util_id_* scripts
+#### idea is to determine all items IDd if timer is greater than 5 seconds
+if not timerexists _util_id_lantern__time_since_last_id
+    @settimer  _util_id_lantern__time_since_last_id  0
+endif
+
+####   make a global-list to hold items to ignore (wands, items, ect)
+####   then clearignore, then re-load the list of items to ignore
+####   clear array after 60 minutes then re-scan all
+@clearignore
+if timerexists  _util_id__ignore_timer
+else
+    @settimer!  _util_id__ignore_timer  _util_id__ignore_timer__ms
+endif
+
+if timer  _util_id__ignore_timer  >=  _util_id__ignore_timer__ms
+    @settimer!  _util_id__ignore_timer  0
+    @removelist  _util_id__ignore_list
+endif
+@createlist  _util_id__ignore_list
+foreach  itr  in  _util_id__ignore_list
+    @ignore!  itr
+    #overhead "ignore {{itr}}"
+endfor
+
+
+
+
+#### how-to-id (skill or wand)
+// skill-120
+// c-id-wand
+// skill-item
+// s-id-wand
+// per-item or per-container
+
+
+@setvar!  _util_id__mode  0
+@setvar!  _util_id__wand_serial  0
+
+@setvar!  _util_id__warn__wand_low_use  0
+
+if  _util_id__force_skill  ==  1
+    if skill "Item Identification" == 120
+        @setvar!  _util_id__mode  1
+    else
+        @setvar!  _util_id__mode  3
+    endif
+else
+    // 4 cases - goal to minimize use of findtype
+
+    if skill "Item Identification" == 120
+        @setvar!  _util_id__mode  1
+    else
+
+        while @findtype! 20495 backpack -1 -1 -1 as _this
+            // container-id-wand
+            @getlabel!  _this  _this_label
+            if "(1 uses remaining)" in _this_label or "(1 use remaining)" in _this_label
+                @setvar!  _util_id__warn__wand_low_use  1
+                @pushlist! _util_id__ignore_list  _this
+                @ignore _this
+            else
+                @setvar!  _util_id__mode  2
+                @setvar!  _util_id__wand_serial  _this
+                break
+            endif
+        endwhile
+        
+        if  _util_id__mode  ==  0
+            if skill "Item Identification" >= 80
+                @setvar!  _util_id__mode  3
+            else
+                while @findtype! 20496 backpack -1 -1 -1 as _this
+                    // id-wand
+                    @getlabel!  _this  _this_label
+                    if "(1 uses remaining)" in _this_label or "(1 use remaining)" in _this_label
+                        @setvar!  _util_id__warn__wand_low_use  1
+                        @pushlist! _util_id__ignore_list  _this
+                        @ignore _this
+                    else
+                        @setvar!  _util_id__mode  4
+                        @setvar!  _util_id__wand_serial  _this
+                        break
+                    endif
+                endwhile
+            endif
+            
+        endif
+    endif
+
+
+endif
+
+if  _util_id__warn__wand_low_use  ==  1
+    sysmsg "at least one identification wand is too low to use"
+endif
+// post-check
+if  _util_id__mode  ==  0
+    sysmsg "no id-wands available and skill too low - set var _util_id__force_skill 1 to force skill use"
+    #### add next-script-logic here or engulf remaining script within an else to this-if
+endif
+
+
+
+#### determine container to use for id-ing
+// _util_id__source_container_mode
+//    1: selection mode
+//    2: player-backpack
+//    3: use value from _deposit_loadout__recycler, or if unset use player-backpack
+
+@setvar!  _util_id__source_container_mode  3
+if _util_id__source_container_mode  ==  2
+    @setvar!  _util_id__source_container  backpack
+elseif  _util_id__source_container_mode  ==  3  and  varexist _deposit_loadout__recycler  and  _deposit_loadout__recycler  !=  0
+    @setvar!  _util_id__source_container  _deposit_loadout__recycler
+else
+    ## selection mode
+    overhead "Select source container - target self for backpack..." 88
+    wait 100
+    @unsetvar _util_id__source_container_selected
+    while not varexist _util_id__source_container_selected
+        overhead "[ SELECT CONTAINER... ]" 253
+        @setvar! _util_id__source_container
+        wft 100
+        while targetexists
+            wait 50
+        endwhile
+
+        @getlabel!  _util_id__source_container  _this_label
+        if "[locked down]" in _this_label
+            overhead "ERROR: container is locked down - try again" 34
+        else
+            @setvar!  _util_id__source_container_selected  1
+            overhead "[ CONTAINER SELECTED! ]" 93
+            overhead _this_label 93
+        endif
+    endwhile
+    @unsetvar!  _util_id__source_container_selected
+endif
+
+
+// debug outputs
+#overhead "_util_id__source_container  {{_this_label}}"
+#overhead "_util_id_mode: {{_util_id__mode}}"
+#if _util_id__wand_serial != 0
+#    @getlabel! _util_id__wand_serial  _this_label
+#    overhead "_util_id__wand_serial: {{_this_label}}"
+#endif
+
+
+
+
+
+#### vars now set and usable
+## list  _util_id__ignore_list
+## _util_id__source_container
+## _util_id__mode
+##    1: skill-120
+##    2: container-id-wand: 20495
+##    3: skill-80+
+##    4: item-wand: 20496
+## _util_id__wand_serial
+#### if mode 1-or-2, target entire container
+####   else use find and ignore-list
+
+
+##### above is setup
+##### below is ID [feed to pushlist]
+##### next-1 breakdown-setup [find util-items which can breakdown - or recycler]
+##### next-2 breakdown [use item or recycler-gump]
+
+// TODO if-target-exist break it
+@createlist!  _util_id__items_id__todo
+@createlist!  _util_id__items_id__done
+if  _util_id__mode  ==  1  or  _util_id__mode  ==  2
+    // id whole container - no checking for gear
+    if  _util_id__mode  ==  1
+        useskill "Item Identification"
+    else
+        ## _util_id__mode  ==  2
+        dclick   _util_id__wand_serial
+    endif
+    // id target
+    waitfortarget 500
+    target _util_id__source_container
+
+    // TODO check insysmsg for value or something for this settimer
+    @settimer  _util_id_lantern__time_since_last_id  0
+
+elseif  _util_id__mode  ==  3  or  _util_id__mode  ==  4
+    // id select items in container
+
+    // todo - do this every 60 seconds?
+    // flip logic, open and keep open- gump needs to be open until set with a timer
+    #dclick _util_id__source_container
+    #@getlabel!  _util_id__source_container  _this_label
+    #if gumpexists 0xF11B7F3D
+    #    gumpclose 0xF11B7F3D
+    #endif
+    if not gumpexists 0xF11B7F3D
+        dclick _util_id__source_container
+    endif
+
+    // first build a list of items to id - one at a time per script run
+    //   allows interrupting script and resuming where it left off since items will be ignored
+    //   and itrating through a list is faster than findtype and getlabel
+    if @findtype! 5056|5059|5060|5061|5063|5070|5074|5075|5076|5078|5085|5089|5090|5101|5103|5105|5106|5129|5131|5132|5135|5138|5139|5142|5143|5144|5146|5201|5203|5204|5205|5207|7169|7170|7173|7175|7177|7179|7181|7610|7947|31003|31004|31005|31006|31007|31008|31009|31010|31011|31012|31015|31191|31017|31019|31021|31023|31025|31027|31029|31031|31033|31035|31037|31038|31041|31043|31045|31047|31049|31051|31053|31055|3834|3740|3742|3762|3763|10245|20006|20008|20010|20012|20014|20016|7026|7027|7029|7031|7033|7034|7035|7107|7109|31002|31130|3920|5042|5117|30990|30993|30994|30995|31184|31186|3719|3922|3938|5121|5123|5125|30989|30992|30996|30997|30998|31176|31188|3568|3713|3721|3932|5040|5044|5112|5127|5177|5179|5181|30991|30999|31000|31001|31014|31178|31180|31182|3909|3911|3913|3915|3917|3934|3937|5046|5049|5115|5119|5182|5185|5187|30988|31128|31190|22187|31141|31142|31169|31172  _util_id__source_container  as _this_item_findtype
+        @getlabel!  _this_item_findtype  _this_item_findtype__label
+        @settimer  _util_id_lantern__time_since_last_id  0
+        sysmsg "found item {{_this_item_findtype__label}}"
+        if  "unidentified"  in  _this_item_findtype__label
+            @poplist    _util_id__items_id__todo  _this_item_findtype
+            @pushlist!  _util_id__items_id__todo  _this_item_findtype
+
+            ## ignore item, ensure not duplicated in persistent ignore-list
+            @poplist    _util_id__ignore_list  _this_item_findtype
+            @pushlist!  _util_id__ignore_list  _this_item_findtype
+            @ignore  _this_item_findtype
+        elseif  "exception"  in  _this_item_to_id__label  or  "blessed"  in  _this_item_to_id__label
+            ## ignore item, ensure not duplicated in persistent ignore-list
+            @poplist    _util_id__ignore_list  _this_item_findtype
+            @pushlist!  _util_id__ignore_list  _this_item_findtype
+            @ignore  _this_item_findtype
+        else
+            ## item is identified already - only get here on ignore-lists reset
+            @poplist    _util_id__items_id__done  _this_item_findtype
+            @pushlist!  _util_id__items_id__done  _this_item_findtype
+
+            @poplist   _util_id__ignore_list  _this_item_findtype
+            @pushlist!  _util_id__ignore_list  _this_item_findtype
+            @ignore  _this_item_findtype
+        endif
+    endif
+    
+    // id a single item
+    if list _util_id__items_id__todo > 0
+        if  _util_id__mode == 3
+            useskill "Item Identification"
+        else
+            ## _util_id__mode == 4
+            dclick   _util_id__wand_serial
+        endif
+        // id target - its a foreach but this list is typically always 1 element in size
+        foreach _itr in _util_id__items_id__todo
+            waitfortarget 500
+            target  _itr
+            @getlabel!  _itr  _this_label
+            
+            // if item is still unidentified, add it back to te list
+            if "unidentified" in _this_label
+                sysmsg "warning- item did not get unidentified properly {{_this_label}}"
+            else
+                @poplist    _util_id__items_id__todo  front
+                @poplist    _util_id__items_id__done  _itr
+                @pushlist!  _util_id__items_id__done  _itr
+            endif
+            // ensure only 1 item is IDd at a time to allow other processing
+            break
+        endfor
+    else
+        ## _util_id__items_id__todo == 0
+        #sysmsg "nothing to id - set faf timer to 0" 44
+        @settimer!  _id_util__mode_faf__timer  0
+    endif
+    
+endif
+
+
+
+
+
+
+
+
+
+
+
+
+while queued
+endwhile
+
+
+#sysmsg "_util_id_minimal - complete"
+
+
+
+#### continue script chain
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+foreach _itr in _util_continue_script_chain 
+    hotkey _itr
+endfor
+#if listexists _script_chain
+#    if list _script_chain > 0
+#        if _loop_mode == 1
+#            foreach _a_script in _script_chain
+#                pushlist _script_chain _a_script
+#                break
+#            endfor
+#        endif
+#        poplist _script_chain front
+#        foreach _a_script in _script_chain
+#            hotkey _a_script
+#        endfor
+#    endif
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+stop
+
+
+
+@setvar!  _util_id_mode  -1
+@setvar!  _util_id_wand_serial  0
+if _util_id__force_skill != 1  and  skill "Item Identification" == 120
+    @setvar!  _util_id_mode  1
+else
+    if _util_id__force_skill != 1
+    while @findtype! 20495 backpack -1 -1 -1 as _this
+        // container-id-wand
+        @getlabel!  _this  _this_label
+        if "(3 uses remaining)" in _this_label or "(3 use remaining)" in _this_label
+            @ignore _this
+        else
+            @setvar!  _util_id_mode  2
+            @setvar!  _util_id_wand_serial  _this
+        endif
+    endwhile
+
+
+elseif _util_id__force_skill == 1  or  skill "Item Identification" >= 80
+    @setvar!  _util_id_mode  3
+endif
+
+overhead _util_id_mode
+
+if _util_id__force_skill != 1  and  _util_id_mode  != 1
+    overhead "try find container id-wand"
+    while @findtype! 20495 backpack -1 -1 -1 as _this
+        // container-id-wand
+        @getlabel!  _this  _this_label
+        if "(3 uses remaining)" in _this_label or "(3 use remaining)" in _this_label
+            @ignore _this
+        else
+            @setvar!  _util_id_mode  2
+            @setvar!  _util_id_wand_serial  _this
+        endif
+    endwhile
+elseif  _util_id__force_skill != 1  and  skill "Item Identification" < 120
+    overhead "try find single id-wand"
+    while @findtype! 20496 backpack -1 -1 -1 as _this
+        // id-wand
+        @getlabel!  _this  _this_label
+        if "(1 uses remaining)" in _this_label or "(1 use remaining)" in _this_label
+            @ignore _this
+        else
+            @setvar!  _util_id_mode  4
+            @setvar!  _util_id_wand_serial  _this
+        endif
+    endwhile
+endif
+
+overhead _util_id_mode

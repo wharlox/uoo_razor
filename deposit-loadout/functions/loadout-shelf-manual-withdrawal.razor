@@ -16,7 +16,7 @@ sysmsg "loadout loadout-shelf-manual-withdrawal - start" 165
 #### TODO- variablize ID and HUE
 @setvar!  _this_shelf__do_resupply  1
 if varexist _deposit_loadout__lantern__shelf_resupply
-    if findtype 2594 ground 1182 any 4 as _tmp
+    if @findtype! 2594 ground 1182 any 4 as _tmp
         ## findtype  ID  ground  HUE  any  4
         if _tmp == _deposit_loadout__lantern__shelf_resupply 
             @setvar!  _this_shelf__do_resupply  0
@@ -40,7 +40,7 @@ if _this_shelf__do_resupply == 1  and  find  _this_self_serial  ground  -1 -1 2
     #### conditionally get 1,2,3 commodities if skinning skill exists and none in backpack
     @setvar!  _this  __deposit_loadout__shelf_withdrawal__skinning__commodities__1_2_3_4_5_6
     if skill "forensic evaluation" > 0
-        if findtype 7715 backpack as _found
+        if @findtype! 7715 backpack as _found
         elseif _this == 1 or _this == 2 or _this == 3 or _this == 4 or _this == 5 or _this == 6
                 @getlabel! backpack _tmp_label
                 ### get one blank commodity
@@ -108,12 +108,26 @@ sysmsg "loadout loadout-shelf-manual-withdrawal - complete" 165
 
 
 #### continue script chain
-if listexists _script_chain and list _script_chain > 0
-    poplist _script_chain front
-    foreach _a_script in _script_chain
-        hotkey _a_script
-    endfor
-endif
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+foreach _itr in _util_continue_script_chain 
+    hotkey _itr
+endfor
+#if listexists _script_chain and list _script_chain > 0
+#    poplist _script_chain front
+#    foreach _a_script in _script_chain
+#        hotkey _a_script
+#    endfor
+#endif
+
+
+
+
+
+
+
+
+
+
 
 
 
