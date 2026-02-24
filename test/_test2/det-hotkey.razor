@@ -1,10 +1,16 @@
 #### script-4: detonate-hotkey
 ### hotkey: ctrl-2
 if varexist  master_stage
-    @setvar! master_stage_previous  master_stage
+    if master_stage == 50005
+        @setvar! master_stage_previous  10
+    else
+        @setvar! master_stage_previous  master_stage
+    endif
 else
     @setvar! master_stage_previous  10
 endif
+ 
+
+
 @setvar! master_stage 50005
 hotkey "play script: test\_test2\det"
-
