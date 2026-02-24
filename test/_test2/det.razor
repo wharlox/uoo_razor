@@ -1,0 +1,14 @@
+### s-5:  detonate
+## (no hotkey)
+
+if master_stage == 50005
+  //... maybe we can equip-weapon in own script? but fine to have it here
+  //... detonate
+  overhead "equip"
+  wait 1000
+  overhead "detonate"
+  wait 1000
+ @setvar! master_stage  master_stage_previous
+ unsetvar master_stage_previous  
+ hotkey "play script: test\_test2\master"
+endif

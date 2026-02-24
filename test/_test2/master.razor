@@ -1,0 +1,82 @@
+### this: test\_test2\master
+
+overhead "master"
+overhead "stage at start: {{master_stage}}"
+@settimer! _m_test_runtimer 0
+
+@setvar! _m_delay 1000
+
+if master_stage == 10
+    // setup vars
+    overhead "vars {{_m_test_runtimer}}"
+    wait _m_delay
+    @setvar! master_stage  20
+endif
+
+if master_stage == 20
+     // setup timers
+     overhead "timers {{_m_test_runtimer}}"
+    wait _m_delay
+     @setvar! master_stage 30
+endif
+
+
+while not dead
+  // summons
+  if master_stage == 30
+    overhead "summons {{_m_test_runtimer}}"
+    wait _m_delay
+    @setvar! master_stage 40
+  endif
+  
+  
+  
+  // [shrooms]
+  if master_stage == 40
+    overhead "shrooms {{_m_test_runtimer}}"
+    wait _m_delay
+    @setvar! master_stage 50
+  endif
+  
+  if hitdiff > 1
+      //hotkey "play script: healme"
+  endif
+
+
+  //[buff 11]
+  if master_stage == 50
+    overhead "buff-11 {{_m_test_runtimer}}"
+    wait _m_delay
+    @setvar! master_stage 60
+  endif
+
+  if hitdiff > 1
+      //hotkey "play script: healme"
+  endif
+
+  
+  
+  
+  //[buff 22]
+  if master_stage == 60
+    overhead "buff-22 {{_m_test_runtimer}}"
+    wait _m_delay
+    @setvar! master_stage 70
+  endif
+
+  if hitdiff > 1
+      //hotkey "play script: healme"
+  endif
+
+  
+  //[the last-stage]
+  #if  master_stage = "the-2nd-to-last-stage"
+  if master_stage == 70
+    // do whatever is in the last-stage
+    overhead "last stage {{_m_test_runtimer}}"
+    wait _m_delay
+    @setvar! master_stage 10
+    hotkey "Play Script: test\_test2\master"
+  endif
+  
+endwhile
