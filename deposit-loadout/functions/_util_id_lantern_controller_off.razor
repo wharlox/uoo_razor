@@ -2,7 +2,7 @@
 #@setvar! _this_script "Play Script: deposit-loadout\functions\_util_id_lantern_controller_off"
 
 if timer _util_id_lantern__time_since_last_id >= 3000
-
+    overhead "id-lantern - timer greater than 3s - done iding  {{_util_id_lantern__time_since_last_id}}"
     if @findtype! 2594 ground 2338 any 4 as _tmp
         #sysmsg "lantern ON"
         ## if cav lantern is ON then  ... id-items of recycler

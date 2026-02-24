@@ -8,8 +8,9 @@
 #@setvar! _this_script "Play Script: deposit-loadout\functions\hide-if-not-hidden"
 
 
-
-if not hidden
+if diffmana > 20
+    skill Meditation
+elseif not hidden
     skill "hiding"
 endif
 #if not dead 

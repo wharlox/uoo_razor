@@ -15,10 +15,16 @@ createlist _script_chain
 pushlist _script_chain "Play Script: deposit-loadout\deposit-loadout-config-home"
 
 
-pushlist _script_chain "Play Script: deposit-loadout\functions\hide-if-not-hidden"
+
+#pushlist _script_chain "Play Script: deposit-loadout\functions\crafting-salvage-wiz-hat"
+#pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-stockpile"
+##pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-shelf-all"
 
 pushlist _script_chain "Play Script: deposit-loadout\functions\loadout-shelf-resupply"
+
 pushlist _script_chain "Play Script: deposit-loadout\functions\cast-gate-to-gh"
+pushlist _script_chain "Play Script: deposit-loadout\functions\hide-if-not-hidden"
+
 pushlist _script_chain "Play Script: deposit-loadout\functions\_util_id_lantern_controller"
 
 
@@ -36,7 +42,7 @@ pushlist _script_chain "Play Script: deposit-loadout\functions\_util_id_lantern_
 
 
 
-@setvar! _util_continue_script_chain_delay_ms 0
+@setvar! _util_continue_script_chain_delay_ms 50
 
 
 #### continue script chain

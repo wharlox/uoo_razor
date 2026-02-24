@@ -7,6 +7,7 @@ sysmsg "loadout loadout-shelf-manual-withdrawal - start" 165
 
 
 
+
 @setvar!  _this_self_serial  _deposit_loadout__shelf
 #@pushlist!  _this_self_serials  _this_shelf_serial_other
 
@@ -31,7 +32,7 @@ endif
 
 
 #### call menu resupply on each shelf if in range
-if _this_shelf__do_resupply == 1  and  find  _this_self_serial  ground  -1 -1 2
+if _this_shelf__do_resupply == 1  and  @find!  _this_self_serial  ground  -1 -1 2
     @getlabel! backpack _tmp_label
 
 
@@ -41,6 +42,7 @@ if _this_shelf__do_resupply == 1  and  find  _this_self_serial  ground  -1 -1 2
     @setvar!  _this  __deposit_loadout__shelf_withdrawal__skinning__commodities__1_2_3_4_5_6
     if skill "forensic evaluation" > 0
         if @findtype! 7715 backpack as _found
+            // if a commodity is found, skip
         elseif _this == 1 or _this == 2 or _this == 3 or _this == 4 or _this == 5 or _this == 6
                 @getlabel! backpack _tmp_label
                 ### get one blank commodity
@@ -85,6 +87,78 @@ if _this_shelf__do_resupply == 1  and  find  _this_self_serial  ground  -1 -1 2
                 endif
                 gumpclose  _common_gumps__shelf
         endif
+    endif 
+
+
+
+    
+    @getlabel! backpack _tmp_label
+endif
+
+
+
+
+
+#### call menu resupply on each shelf if in range
+if 1 == 1 or _this_shelf__do_resupply == 1  and  @find!  _this_self_serial  ground  -1 -1 2
+    @getlabel! backpack _tmp_label
+
+    sysmsg "asdfas"
+
+
+    #### get a single basic skinning knife
+    if skill "forensic evaluation" > 0  and  __deposit_loadout__shelf_withdrawal__skinning__basic_knife__0_1 == 1
+        
+        // skinning knife - elven spellblade - 11552
+        @setvar! _color 47
+        @setvar! _found_skinner 0
+        @setvar! _uses_too_low 6
+        while @findtype! 11552 backpack -1 -1 -1 as _found
+            @getlabel! _found _this_label
+            if "exceptional" in _this_label
+                if _found_skinner == 0
+                    sysmsg "skinners found:" 42
+                    overhead "skinners found:" 42
+                    @setvar! _found_skinner 1
+                endif
+                sysmsg _this_label _color
+                overhead _this_label _color
+                if _color == 47
+                    @setvar! _color 52
+                elseif _color == 52
+                    @setvar! _color 47
+                endif
+                if "(1 use remaining)" in _this_label or "(1 uses remaining)" in _this_label  or  "(2 uses remaining)" in _this_label  or  "(3 uses remaining)" in _this_label  or  "(4 uses remaining)" in _this_label  or  "(5 uses remaining)" in _this_label  or  "(6 uses remaining)" in _this_label  or  "(7 uses remaining)" in _this_label  or  "(8 uses remaining)" in _this_label  or  "(9 uses remaining)" in _this_label  or  "(10 uses remaining)" in _this_label  or  "(11 uses remaining)" in _this_label  or  "(12 uses remaining)" in _this_label  or  "(13 uses remaining)" in _this_label  or  "(14 uses remaining)" in _this_label  or  "(15 uses remaining)" in _this_label  or  "(16 uses remaining)" in _this_label  or  "(17 uses remaining)" in _this_label  or  "(18 uses remaining)" in _this_label  or  "(19 uses remaining)" in _this_label  or  "(20 uses remaining)" in _this_label  or  "(21 uses remaining)" in _this_label  or  "(22 uses remaining)" in _this_label  or  "(23 uses remaining)" in _this_label  or  "(24 uses remaining)" in _this_label  or  "(25 uses remaining)" in _this_label  or  "(26 uses remaining)" in _this_label  or  "(27 uses remaining)" in _this_label  or  "(28 uses remaining)" in _this_label  or  "(29 uses remaining)" in _this_label  or  "(30 uses remaining)" in _this_label  or  "(31 uses remaining)" in _this_label  or  "(32 uses remaining)" in _this_label  or  "(33 uses remaining)" in _this_label  or  "(34 uses remaining)" in _this_label  or  "(35 uses remaining)" in _this_label  or  "(36 uses remaining)" in _this_label  or  "(37 uses remaining)" in _this_label  or  "(38 uses remaining)" in _this_label  or  "(39 uses remaining)" in _this_label  or  "(40 uses remaining)" in _this_label  or  "(41 uses remaining)" in _this_label  or  "(42 uses remaining)" in _this_label  or  "(43 uses remaining)" in _this_label  or  "(44 uses remaining)" in _this_label  or  "(45 uses remaining)" in _this_label  or  "(46 uses remaining)" in _this_label  or  "(47 uses remaining)" in _this_label  or  "(48 uses remaining)" in _this_label  or  "(49 uses remaining)" in _this_label  or  "(50 uses remaining)" in _this_label  or  "(51 uses remaining)" in _this_label  or  "(52 uses remaining)" in _this_label  or  "(53 uses remaining)" in _this_label  or  "(54 uses remaining)" in _this_label  or  "(55 uses remaining)" in _this_label  or  "(56 uses remaining)" in _this_label  or  "(57 uses remaining)" in _this_label  or  "(58 uses remaining)" in _this_label  or  "(59 uses remaining)" in _this_label  or  "(60 uses remaining)" in _this_label  or  "(61 uses remaining)" in _this_label  or  "(62 uses remaining)" in _this_label  or  "(63 uses remaining)" in _this_label  or  "(64 uses remaining)" in _this_label  or  "(65 uses remaining)" in _this_label  or  "(66 uses remaining)" in _this_label  or  "(67 uses remaining)" in _this_label  or  "(68 uses remaining)" in _this_label  or  "(69 uses remaining)" in _this_label  or  "(70 uses remaining)" in _this_label  or  "(71 uses remaining)" in _this_label  or  "(72 uses remaining)" in _this_label  or  "(73 uses remaining)" in _this_label  or  "(74 uses remaining)" in _this_label  or  "(75 uses remaining)" in _this_label  or  "(76 uses remaining)" in _this_label  or  "(77 uses remaining)" in _this_label  or  "(78 uses remaining)" in _this_label  or  "(79 uses remaining)" in _this_label  or  "(80 uses remaining)" in _this_label  or  "(81 uses remaining)" in _this_label  or  "(82 uses remaining)" in _this_label  or  "(83 uses remaining)" in _this_label  or  "(84 uses remaining)" in _this_label  or  "(85 uses remaining)" in _this_label  or  "(86 uses remaining)" in _this_label  or  "(87 uses remaining)" in _this_label  or  "(88 uses remaining)" in _this_label  or  "(89 uses remaining)" in _this_label  or  "(90 uses remaining)" in _this_label  or  "(91 uses remaining)" in _this_label  or  "(92 uses remaining)" in _this_label  or  "(93 uses remaining)" in _this_label  or  "(94 uses remaining)" in _this_label  or  "(95 uses remaining)" in _this_label  or  "(96 uses remaining)" in _this_label  or  "(97 uses remaining)" in _this_label  or  "(98 uses remaining)" in _this_label  or  "(99 uses remaining)" in _this_label  or  "(100 uses remaining)" in _this_label  or  "(101 uses remaining)" in _this_label  or  "(102 uses remaining)" in _this_label  or  "(103 uses remaining)" in _this_label  or  "(104 uses remaining)" in _this_label  or  "(105 uses remaining)" in _this_label  or  "(106 uses remaining)" in _this_label  or  "(107 uses remaining)" in _this_label  or  "(108 uses remaining)" in _this_label  or  "(109 uses remaining)" in _this_label  or  "(110 uses remaining)" in _this_label  or  "(111 uses remaining)" in _this_label  or  "(112 uses remaining)" in _this_label  or  "(113 uses remaining)" in _this_label  or  "(114 uses remaining)" in _this_label  or  "(115 uses remaining)" in _this_label  or  "(116 uses remaining)" in _this_label  or  "(117 uses remaining)" in _this_label  or  "(118 uses remaining)" in _this_label  or  "(119 uses remaining)" in _this_label  or  "(120 uses remaining)" in _this_label  or  "(121 uses remaining)" in _this_label  or  "(122 uses remaining)" in _this_label  or  "(123 uses remaining)" in _this_label  or  "(124 uses remaining)" in _this_label  or  "(125 uses remaining)" in _this_label  or  "(126 uses remaining)" in _this_label  or  "(127 uses remaining)" in _this_label  or  "(128 uses remaining)" in _this_label  or  "(129 uses remaining)" in _this_label  or  "(130 uses remaining)" in _this_label  or  "(131 uses remaining)" in _this_label  or  "(132 uses remaining)" in _this_label  or  "(133 uses remaining)" in _this_label  or  "(134 uses remaining)" in _this_label  or  "(135 uses remaining)" in _this_label  or  "(136 uses remaining)" in _this_label  or  "(137 uses remaining)" in _this_label  or  "(138 uses remaining)" in _this_label  or  "(139 uses remaining)" in _this_label  or  "(140 uses remaining)" in _this_label  or  "(141 uses remaining)" in _this_label  or  "(142 uses remaining)" in _this_label  or  "(143 uses remaining)" in _this_label  or  "(144 uses remaining)" in _this_label  or  "(145 uses remaining)" in _this_label  or  "(146 uses remaining)" in _this_label  or  "(147 uses remaining)" in _this_label  or  "(148 uses remaining)" in _this_label  or  "(149 uses remaining)" in _this_label  or  "(150 uses remaining)" in _this_label  or  "(151 uses remaining)" in _this_label  or  "(152 uses remaining)" in _this_label  or  "(153 uses remaining)" in _this_label  or  "(154 uses remaining)" in _this_label  or  "(155 uses remaining)" in _this_label  or  "(156 uses remaining)" in _this_label  or  "(157 uses remaining)" in _this_label  or  "(158 uses remaining)" in _this_label  or  "(159 uses remaining)" in _this_label  or  "(160 uses remaining)" in _this_label  or  "(161 uses remaining)" in _this_label  or  "(162 uses remaining)" in _this_label  or  "(163 uses remaining)" in _this_label  or  "(164 uses remaining)" in _this_label  or  "(165 uses remaining)" in _this_label  or  "(166 uses remaining)" in _this_label  or  "(167 uses remaining)" in _this_label  or  "(168 uses remaining)" in _this_label  or  "(169 uses remaining)" in _this_label  or  "(170 uses remaining)" in _this_label  or  "(171 uses remaining)" in _this_label  or  "(172 uses remaining)" in _this_label  or  "(173 uses remaining)" in _this_label  or  "(174 uses remaining)" in _this_label  or  "(175 uses remaining)" in _this_label  or  "(176 uses remaining)" in _this_label  or  "(177 uses remaining)" in _this_label  or  "(178 uses remaining)" in _this_label  or  "(179 uses remaining)" in _this_label  or  "(180 uses remaining)" in _this_label  or  "(181 uses remaining)" in _this_label  or  "(182 uses remaining)" in _this_label  or  "(183 uses remaining)" in _this_label  or  "(184 uses remaining)" in _this_label  or  "(185 uses remaining)" in _this_label  or  "(186 uses remaining)" in _this_label  or  "(187 uses remaining)" in _this_label  or  "(188 uses remaining)" in _this_label  or  "(189 uses remaining)" in _this_label  or  "(190 uses remaining)" in _this_label  or  "(191 uses remaining)" in _this_label  or  "(192 uses remaining)" in _this_label  or  "(193 uses remaining)" in _this_label  or  "(194 uses remaining)" in _this_label  or  "(195 uses remaining)" in _this_label  or  "(196 uses remaining)" in _this_label  or  "(197 uses remaining)" in _this_label  or  "(198 uses remaining)" in _this_label  or  "(199 uses remaining)" in _this_label  or  "(200 uses remaining)" in _this_label  or  "(201 uses remaining)" in _this_label  or  "(202 uses remaining)" in _this_label  or  "(203 uses remaining)" in _this_label  or  "(204 uses remaining)" in _this_label  or  "(205 uses remaining)" in _this_label  or  "(206 uses remaining)" in _this_label  or  "(207 uses remaining)" in _this_label  or  "(208 uses remaining)" in _this_label  or  "(209 uses remaining)" in _this_label  or  "(210 uses remaining)" in _this_label  or  "(211 uses remaining)" in _this_label  or  "(212 uses remaining)" in _this_label  or  "(213 uses remaining)" in _this_label  or  "(214 uses remaining)" in _this_label  or  "(215 uses remaining)" in _this_label  or  "(216 uses remaining)" in _this_label  or  "(217 uses remaining)" in _this_label  or  "(218 uses remaining)" in _this_label  or  "(219 uses remaining)" in _this_label  or  "(220 uses remaining)" in _this_label  or  "(221 uses remaining)" in _this_label  or  "(222 uses remaining)" in _this_label  or  "(223 uses remaining)" in _this_label  or  "(224 uses remaining)" in _this_label  or  "(225 uses remaining)" in _this_label  or  "(226 uses remaining)" in _this_label  or  "(227 uses remaining)" in _this_label  or  "(228 uses remaining)" in _this_label  or  "(229 uses remaining)" in _this_label  or  "(230 uses remaining)" in _this_label  or  "(231 uses remaining)" in _this_label  or  "(232 uses remaining)" in _this_label  or  "(233 uses remaining)" in _this_label  or  "(234 uses remaining)" in _this_label  or  "(235 uses remaining)" in _this_label  or  "(236 uses remaining)" in _this_label  or  "(237 uses remaining)" in _this_label  or  "(238 uses remaining)" in _this_label  or  "(239 uses remaining)" in _this_label  or  "(240 uses remaining)" in _this_label  or  "(241 uses remaining)" in _this_label  or  "(242 uses remaining)" in _this_label  or  "(243 uses remaining)" in _this_label  or  "(244 uses remaining)" in _this_label  or  "(245 uses remaining)" in _this_label  or  "(246 uses remaining)" in _this_label  or  "(247 uses remaining)" in _this_label  or  "(248 uses remaining)" in _this_label  or  "(249 uses remaining)" in _this_label  or  "(250 uses remaining)" in _this_label  or  "(251 uses remaining)" in _this_label  or  "(252 uses remaining)" in _this_label  or  "(253 uses remaining)" in _this_label  or  "(254 uses remaining)" in _this_label  or  "(255 uses remaining)" in _this_label  or  "(256 uses remaining)" in _this_label  or  "(257 uses remaining)" in _this_label  or  "(258 uses remaining)" in _this_label  or  "(259 uses remaining)" in _this_label  or  "(260 uses remaining)" in _this_label  or  "(261 uses remaining)" in _this_label  or  "(262 uses remaining)" in _this_label  or  "(263 uses remaining)" in _this_label  or  "(264 uses remaining)" in _this_label  or  "(265 uses remaining)" in _this_label  or  "(266 uses remaining)" in _this_label  or  "(267 uses remaining)" in _this_label  or  "(268 uses remaining)" in _this_label  or  "(269 uses remaining)" in _this_label  or  "(270 uses remaining)" in _this_label  or  "(271 uses remaining)" in _this_label  or  "(272 uses remaining)" in _this_label  or  "(273 uses remaining)" in _this_label  or  "(274 uses remaining)" in _this_label  or  "(275 uses remaining)" in _this_label  or  "(276 uses remaining)" in _this_label  or  "(277 uses remaining)" in _this_label  or  "(278 uses remaining)" in _this_label  or  "(279 uses remaining)" in _this_label  or  "(280 uses remaining)" in _this_label  or  "(281 uses remaining)" in _this_label  or  "(282 uses remaining)" in _this_label  or  "(283 uses remaining)" in _this_label  or  "(284 uses remaining)" in _this_label  or  "(285 uses remaining)" in _this_label  or  "(286 uses remaining)" in _this_label  or  "(287 uses remaining)" in _this_label  or  "(288 uses remaining)" in _this_label  or  "(289 uses remaining)" in _this_label  or  "(290 uses remaining)" in _this_label  or  "(291 uses remaining)" in _this_label  or  "(292 uses remaining)" in _this_label  or  "(293 uses remaining)" in _this_label  or  "(294 uses remaining)" in _this_label  or  "(295 uses remaining)" in _this_label  or  "(296 uses remaining)" in _this_label  or  "(297 uses remaining)" in _this_label  or  "(298 uses remaining)" in _this_label  or  "(299 uses remaining)" in _this_label  or  "(300 uses remaining)" in _this_label
+                    if _uses_too_low != 2
+                        @setvar! _uses_too_low 1
+                    endif
+                    sysmsg _this_label 27
+                    overhead _this_label 27
+                else
+                    @setvar! _uses_too_low 2
+                endif
+            endif
+            @ignore _found
+        endwhile
+        @clearignore
+        if _found_skinner == 0 or _uses_too_low == 1
+            dclick _this_self_serial
+            waitforgump _common_gumps__shelf
+            ## scroll right
+            gumpresponse 21
+            waitforgump _common_gumps__shelf
+            ## select tools
+            gumpresponse 53
+            waitforgump _common_gumps__shelf
+            ## retrieve one
+            gumpresponse 23
+            waitforgump _common_gumps__shelf
+            ## get skinning knife
+            gumpresponse 233
+            waitforgump _common_gumps__shelf
+            gumpclose _common_gumps__shelf
+        endif
+        
     endif 
 
 
@@ -169,3 +243,17 @@ waitforgump  _common_gumps__shelf
 
 
 #
+
+
+### get one exceptional skinning knife
+dclick 0x4B41ED97
+waitforgump 3232825965
+gumpresponse 21
+waitforgump 3232825965
+gumpresponse 53
+waitforgump 3232825965
+gumpresponse 23
+waitforgump 3232825965
+gumpresponse 233
+waitforgump 3232825965
+gumpclose 3232825965
