@@ -6,6 +6,39 @@ sysmsg "deposit items no qol - start"
 
 
 
+    #### prev-trunks
+    ## train coal :: dirt patch :: id 2323 hue 2500
+    ## train track :: toy train track :: 48352
+    ## train track [turn] :: snow covered track :: 60209
+    ## train track [straight] :: snow covered track :: 60125
+    ## popcorn train car :: popcorn train :: 56037
+    ## a train engine :: wooden train engine :: 65287
+@setvar! _seasonal_and_events__crate  _deposit_loadout__chest__seasonal_and_events
+while @findtype! 54232|39857|52615  backpack as _this
+    ## halloween 2025 prev scratch ticket :: scratch ticket :: i65066 h2493
+    ## snowballs :: snowball :: 54232
+    ## cupid arrow bundle :: 39857
+    ## mending arrow :: 52615
+    #@ignore! _this
+    @getlabel! _this _this_label
+    sysmsg _this_label 11
+
+    @getlabel! _seasonal_and_events__crate  _this_chest_label
+    if "125 items" in _this_chest_label
+        overhead "seasonal and events stuff crate full"
+        dclick  _seasonal_and_events__crate
+        break
+    endif
+
+    lift _this 60000
+    drop _seasonal_and_events__crate  -1 -1 -1
+    #@getlabel! backpack _this_label
+    while queued
+        #@getlabel! backpack _this_label
+    endwhile
+    #@getlabel! backpack _this_label
+endwhile
+
 
 
 

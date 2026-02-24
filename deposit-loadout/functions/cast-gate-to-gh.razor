@@ -120,6 +120,7 @@ if mana > 39 and _this_lantern_on == 1  and  _this_gate_exists == 0
     @getlabel! backpack _tmp
 
     if insysmsg "You open a magical gate to another location"
+        sysmsg "dclick lanter"
         dclick _this_lantern_serial
     endif
 else
