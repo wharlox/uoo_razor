@@ -1,0 +1,75 @@
+### 2026-02-24T01:23:10-08:00
+### 97ea055f2ef232d1bb6c1a8fdd8da33dbfc84ace commit refs/remotes/origin/Subs
+
+// Buff - Reactive Armor / Protection / Bless
+
+
+if not cooldown 'Reactive' and not hidden and mana > 20 and not findbuff 'reactive armor' 
+    cast 'reactive armor'
+    wait 100
+    if not insysmsg 'You do not have that spell'
+        while casting 
+            wait 100
+        endwhile
+        wait 600
+        cooldown 'Reactive' 10000
+    endif  
+endif 
+
+if not cooldown 'Reflection' and not hidden and mana > 20 and skill 'magery' >= 70 and not findbuff 'magic reflection' 
+    cast 'magic reflection'
+    wait 100
+    if not insysmsg 'You do not have that spell'
+        while casting 
+            wait 100
+        endwhile
+        wait 222
+        cooldown 'Reflection' 60000
+    endif  
+endif 
+
+if not cooldown 'Protection' and not hidden and mana > 20 and skill 'magery' >= 40 and not findbuff 'protection'
+    cast 'protection'
+    wait 100
+    if not insysmsg 'You do not have that spell'
+        while casting 
+            wait 100
+        endwhile
+        wait 222
+        cooldown 'Protection' 10000
+    endif  
+endif 
+
+if name = 'a stranger'
+    hotkey 'play script: Events\Strangelands'
+endif
+
+if not hidden and mana > 20 and skill 'magery' >= 50 and hp < 120
+    @getlabel! backpack _bp
+    cast 'bless'
+    wait 100
+    if not insysmsg 'You do not have that spell'
+        while casting 
+            wait 100
+        endwhile
+        wait 222
+        wft 200
+        target self
+        wait 222
+    endif 
+endif 
+
+if not hidden and mana > 20 and skill 'magery' >= 50
+    cast 'telekinesis'
+    wait 100
+    if not insysmsg 'You do not have that spell'
+        while casting 
+            wait 100
+        endwhile
+        wft 200
+        target self
+        wait 222
+    endif 
+endif
+
+hotkey 'play script: Subs\Routing'    

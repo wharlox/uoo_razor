@@ -1,0 +1,127 @@
+### 2026-02-24T01:23:10-08:00
+### 97ea055f2ef232d1bb6c1a8fdd8da33dbfc84ace commit refs/remotes/origin/Subs
+
+// TRAP DETONATE
+
+clearsysmsg 
+if name = 'a stranger' 
+    getlabel backpack pingCheck
+    dclicktype '29447'
+    getlabel backpack pingCheck 
+    if insysmsg 'You detonate a ground trap.'
+        if skill 'detecting hidden' <= 80      
+        overhead '80 detonate stranger'
+            cooldown 'Detonate' 35000  
+        elseif skill 'detecting hidden' <= 84      
+            overhead '84 detonate stranger'
+            cooldown 'Detonate' 34000  
+        elseif skill 'detecting hidden' <= 88      
+            overhead '88 detonate stranger'
+            cooldown 'Detonate' 33000                  
+        elseif skill 'detectng hidden' <= 92      
+            overhead '92 detonate stranger'
+        cooldown 'Detonate' 32000   
+        elseif skill 'detecting hidden' <= 96      
+            overhead '96 detonate stranger'
+            cooldown 'Detonate' 31000     
+        elseif skill 'detecting hidden' <= 100      
+            overhead '100 detonate stranger'
+            cooldown 'Detonate' 30000     
+        endif
+    endif
+    hotkey 'play script: Subs\Routing'    
+endif
+
+
+
+
+
+if lhandempty and  not casting
+    #@getlabel! backpack _bp
+
+    #### weapon
+        if @find! _t_equip_lhand  backpack
+            @getlabel! backpack _bp
+            if not casting
+                @getlabel! backpack _bp
+                #dclick  _t_equip_lhand
+                lift _t_equip_lhand
+                drop self LeftHand
+                while queued
+                    @getlabel! backpack _bp
+                endwhile
+            endif
+        else
+            @unsetvar _t_equip_lhand
+        endif
+    endif
+
+endif
+
+
+
+while lhandempty and not casting
+    if skill 'Fencing' >= 80    
+        if findtype 'kryss' backpack
+            dclicktype 'kryss' backpack
+            overhead 'Kryss'    
+            break
+        endif        
+    endif
+    if skill 'Mace Fighting' >= 80
+        if findtype 'flail' backpack
+            dclicktype 'flail' backpack
+            overhead 'Flail'    
+            break
+        endif     
+    endif
+    if skill 'Swordsmanship' >= 80
+        if findtype 'scimitar' backpack
+            dclicktype 'scimitar' backpack
+            overhead 'Scimitar'    
+            break
+        endif             
+    endif   
+    if skill 'Fishing' >= 80
+        if findtype 'harpoon' backpack
+            dclicktype 'harpoon' backpack
+            overhead 'Harpoon'    
+            break
+        endif             
+    endif    
+    if skill 'Wrestling' >= 80
+        if findtype 'caesti' backpack
+            dclicktype 'caesti' backpack
+            overhead 'Caesti'    
+            break
+        endif             
+    endif        
+    break 
+endwhile
+getlabel backpack pingCheck
+dclicktype '29447'
+getlabel backpack pingCheck
+if insysmsg 'You detonate a ground trap.'  
+    cooldown 'Detonate' 15100  
+endif  
+    
+
+
+#### offhand
+if rhandempty and not casting  
+    @getlabel! backpack _bp
+    if @find! _t_equip_rhand  backpack
+        @getlabel! backpack _bp
+        dclick  _t_equip_rhand
+        #lift _t_equip_rhand
+        #drop self RightHand
+    else
+        @unsetvar _t_equip_rhand
+    endif
+endif
+while queued
+endwhile
+
+
+
+hotkey 'play script: Advanced\_Master'

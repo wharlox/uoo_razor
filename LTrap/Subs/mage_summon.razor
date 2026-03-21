@@ -1,0 +1,42 @@
+
+if not dead
+    if skill 'magery' >= 100 and skill 'meditation' >= 80 and skill 'spirit speak' >= 80 and not cooldown 'move' and not cooldown 'Setting Trap' and not hidden and not casting 
+    #and not targetexists
+            // ------------------------ Summon Elementals
+            // ------------------------ Summon Elementals
+            // ------------------------ Summon Elementals
+            if mana > 54 and followers < 4 and findtype '3963' self and findtype '3974' self and findtype '3981' self   
+                #cast 'earth Elemental'
+                #cast 'fire Elemental'
+                #cast 'water elemental'
+                cast 'summon daemon'
+                @getlabel! backpack _tmp
+                while casting
+                    @getlabel! backpack _tmp
+                endwhile
+                @getlabel! backpack _tmp
+                say 'All Guard Me'
+            endif
+
+            if 1 == 1
+            if mana > 54 and followers == 4 and findtype '3963' self and findtype '3974' self and findtype '3981' self   
+                //    cast 'earth Elemental'
+                cast 'blade spirits'
+                @getlabel! backpack _tmp
+                while casting
+                    @getlabel! backpack _tmp
+                endwhile
+                @getlabel! backpack _tmp
+                wft 500
+                target self
+            endif
+            endif
+
+        endif
+        
+endif
+
+
+hotkey 'play script: Subs\Routing'
+## 337
+## old papua

@@ -1,0 +1,132 @@
+### 2026-02-24T01:23:10-08:00
+### 97ea055f2ef232d1bb6c1a8fdd8da33dbfc84ace commit refs/remotes/origin/Subs
+
+// Weapon 1h
+overhead 'Weapon Swap 1h'
+while not dead
+    if skill 'Fencing' >= 50    
+        if findtype 'kryss' backpack
+            dclicktype 'kryss' backpack
+            overhead 'kryss'    
+            break
+        endif  
+        if findtype 'assassins dagger' backpack
+            dclicktype 'assassins dagger' backpack
+            overhead 'assassins dagger'    
+            break
+        endif        
+        if findtype 'tracker knife' backpack
+            dclicktype 'tracker knife' backpack
+            overhead 'tracker knife'    
+            break
+        endif       
+        if findtype 'kukri' backpack
+            dclicktype 'kukri' backpack
+            overhead 'kukri'    
+            break
+        endif         
+        if findtype 'war fork' backpack
+            dclicktype 'war fork' backpack
+            overhead 'war fork'    
+            break
+        endif 
+        if findtype 'epee' backpack
+            dclicktype 'epee' backpack
+            overhead 'epee'    
+            break
+        endif        
+        if findtype 'rapier' backpack
+            dclicktype 'rapier' backpack
+            overhead 'rapier'    
+            break
+        endif
+        if findtype 'sabre' backpack
+            dclicktype 'sabre' backpack
+            overhead 'sabre'    
+            break
+        endif        
+    endif
+    
+    if skill 'Mace Fighting' >= 50
+        if findtype 'club' backpack
+            dclicktype 'club' backpack
+            overhead 'club'    
+            break
+        endif     
+        if findtype 'war axe' backpack
+            dclicktype 'war axe' backpack
+            overhead 'war axe'    
+            break
+        endif          
+        if findtype 'hammer pick' backpack
+            dclicktype 'hammer pick' backpack
+            overhead 'hammer pick'    
+            break
+        endif   
+        if findtype 'cudgel' backpack
+            dclicktype 'cudgel' backpack
+            overhead 'cudgel'    
+            break
+        endif         
+        if findtype 'skull club' backpack
+            dclicktype 'skull club' backpack
+            overhead 'skull club'    
+            break
+        endif          
+        if findtype 'mace' backpack
+            dclicktype 'mace' backpack
+            overhead 'mace'    
+            break
+        endif  
+        if findtype 'maul' backpack
+            dclicktype 'maul' backpack
+            overhead 'maul'    
+            break
+        endif  
+        if findtype 'war mace' backpack
+            dclicktype 'war mace' backpack
+            overhead 'war mace'    
+            break
+        endif       
+    endif
+        
+    if skill 'Swordsmanship' >= 50
+        if findtype 'katana' backpack
+            dclicktype 'katana' backpack
+            overhead 'katana'    
+            break
+        endif      
+        if findtype 'scimitar' backpack
+            dclicktype 'scimitar' backpack
+            overhead 'scimitar'    
+            break
+        endif        
+        if findtype 'cutlass' backpack
+            dclicktype 'cutlass' backpack
+            overhead 'cutlass'    
+            break
+        endif        
+        if findtype 'norse axe' backpack
+            dclicktype 'norse axe' backpack
+            overhead 'norse axe'    
+            break
+        endif        
+        if findtype 'viking sword' backpack
+            dclicktype 'viking sword' backpack
+            overhead 'viking sword'    
+            break
+        endif
+        if findtype 'longsword' backpack
+            dclicktype 'longsword' backpack
+            overhead 'longsword'    
+            break
+        endif
+        if findtype 'broadsword' backpack
+            dclicktype 'broadsword' backpack
+            overhead 'broadsword'    
+            break
+        endif         
+    endif     
+    break 
+endwhile
+hotkey 'play script: Subs\Routing'

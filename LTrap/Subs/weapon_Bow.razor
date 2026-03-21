@@ -1,0 +1,74 @@
+### 2026-02-24T01:23:10-08:00
+### 97ea055f2ef232d1bb6c1a8fdd8da33dbfc84ace commit refs/remotes/origin/Subs
+
+// WEAPON BOW
+overhead 'Weapon Swap Bow'
+while not dead   
+    if skill 'Archery' >= 50   
+        if findtype 'bow' backpack
+            dclicktype 'bow' backpack
+            overhead 'bow' 
+            break        
+        endif  
+        if findtype 'composite bow' backpack
+            dclicktype 'composite bow' backpack
+            overhead 'Hunting Bow' 
+            break        
+        endif  
+        if findtype 'recurve bow' backpack
+            dclicktype 'recurve bow' backpack
+            overhead 'recurve bow' 
+            break        
+        endif    
+        if findtype 'crossbow' backpack
+            dclicktype 'crossbow' backpack
+            overhead 'crossbow' 
+            break        
+        endif          
+        if findtype 'balestra' backpack
+            dclicktype 'balestra' backpack
+            overhead 'balestra' 
+            break        
+        endif         
+        if findtype 'stubnose crossbow' backpack
+            dclicktype 'stubnose crossbow' backpack
+            overhead 'stubnose crossbow' 
+            break        
+        endif          
+        if findtype 'heavy crossbow' backpack
+            dclicktype 'heavy crossbow' backpack
+            overhead 'heavy crossbow' 
+            break        
+        endif 
+        if findtype 'tower guard crossbow' backpack
+            dclicktype 'tower guard crossbow' backpack
+            overhead 'tower guard crossbow' 
+            break        
+        endif   
+        if findtype 'long bow' backpack
+            dclicktype 'long bow' backpack
+            overhead 'long bow' 
+            break        
+        endif     
+    endif  
+    
+    if skill 'Arcane' >= 50   
+        if findtype 'prismatic staff' backpack
+            dclicktype 'prismatic staff' backpack
+            overhead 'Staff' 
+            break        
+        endif  
+        
+    endif     
+    
+#    if skill 'Arcane' >= 50
+#        if findtype '31017|31019|31021|31023|31025|31029|31031|31033|31035|31037|31038|31041|31043|31045|31047|31049|31051|31053|31055' backpack as ArcaneStaff
+#            dclicktype ArcaneStaff backpack
+#            overhead 'Arcane Staff'    
+#            break
+#        endif     
+#    endif    
+
+    break
+endwhile
+hotkey 'play script: Subs\Routing'

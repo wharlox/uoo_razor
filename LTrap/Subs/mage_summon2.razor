@@ -1,0 +1,163 @@
+
+#### allows summoning any configuration usin short names
+#### if multiple types are needed, append a number to the end, see example
+##  priority: earth, water, fire, air, daemon, spirit blade, creature
+##  set the summons via the pushlist entries
+
+#### known issues:
+## if a summon is out of view it is considered not-summoned and the script will try to summon it
+## no necro support
+
+
+
+
+
+#### do not edit remove and create lists
+@removelist!  _cast_summons
+@createlist!  _cast_summons
+
+
+
+#### edit the pushlist entries below
+#@pushlist!  _cast_summons  "earth 1"
+#@pushlist!  _cast_summons  "earth 2"
+#@pushlist!  _cast_summons  "water 1"
+#@pushlist!  _cast_summons  "water 2"
+#@pushlist!  _cast_summons  "fire 1"
+#@pushlist!  _cast_summons  "fire 2"
+@pushlist!  _cast_summons  "air 1"
+#@pushlist!  _cast_summons  "air 2"
+@pushlist!  _cast_summons  "daemon 1"
+#@pushlist!  _cast_summons  "daemon 2"
+#@pushlist!  _cast_summons  "blade"
+@pushlist!  _cast_summons  "creature 1"
+#@pushlist!  _cast_summons  "creature 2"
+#@pushlist!  _cast_summons  "creature 3"
+#@pushlist!  _cast_summons  "creature 4"
+#@pushlist!  _cast_summons  "creature 5"
+
+
+
+
+#### do not edit below
+
+
+
+@clearignore
+if followers < 5
+foreach _cast in _cast_summons
+
+    @removelist _cast_tmp
+    @createlist _cast_tmp
+
+    @setvar! _found_this_summon 1
+
+    if "earth" in _cast
+        while _found_this_summon == 1 and @findtype! "an earth elemental" ground -1 -1 -1 as _this
+            @getlabel! backpack _bp
+            @ignore _this
+            if noto _this == "friend"
+                @setvar! _found_this_summon 11
+            endif
+        endwhile
+        @pushlist _cast_tmp "earth elemental"
+
+    elseif "water" in _cast
+        while _found_this_summon == 1 and @findtype! "a water elemental" ground -1 -1 -1 as _this
+            @getlabel! backpack _bp
+            @ignore! _this
+            if noto _this == "friend"
+                @setvar! _found_this_summon 11
+            endif
+        endwhile
+        @pushlist _cast_tmp "water elemental"
+        
+    elseif "fire" in _cast
+        while _found_this_summon == 1 and @findtype! "a fire elemental" ground -1 -1 -1 as _this
+            @getlabel! backpack _bp
+            @ignore! _this
+            if noto _this == "friend"
+                @setvar! _found_this_summon 11
+            endif
+        endwhile
+        @pushlist _cast_tmp "fire elemental"
+        
+    elseif "air" in _cast
+        while _found_this_summon == 1 and @findtype! "an air elemental" ground -1 -1 -1 as _this
+            @getlabel! backpack _bp
+            @ignore _this
+            @setvar _tmp noto _this
+            sysmsg _tmp
+            if noto _this == "friend"
+                @setvar! _found_this_summon 11
+            endif
+        endwhile
+        @pushlist _cast_tmp "air elemental"
+        
+    elseif "deamon" in _cast or "daemon" in _cast
+        while _found_this_summon == 1 and @findtype! "a daemon" ground -1 -1 -1 as _this
+            @getlabel! backpack _bp
+            @ignore! _this
+            if noto _this == "friend"
+                @setvar! _found_this_summon 11
+            endif
+        endwhile
+        @pushlist _cast_tmp "summon daemon"
+        
+    elseif "blade spirits" in _cast or "blade" in _cast  or "spirit" in _cast
+        while _found_this_summon == 1 and @findtype! "a blade spirit" ground -1 -1 -1 as _this
+            @getlabel! backpack _bp
+            @ignore! _this
+            if noto _this == "friend"
+                @setvar! _found_this_summon 11
+            endif
+        endwhile
+        @pushlist _cast_tmp "blade spirits"
+        
+    elseif  "creature" in _cast 
+        while _found_this_summon == 1 and @findtype! "a primordial whelp|an aegis rat|a cougar|a wolf|a grizzly bear|a brown bear|a corpse eater|a familiar|a rock guar|a flamehound|a sand crab|a monitor hatchling|a firebat|a black bear|a muck|a polar bear|shallow water|a scorpion|a swamp spider|a searing lizard|a minion|a fire salamander|a fire ant|a silverback|a jaguar|an aegis mongbat|a cave bat|a primordial|a monitor|an asp|an imp|a winter wolf|a cave bear|a giant swamp slug|an aegis slime|a trapdoor spider|a chameleon|a searing imp|a dragon whelp|a drake whelp|a devilbat|a wolfhound|a blood ape|an army ant|a molten mongbat|a stinger|a rime guar|an aegis scorpion|a skulker|a komodo|a shade wolf|a husk crab|an aegis imp|a fire minion|a snowdrift|a spitting viper|a vampire bat" as _this
+            @getlabel! backpack _bp
+            @ignore! _this
+            if noto _this == "friend"
+                @setvar! _found_this_summon 11
+            endif
+        endwhile
+        @pushlist _cast_tmp "Summ. Creature"
+        
+    else
+        overhead "unknown item to cast :: {{_cast}}" 66
+        @removelist _cast_tmp
+        
+    endif
+    @getlabel! backpack _bp
+    if _found_this_summon == 11
+        #overhead " NOT casting :: {{_cast}}"
+    else
+        if listexists _cast_tmp
+            foreach _cast in _cast_tmp
+                #overhead "casting :: {{_cast}}"
+                cast _cast
+                break
+            endfor
+            @getlabel! backpack _bp
+            while casting
+                @getlabel! backpack _bp
+            endwhile
+            @getlabel! backpack _bp
+            waitfortarget 500
+            target self
+        endif
+        break
+    endif
+        
+endfor
+endif
+
+
+stop
+
+hotkey 'play script: Subs\Routing'
+#
+
+## 337
+## old papua

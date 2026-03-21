@@ -1,0 +1,132 @@
+### 2026-02-24T01:23:10-08:00
+### 97ea055f2ef232d1bb6c1a8fdd8da33dbfc84ace commit refs/remotes/origin/Subs
+
+// EXPLOSION POTION
+clearsysmsg 
+getlabel backpack pingCheck
+target clear
+getlabel backpack pingCheck
+
+while not cooldown 'Explosion' and findtype 'Purple Potion' self as explosion
+    if warmode
+        hotkey 'next murderer player target'
+        getlabel backpack pingCheck   
+        if skill 'magery' >= 30 and not insysmsg 'No one matching that was found on your screen.'  
+            overhead '† Murderer †' 33 lasttarget 
+            cast 'Telekinesis'
+            wait 100
+            while casting 
+                wait 100
+            endwhile   
+            wft 1000             
+            hotkey 'last target' 
+            getlabel backpack pingCheck     
+            dclick explosion
+            wft 1000  
+            hotkey 'last target'          
+            if not cooldown 'Explosion' and skill 'alchemy' >= 80 
+                cooldown 'Explosion' 13000
+            elseif not cooldown 'Explosion' 
+                cooldown 'Explosion' 15000
+            endif
+            break  
+        endif   
+        hotkey 'next criminal player target'   
+        getlabel backpack pingCheck
+        if skill 'magery' >= 30 and not insysmsg 'No one matching that was found on your screen.'  
+            overhead '† Criminal Player †' 88 lasttarget 
+            cast 'Telekinesis'
+            wait 100
+            while casting 
+                wait 100
+            endwhile   
+            wft 1000             
+            hotkey 'last target' 
+            getlabel backpack pingCheck     
+            dclick explosion
+            wft 1000  
+            hotkey 'last target'          
+            if not cooldown 'Explosion' and skill 'alchemy' >= 80 
+                cooldown 'Explosion' 13000
+            elseif not cooldown 'Explosion' 
+                cooldown 'Explosion' 15000
+            endif
+            break 
+        endif      
+        hotkey 'next grey player target'
+        getlabel backpack pingCheck
+        if skill 'magery' >= 30 and not insysmsg 'No one matching that was found on your screen.'  
+            overhead '† Grey Player †' 88 lasttarget 
+            cast 'Telekinesis'
+            wait 100
+            while casting 
+                wait 100
+            endwhile   
+            wft 1000             
+            hotkey 'last target' 
+            getlabel backpack pingCheck     
+            dclick explosion
+            wft 1000  
+            hotkey 'last target'          
+            if not cooldown 'Explosion' and skill 'alchemy' >= 80 
+                cooldown 'Explosion' 13000
+            elseif not cooldown 'Explosion' 
+                cooldown 'Explosion' 15000
+            endif
+            break 
+        endif  
+    endif
+    hotkey 'target closest grey monster' 
+    getlabel backpack pingCheck
+    if skill 'magery' >= 30 and not insysmsg 'No one matching that was found on your screen.'  
+        overhead '† Target †' 88 lasttarget     
+        cast 'Telekinesis'
+        wait 100
+        while casting 
+            wait 100
+        endwhile   
+        wft 1000             
+        hotkey 'last target' 
+        getlabel backpack pingCheck     
+        dclick explosion
+        wft 1000  
+        hotkey 'last target'          
+        if not cooldown 'Explosion' and skill 'alchemy' >= 80 
+            cooldown 'Explosion' 13000
+        elseif not cooldown 'Explosion' 
+            cooldown 'Explosion' 15000
+        endif
+        break 
+    endif
+    if not cooldown 'Explosion' and findtype 'Purple Potion' self as explosion    
+        hotkey 'target closest grey monster'
+        getlabel backpack pingCheck
+        if not insysmsg 'No one matching that was found on your screen.'  
+            overhead '† Target †' 88 lasttarget 
+            getlabel backpack pingCheck   
+            dclick explosion
+            wft 1000
+            getlabel backpack pingCheck  
+            hotkey 'last target'          
+            if not cooldown 'Explosion' and skill 'alchemy' >= 80 
+                cooldown 'Explosion' 13000
+            elseif not cooldown 'Explosion' 
+                cooldown 'Explosion' 15000
+            endif
+            wait 200 
+        endif
+    endif        
+    break
+endwhile
+
+getlabel backpack pingCheck  
+if cooldown 'Explosion' and findtype 'Purple Potion' backpack -1 1 1 as explosion
+    overhead 'Live Explosive!' 33
+    dclick explosion 
+    wft 1000
+    target explosion
+    getlabel backpack pingCheck
+endif 
+
+
+hotkey 'play script: Subs\Routing'

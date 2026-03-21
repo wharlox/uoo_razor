@@ -1,0 +1,105 @@
+### 2026-02-24T01:23:10-08:00
+### 97ea055f2ef232d1bb6c1a8fdd8da33dbfc84ace commit refs/remotes/origin/Subs
+
+// Lightning
+clearsysmsg 
+getlabel backpack pingCheck
+target clear
+
+while not dead
+    if warmode
+        hotkey 'next murderer player target'
+        getlabel backpack pingCheck
+        if not insysmsg 'No one matching that was found on your screen.' 
+            overhead '† Murderer †' 33 lasttarget 
+            getlabel backpack pingCheck   
+            cast 'lightning'
+            wait 100
+            while casting 
+                wait 100
+            endwhile
+            hotkey 'last target'
+            getlabel backpack pingCheck    
+            hotkey 'next murderer player target'
+            getlabel backpack pingCheck
+            if not insysmsg 'No one matching that was found on your screen.'  
+                overhead '† Murderer †' 33 lasttarget 
+                getlabel backpack pingCheck   
+                hotkey 'attack last target'
+                getlabel backpack pingCheck               
+            endif
+        break
+        endif
+       
+        hotkey 'next criminal player target'
+        getlabel backpack pingCheck
+        if not insysmsg 'No one matching that was found on your screen.' 
+            overhead '† Criminal †' 88 lasttarget 
+            getlabel backpack pingCheck   
+            cast 'lightning'
+            wait 100
+            while casting 
+                wait 100
+            endwhile
+            hotkey 'last target'
+            getlabel backpack pingCheck    
+            if not insysmsg 'No one matching that was found on your screen.'  
+                overhead '† Criminal †' 88 lasttarget 
+                getlabel backpack pingCheck   
+                hotkey 'attack last target'
+                getlabel backpack pingCheck    
+            endif
+        break
+        endif
+        hotkey 'next grey player target'
+        getlabel backpack pingCheck
+        if not insysmsg 'No one matching that was found on your screen.' 
+            overhead '† Grey Player †' 88 lasttarget 
+            getlabel backpack pingCheck   
+            cast 'lightning'
+            wait 100
+            while casting 
+                wait 100
+            endwhile
+            hotkey 'last target'
+            getlabel backpack pingCheck    
+            hotkey 'next murderer player target'
+            getlabel backpack pingCheck
+            if not insysmsg 'No one matching that was found on your screen.'  
+                overhead '† Grey Player †' 88 lasttarget 
+                getlabel backpack pingCheck   
+                hotkey 'attack last target'
+                getlabel backpack pingCheck                
+            endif
+        break
+        endif
+    endif
+    hotkey 'target closest grey monster' 
+    getlabel backpack pingCheck
+    if not insysmsg 'No one matching that was found on your screen.' 
+        overhead '† Monster †' 88 lasttarget 
+        getlabel backpack pingCheck   
+        cast 'lightning'
+        wait 100
+        while casting 
+            wait 100
+        endwhile
+        hotkey 'last target'
+        getlabel backpack pingCheck    
+        hotkey 'target closest grey monster' 
+        getlabel backpack pingCheck
+        if not insysmsg 'No one matching that was found on your screen.'  
+            overhead '† Monster †' 88 lasttarget  
+            getlabel backpack pingCheck   
+            hotkey 'attack last target'
+            getlabel backpack pingCheck                
+
+        endif
+    break
+    endif
+endwhile
+
+hotkey 'play script: Subs\Routing'    
+    
+    
+    

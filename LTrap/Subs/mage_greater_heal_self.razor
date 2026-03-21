@@ -1,0 +1,20 @@
+if not dead
+
+    @hotkey "Cancel Current Target"
+    // === Heal Greater - Mage 
+    if not hidden and diffhits > 1 and not casting and skill 'magery' >= 60 findtype '3972' self and findtype '3973' self and findtype '3974' self and mana > 54 
+        @getlabel! backpack _bp
+        cast 'Greater Heal'
+        @getlabel! backpack _bp
+        while casting
+            @getlabel! backpack _bp
+        endwhile
+        @getlabel! backpack _bp
+        wft 200
+        target self
+    endif  
+    
+endif
+
+
+hotkey 'play script: Subs\Routing'
