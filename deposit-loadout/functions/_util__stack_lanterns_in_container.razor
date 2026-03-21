@@ -1,0 +1,145 @@
+
+#### primary goal to stack dungeon lanterns in adventures satchel
+
+
+    
+####
+@setvar!  _util__stack_lanterns__source_container__serial  backpack
+@setvar!  _util__stack_lanterns__source_container__search_depth  100
+
+@setvar!  _util__stack_lanterns__destination_container__serial  0x454A96ED
+
+
+
+
+###
+## top left:  43  64
+## top right: 158 64
+## bot left:  43  134
+## bot right: 158 134
+#
+
+## 115 horizontal
+## 70  vertical
+
+
+## 115 is horizantal, 13 is # lanterns, 8 is slots apart
+## (115-(13*8))/2 == offset from left/right sides  == 5.5
+## START: 43+5+(8*0)
+##
+
+#
+
+
+@setvar!  _util__stack_lanterns__destination__others__x  46
+@setvar!  _util__stack_lanterns__destination__others__y  99
+
+
+
+
+@setvar!  _util__stack_lanterns__destination__aegis__x  48
+@setvar!  _util__stack_lanterns__destination__aegis__y  85
+
+@setvar!  _util__stack_lanterns__destination__cavernam__x  56
+@setvar!  _util__stack_lanterns__destination__cavernam__y  _util__stack_lanterns__destination__aegis__y
+
+@setvar!  _util__stack_lanterns__destination__darkmire__x  64
+@setvar!  _util__stack_lanterns__destination__darkmire__y  _util__stack_lanterns__destination__aegis__y
+
+@setvar!  _util__stack_lanterns__destination__inferno__x  72
+@setvar!  _util__stack_lanterns__destination__inferno__y  _util__stack_lanterns__destination__aegis__y
+
+@setvar!  _util__stack_lanterns__destination__kraul__x  80
+@setvar!  _util__stack_lanterns__destination__kraul__y  _util__stack_lanterns__destination__aegis__y
+
+@setvar!  _util__stack_lanterns__destination__petram__x  88
+@setvar!  _util__stack_lanterns__destination__petram__y  _util__stack_lanterns__destination__aegis__y
+
+@setvar!  _util__stack_lanterns__destination__nusero__x  96
+@setvar!  _util__stack_lanterns__destination__nusero__y  _util__stack_lanterns__destination__aegis__y
+
+@setvar!  _util__stack_lanterns__destination__ossuary__x  104
+@setvar!  _util__stack_lanterns__destination__ossuary__y  _util__stack_lanterns__destination__aegis__y
+
+@setvar!  _util__stack_lanterns__destination__pulma__x  112
+@setvar!  _util__stack_lanterns__destination__pulma__y  _util__stack_lanterns__destination__aegis__y
+
+@setvar!  _util__stack_lanterns__destination__ssc__x  120
+@setvar!  _util__stack_lanterns__destination__ssc__y  _util__stack_lanterns__destination__aegis__y
+
+@setvar!  _util__stack_lanterns__destination__mausoleum__x  128
+@setvar!  _util__stack_lanterns__destination__mausoleum__y  _util__stack_lanterns__destination__aegis__y
+
+@setvar!  _util__stack_lanterns__destination__tidal__x  136
+@setvar!  _util__stack_lanterns__destination__tidal__y  _util__stack_lanterns__destination__aegis__y
+
+@setvar!  _util__stack_lanterns__destination__netherzone__x  144
+@setvar!  _util__stack_lanterns__destination__netherzone__y  _util__stack_lanterns__destination__aegis__y
+
+@setvar!  _util__stack_lanterns__destination__wilderness__x  152
+@setvar!  _util__stack_lanterns__destination__wilderness__y  _util__stack_lanterns__destination__aegis__y
+
+
+
+
+@drop backpack
+
+@clearignore
+## find (serial) [src] [hue] [qty] [range]
+while @findtype! 2594|2597  _util__stack_lanterns__source_container__serial  -1 -1  _util__stack_lanterns__source_container__search_depth  as _this
+    @getlabel! _this _label
+    @ignore _this
+
+    if "aegis" in _label
+        lift  _this
+        drop  _util__stack_lanterns__destination_container__serial  _util__stack_lanterns__destination__aegis__x  _util__stack_lanterns__destination__aegis__y
+    elseif "cavernam" in _label
+        lift  _this
+        drop  _util__stack_lanterns__destination_container__serial  _util__stack_lanterns__destination__cavernam__x  _util__stack_lanterns__destination__cavernam__y
+    elseif "darkmire" in _label
+        lift  _this
+        drop  _util__stack_lanterns__destination_container__serial  _util__stack_lanterns__destination__darkmire__x  _util__stack_lanterns__destination__darkmire__y
+    elseif "inferno" in _label
+        lift  _this
+        drop  _util__stack_lanterns__destination_container__serial  _util__stack_lanterns__destination__inferno__x  _util__stack_lanterns__destination__inferno__y
+    elseif "kraul" in _label
+        lift  _this
+        drop  _util__stack_lanterns__destination_container__serial  _util__stack_lanterns__destination__kraul__x  _util__stack_lanterns__destination__kraul__y
+    elseif "petram" in _label
+        lift  _this
+        drop  _util__stack_lanterns__destination_container__serial  _util__stack_lanterns__destination__petram__x  _util__stack_lanterns__destination__petram__y
+    elseif "nusero" in _label
+        lift  _this
+        drop  _util__stack_lanterns__destination_container__serial  _util__stack_lanterns__destination__nusero__x  _util__stack_lanterns__destination__nusero__y
+    elseif "ossuary" in _label
+        lift  _this
+        drop  _util__stack_lanterns__destination_container__serial  _util__stack_lanterns__destination__ossuary__x  _util__stack_lanterns__destination__ossuary__y
+    elseif "pulma" in _label
+        lift  _this
+        drop  _util__stack_lanterns__destination_container__serial  _util__stack_lanterns__destination__pulma__x  _util__stack_lanterns__destination__pulma__y
+    elseif "shadowspire" in _label
+        lift  _this
+        drop  _util__stack_lanterns__destination_container__serial  _util__stack_lanterns__destination__ssc__x  _util__stack_lanterns__destination__ssc__y
+    elseif "mausoleum" in _label
+        lift  _this
+        drop  _util__stack_lanterns__destination_container__serial  _util__stack_lanterns__destination__mausoleum__x  _util__stack_lanterns__destination__mausoleum__y
+    elseif "tidal tomb" in _label
+        lift  _this
+        drop  _util__stack_lanterns__destination_container__serial  _util__stack_lanterns__destination__tidal__x  _util__stack_lanterns__destination__tidal__y
+    elseif "netherzone" in _label
+        lift  _this
+        drop  _util__stack_lanterns__destination_container__serial  _util__stack_lanterns__destination__netherzone__x  _util__stack_lanterns__destination__netherzone__y
+    elseif "wilderness" in _label
+        lift  _this
+        drop  _util__stack_lanterns__destination_container__serial  _util__stack_lanterns__destination__wilderness__x  _util__stack_lanterns__destination__wilderness__y
+    else
+        lift  _this
+        drop  _util__stack_lanterns__destination_container__serial  _util__stack_lanterns__destination__others__x  _util__stack_lanterns__destination__others__y
+    endif
+    
+    while queued
+        @getlabel! backpack _bp
+    endwhile
+endwhile
+
+#

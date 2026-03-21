@@ -23,6 +23,9 @@ sysmsg "loadout organizer - start" 165
 
 
 @drop backpack 0 0 0
+while queued
+endwhile
+@getlabel! backpack _bp
 
 
 
@@ -62,6 +65,14 @@ if @findtype! "pouch" backpack  0 -1 1 as _loot_pouch
         @setvar!  _deposit_loadout_chain_loot_pouch  _loot_pouch
     endif
     @ignore  _loot_pouch
+else
+    sysmsg "no untrapped pouch directly within backpack" 55
+    overhead "no untrapped pouch directly within backpack" 55
+endif
+
+@clearignore
+if @find!  _deposit_loadout_chain_loot_pouch  backpack 0 -1 -1 as _loot_pouch
+    @ignore  _deposit_loadout_chain_loot_pouch
     ##  move all other untrapped pouches within loot-pouch
     ## onl applies to untrapped pouches direclty within backpack, not nested
     while @findtype! "pouch"  backpack 0 -1 1 as _other_pouch
@@ -178,12 +189,24 @@ if @findtype! "pouch" backpack  0 -1 1 as _loot_pouch
         @ignore _this
         @getlabel! _this _tmp_label
         lift _this 1
-        drop _loot_pouch 64 64 0
+        drop _loot_pouch 64 114 0
         while queued
         endwhile
         #@getlabel! backpack _tmp_label
         #wait 100
-        dclick _this
+        #dclick _this
+    endwhile
+    ##
+    while @findtype! "alchemists satchel" self -1 -1 1 as _this
+        @ignore _this
+        @getlabel! _this _tmp_label
+        lift _this 1
+        drop _loot_pouch 64 114 0
+        while queued
+        endwhile
+        #@getlabel! backpack _tmp_label
+        #wait 100
+        #dclick _this
     endwhile
 
 
@@ -195,12 +218,24 @@ if @findtype! "pouch" backpack  0 -1 1 as _loot_pouch
         @ignore _this
         @getlabel! _this _tmp_label
         lift _this 1
-        drop _loot_pouch 60 85 0
+        drop _loot_pouch 74 152 0
         while queued
         endwhile
         #@getlabel! backpack _tmp_label
         #wait 100
-        dclick _this
+        #dclick _this
+    endwhile
+    ##
+    while @findtype! "reagent satchel" self -1 -1 1 as _this
+        @ignore _this
+        @getlabel! _this _tmp_label
+        lift _this 1
+        drop _loot_pouch 44 114 0
+        while queued
+        endwhile
+        #@getlabel! backpack _tmp_label
+        #wait 100
+        #dclick _this
     endwhile
 
 
@@ -215,8 +250,8 @@ if @findtype! "pouch" backpack  0 -1 1 as _loot_pouch
 
 
 else
-    sysmsg "no untrapped pouch directly within backpack" 55
-    overhead "no untrapped pouch directly within backpack" 55
+    sysmsg "loot pouch not found in backpack" 55
+    overhead "loot pouch not found in backpack" 55
 endif
 @getlabel! backpack _tmp_label
 

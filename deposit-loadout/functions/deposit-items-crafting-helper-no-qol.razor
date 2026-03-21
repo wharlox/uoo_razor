@@ -1,0 +1,60 @@
+
+#sysmsg "deposit items crafting-helper-no-qol - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\deposit-items-crafting-helper-no-qol"
+
+#### for when no tome/vault/rack/ect exists, use a chest instead
+
+
+
+    #### crafting repair kit
+    ## tailoring repair kit :: tool kit :: 7866 h2901
+@setvar! _this_chest  _deposit_loadout__chest__crafting_helper_no_qol
+while @findtype! 7866  backpack as _this
+    @getlabel! _this _this_label
+    sysmsg _this_label 11
+
+    @getlabel! _this_chest  _this_chest_label
+    if "125 items" in _this_chest_label
+        overhead "seasonal and events stuff crate full"
+        dclick  _this_chest
+        @ignore! _this
+        break
+    endif
+
+    lift _this 60000
+    drop _this_chest  -1 -1 -1
+    #@getlabel! backpack _this_label
+    while queued
+        #@getlabel! backpack _this_label
+    endwhile
+    #@getlabel! backpack _this_label
+endwhile
+
+
+
+
+
+
+while queued
+endwhile
+
+
+
+@getlabel! backpack _this_label
+#wait 100
+# sysmsg "deposit items crafting-helper-no-qol - complete"
+
+
+
+
+#### continue script chain
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+foreach _itr in _util_continue_script_chain 
+    hotkey _itr
+endfor
+#if listexists _script_chain and list _script_chain > 0
+#    poplist _script_chain front
+#    foreach _a_script in _script_chain
+#        hotkey _a_script
+#    endfor
+#endif

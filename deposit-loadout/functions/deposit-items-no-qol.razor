@@ -6,6 +6,8 @@ sysmsg "deposit items no qol - start"
 
 
 
+
+
     #### prev-trunks
     ## train coal :: dirt patch :: id 2323 hue 2500
     ## train track :: toy train track :: 48352
@@ -13,8 +15,9 @@ sysmsg "deposit items no qol - start"
     ## train track [straight] :: snow covered track :: 60125
     ## popcorn train car :: popcorn train :: 56037
     ## a train engine :: wooden train engine :: 65287
+    ## st. patrick-s match game :: book :: 41467
 @setvar! _seasonal_and_events__crate  _deposit_loadout__chest__seasonal_and_events
-while @findtype! 54232|39857|52615  backpack as _this
+while @findtype! 54232|39857|52615|41467  backpack as _this
     ## halloween 2025 prev scratch ticket :: scratch ticket :: i65066 h2493
     ## snowballs :: snowball :: 54232
     ## cupid arrow bundle :: 39857
@@ -25,7 +28,7 @@ while @findtype! 54232|39857|52615  backpack as _this
 
     @getlabel! _seasonal_and_events__crate  _this_chest_label
     if "125 items" in _this_chest_label
-        overhead "seasonal and events stuff crate full"
+        overhead "seasonal and events stuff crate full {{_this_chest_label}}"
         dclick  _seasonal_and_events__crate
         break
     endif
@@ -53,7 +56,7 @@ if _deposit_loadout__tomes__arcane_rune_tome == 0
 
         @getlabel!  _this_chest  _this_chest_label
         if "125 items" in _this_chest_label
-            overhead "arcane rune crate full"
+            overhead "arcane rune crate full {{_this_chest_label}}"
             dclick  _this_chest
             break
         endif
@@ -84,7 +87,7 @@ if _deposit_loadout__menuable__carpet_rack == 0
 
         @getlabel!  _this_chest  _this_chest_label
         if "125 items" in _this_chest_label
-            overhead "carpet crate full"
+            overhead "carpet crate full {{_this_chest_label}}"
             dclick  _this_chest
             break
         endif

@@ -57,6 +57,7 @@ endif
 # if mana > 14  dispel
 # mana 40 gate
 
+
 ## gate or chiv gate
 @setvar!  _this_gate_exists  0
 #### if caster detects a moongate at CLOSE-TO player-location - range 0 and 1 are broken
@@ -69,16 +70,20 @@ if @findtype! "blue moongate" ground 0 1 1 as _this or  @findtype! 30528 ground 
             sysmsg "casting dispel" 11
             overhead "casting dispel" 11
         endif
+
         if targetexists
             hotkey 'cancel current target'
         endif
         cast 'dispel field'
+        @getlabel! backpack _tmp
 
         @getlabel! backpack _tmp
         while casting
             @getlabel! backpack _tmp
         endwhile
         @getlabel! backpack _tmp
+        while queued
+        endwhile
         
         #sysmsg "this2 {{_this}}"
         #sysmsg "that2 {{_that}}"
@@ -104,7 +109,9 @@ if mana > 39 and _this_lantern_on == 1  and  _this_gate_exists == 0
         sysmsg "casting gate to GH" 11
         overhead "casting gate to GH" 11
     endif
-    
+
+    @clearsysmsg
+
     dclick _this_tome_serial
     waitforgump 167090027 650
     ## tome page
@@ -112,14 +119,21 @@ if mana > 39 and _this_lantern_on == 1  and  _this_gate_exists == 0
     waitforgump 167090027 650
     ## cast gate
     gumpresponse 12
+    @getlabel! backpack _tmp
 
     @getlabel! backpack _tmp
     while casting
         @getlabel! backpack _tmp
     endwhile
     @getlabel! backpack _tmp
+    while queued
+    endwhile
+    @getlabel! backpack _tmp
+    #wait 100
 
-    if insysmsg "You open a magical gate to another location"
+    if insysmsg "you open a magical gate to another location"
+        @getlabel! backpack _tmp
+        #@getlabel! backpack _tmp
         sysmsg "dclick lanter"
         dclick _this_lantern_serial
     endif

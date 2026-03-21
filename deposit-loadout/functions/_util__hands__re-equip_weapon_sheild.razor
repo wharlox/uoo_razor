@@ -1,0 +1,51 @@
+
+#sysmsg "_util_msg - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\_util__hands__re-equip_weapon_sheild"
+
+
+#### weapon
+if lhandempty and not casting  and not targetexists
+    @getlabel! backpack _bp
+    if @find! _t_equip_lhand  backpack
+        @getlabel! backpack _bp
+        #dclick  _t_equip_lhand
+        lift _t_equip_rhand
+        drop self LeftHand
+    else
+        @unsetvar _t_equip_lhand
+    endif
+endif
+
+while queued
+    @getlabel!  backpack _bp
+endwhile
+
+
+
+
+
+
+#### offhand
+if rhandempty and not casting  and not targetexists
+    @getlabel! backpack _bp
+    if @find! _t_equip_rhand  backpack
+        @getlabel! backpack _bp
+        #dclick  _t_equip_rhand
+        lift _t_equip_rhand
+        drop self RightHand
+    else
+        @unsetvar _t_equip_rhand
+    endif
+endif
+
+while queued
+    @getlabel!  backpack _bp
+endwhile
+
+
+stop
+
+
+#### continue script chain
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+#
