@@ -333,7 +333,7 @@ elseif  _util_id__mode  ==  3  or  _util_id__mode  ==  4
             @pushlist!  _util_id__ignore_list  _this_item_findtype
             @ignore  _this_item_findtype
             if _util_id__move_id_item_to_bottom_left == 1
-                @lift _itr
+                @lift _this_item_findtype
                 @drop _util_id__source_container 0 65 0
                 while queued
                 endwhile
@@ -347,7 +347,7 @@ elseif  _util_id__mode  ==  3  or  _util_id__mode  ==  4
             @pushlist!  _util_id__ignore_list  _this_item_findtype
             @ignore  _this_item_findtype
             if _util_id__move_id_item_to_bottom_left == 1
-                @lift _itr
+                @lift _this_item_findtype
                 @drop _util_id__source_container 100 65 0
                 while queued
                 endwhile
@@ -539,4 +539,3 @@ elseif  _util_id__force_skill != 1  and  skill "Item Identification" < 120
 endif
 
 overhead _util_id_mode
-
