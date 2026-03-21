@@ -1,0 +1,169 @@
+### 2026-02-24T01:23:10-08:00
+### 97ea055f2ef232d1bb6c1a8fdd8da33dbfc84ace commit refs/remotes/origin/Subs
+
+// WEAPON 2H
+overhead 'Weapon Swap 2h'
+while not dead
+    if skill 'Fencing' >= 50     
+        if findtype 'Long Spear' backpack
+            dclicktype 'Long Spear' backpack
+            overhead 'Long Spear'    
+            break
+        endif  
+        if findtype 'sarissa' backpack
+            dclicktype 'sarissa' backpack
+            overhead 'sarissa'    
+            break
+        endif          
+        if findtype 'pitchfork' backpack
+            dclicktype 'pitchfork' backpack
+            overhead 'pitchfork'    
+            break
+        endif           
+        if findtype 'short spear' backpack
+            dclicktype 'short spear' backpack
+            overhead 'short spear'    
+            break
+        endif 
+    endif
+
+    if skill 'Fishing' >= 80
+        if findtype 'harpoon' backpack
+            dclicktype 'harpoon' backpack
+            overhead 'Harpoon'    
+            break
+        endif 
+        if findtype 'trident' backpack
+            dclicktype 'trident' backpack
+            overhead 'trident'    
+            break
+        endif           
+    endif    
+    
+    if skill 'Mace Fighting' >= 50
+        if findtype 'gnarled staff' backpack
+            dclicktype 'gnarled staff' backpack
+            overhead 'gnarled staff'    
+            break
+        endif      
+        if findtype 'black staff' backpack
+            dclicktype 'black staff' backpack
+            overhead 'black staff'    
+            break
+        endif       
+        if findtype 'quarter staff' backpack
+            dclicktype 'quarter staff' backpack
+            overhead 'quarter staff'    
+            break
+        endif       
+        if findtype '3713' backpack
+            dclicktype '3713' backpack
+            overhead 'Shepherds Crook'    
+            break
+        endif  
+        if findtype 'war hammer' backpack
+            dclicktype 'war hammer' backpack
+            overhead 'war hammer'    
+            break
+        endif 
+        if findtype 'sledgehammer' backpack
+            dclicktype 'sledgehammer' backpack
+            overhead 'sledgehammer'    
+            break
+        endif
+        if findtype 'great mace' backpack
+            dclicktype 'great mace' backpack
+            overhead 'great mace'    
+            break
+        endif 
+        if findtype 'giant spiked club' backpack
+            dclicktype 'giant spiked club' backpack
+            overhead 'giant spiked club'    
+            break
+        endif  
+        if findtype 'giant club' backpack
+            dclicktype 'giant club' backpack
+            overhead 'giant club'    
+            break
+        endif 
+    endif         
+        
+    if skill 'Swordsmanship' >= 50
+        if findtype 'axe' backpack
+            dclicktype 'axe' backpack
+            overhead 'axe'    
+            break
+        endif                 
+        if findtype 'two handed axe' backpack
+            dclicktype 'two handed axe' backpack
+            overhead 'two handed axe'    
+            break
+        endif             
+        if findtype 'battle axe' backpack
+            dclicktype 'battle axe' backpack
+            overhead 'battle axe'    
+            break
+        endif       
+        if findtype 'double axe' backpack
+            dclicktype 'double axe' backpack
+            overhead 'double axe'    
+            break
+        endif 
+        if findtype '3909' backpack
+            dclicktype '3909' backpack
+            overhead 'Executioners Axe'    
+            break
+        endif      
+        if findtype 'large battle axe' backpack
+            dclicktype 'large battle axe' backpack
+            overhead 'large battle axe'    
+            break
+        endif   
+        if findtype 'hatchet' backpack
+            dclicktype 'hatchet' backpack
+            overhead 'hatchet'    
+            break
+        endif      
+        if findtype 'halberd' backpack
+            dclicktype 'halberd' backpack
+            overhead 'halberd'    
+            break
+        endif
+        if findtype 'bardiche' backpack
+            dclicktype 'bardiche' backpack
+            overhead 'bardiche'    
+            break
+        endif     
+        if findtype 'zweihander' backpack
+            dclicktype 'zweihander' backpack
+            overhead 'zweihander'    
+            break
+        endif        
+        if findtype 'giant axe' backpack
+            dclicktype 'giant axe' backpack
+            overhead 'giant axe'    
+            break
+        endif               
+    endif     
+
+    if skill 'Wrestling' >= 80
+        if findtype 'fistblade' backpack
+            dclicktype 'fistblade' backpack
+            overhead 'fistblade'    
+            break
+        endif
+        if findtype 'martial arts scroll' backpack
+            dclicktype 'martial arts scroll' backpack
+            overhead 'martial arts scroll'    
+            break
+        endif        
+        if findtype 'caesti' backpack
+            dclicktype 'caesti' backpack
+            overhead 'caesti'    
+            break
+        endif    
+        
+    endif    
+    break    
+endwhile
+hotkey 'play script: Subs\Routing'

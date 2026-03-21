@@ -1,0 +1,1050 @@
+### 2026-02-24T01:23:10-08:00
+### 7863857644416c2e37b5f23887e5809226feb061 commit refs/remotes/origin/Advanced
+
+// MASTER for all Builds
+// FORMAT: Skills, Coolodnws, buffs, Warmode, not hidden, not casting, not target exist, regs, item as
+
+
+############ VARABLES ############
+@clearsysmsg 
+@clearignore 
+overhead 'Master'
+
+@setvar! _auto_use_detect_hidden 1
+
+
+if not timerexists "searchTimer"
+    createtimer "searchTimer"
+    settimer 'searchTimer' 10000
+endif
+if not timerexists 'notification'
+    createtimer 'notification'
+    settimer 'notification' 2000
+endif
+if not timerexists 'peeking'
+    createtimer 'peeking'
+    settimer 'peeking' 2000
+endif
+
+if not timerexists 'openChestTimer'
+    createtimer 'openChestTimer'
+    settimer 'openChestTimer' 1500
+endif
+if not timerexists 'findChestTimerReset'
+    createtimer 'findChestTimerReset'
+    settimer 'findChestTimerReset' 2000
+endif
+
+// _auto_cast_summons
+// 0 disable
+// 1 enable
+if not varexist _auto_cast_summons
+    @setvar! _auto_cast_summons 0
+endif
+if not varexist castSummonNagThreshold
+    @setvar! castSummonNagThreshold 2800
+endif
+if not timerexists castSummonNagTimer
+    @createtimer! castSummonNagTimer
+    @settimer! castSummonNagTimer castSummonNagThreshold
+endif
+
+@setvar! lootInChest 1  
+
+
+if not dead 
+
+    if @findlayer! self lefthand as _this
+        @getlabel! backpack _bp
+        @setvar  _t_equip_lhand  _this
+    else
+        if not varexist _t_equip_lhand  
+            overhead "no l-hand equipped - aka weapon" 44
+        endif
+        #@setvar!  _t_equip_lhand  0
+    endif
+
+
+    if @findlayer! self righthand as _this
+        @getlabel! backpack _bp
+        @setvar  _t_equip_rhand  _this
+    else
+        #if not varexist _t_equip_rhand  
+        #    overhead "no r-hand equipped - aka offhand" 44
+        #endif
+        #@setvar!  _t_equip_rhand  0
+    endif
+
+
+    if varexist _this
+        @unsetvar _this
+    endif
+endif
+
+
+
+while not dead
+    if skill 'Arcane' >= 50
+        say [WeaponAbility2
+        break    
+    endif    
+    if skill 'archery' >= 50 and skill 'swordsmanship' >= 50
+        say [WeaponAbility3
+       break  
+    endif
+    if skill 'archery' >= 50 
+        say [WeaponAbility3
+       break  
+    endif
+    if skill 'fencing' >= 50 
+        say [WeaponAbility2
+        break  
+    endif   
+    if skill 'fishing' >= 50 
+        say [WeaponAbility2
+        break  
+    endif     
+    if skill 'mace fighting' >= 50 
+        say [WeaponAbility1
+        break 
+    endif
+    if skill 'swordsmanship' >= 50 
+        say [WeaponAbility3
+        break
+    endif
+    if skill 'wrestling' >= 50 
+        say [WeaponAbility2          
+        break                 
+    endif   
+    break
+endwhile   
+
+################################### Main Loop
+while not dead    
+    // ================================ Health and Wellness Portion    
+    // === Cure - Potion 
+    if not hidden and poisoned and not cooldown 'Cure Potion' and findtype 'Orange Potion' self
+        wait 200 
+        overhead 'Drinking cures!'
+        dclicktype 'Orange Potion'
+        cooldown 'Cure Potion' 1000
+    endif
+    // === Cure - Mage 
+    if not hidden and poisoned and not cooldown 'Cure Potion' and not findtype 'Orange Potion' self and skill 'magery' >= 30 and not casting and not targetexists and not cooldown 'Setting Trap'   
+        cast 'cure'
+        wait 100
+        while casting 
+            wait 100
+        endwhile
+        target self
+    endif    
+    // === Cure - Chivalry
+    if not hidden and poisoned and not cooldown 'Cure Potion' and not findtype 'Orange Potion' self and not findbuff 'Cleanse by Fire' and skill 'Chivalry' >= 60 
+        cast 'Cleanse by Fire'
+    endif      
+    
+    // === Heal - Potion 
+    if not hidden and diffhits > 20 and not cooldown 'Heal Potion' and not targetexists
+        if not hidden and findtype 'Yellow Potion' self and skill 'alchemy' >= 80
+            dclicktype 'Yellow Potion'
+            wait 200
+            overhead 'Drinking heal!'
+            wait 200
+            cooldown 'Heal Potion' 7200           
+        elseif not hidden and findtype 'Yellow Potion' self 
+            dclicktype 'Yellow Potion'
+            wait 200
+            overhead 'Drinking heal!'
+            wait 200
+            cooldown 'Heal Potion' 10200       
+        endif
+    endif
+    
+    // === Heal Greater - Mage 
+    if not hidden and diffhits > 35 and not casting and not targetexists and not cooldown 'Move' and skill 'magery' >= 60 and not cooldown 'Setting Trap' and findtype '3972' self and findtype '3973' self and findtype '3974' self and mana > 54 
+        cast 'Greater Heal'
+        wait 100
+        while casting 
+            wait 100
+        endwhile
+        wft 200
+        target self
+        wait 210
+    endif  
+    
+    // === Heal - Bandage 
+    if not hidden and findtype "clean bandage%s%" self and not bandaging and not targetexists and skill 'healing' > 0 and hp < maxhits 
+        hotkey 'Bandage Self'
+        wait 200            
+    endif      
+    // === Heal - Veterinary
+    if not hidden and findtype 'veterinary supplies' self and not bandaging and not targetexists and skill 'veterinary' > 0 and hp < maxhits 
+        say [vetsupplies
+        wait 200            
+    endif        
+    // === Heal - Chivalry Holylight
+    if diffhits >= 50 and skill "Chivalry" > 95 and not cooldown 'Holy Light'
+        say '[Holylight'
+        wait 250
+        if insysmsg "Holy symbols remaining:"
+            cooldown 'Holy Light' 31000
+        endif
+    endif  
+    // === Cripple and Disease
+    if not hidden and not findbuff 'Remove Curse' and findbuff 'Cripple' and skill 'Chivalry' >= 50 
+        @getlabel! backpack _bp
+        cast 'Remove Curse'
+    endif   
+
+    if not hidden and not findbuff 'Close Wounds' and findbuff 'Diseased' and skill 'Chivalry' >= 70 
+        @getlabel! backpack _bp
+        cast 'Close Wounds'
+    endif     
+    
+    // === Paralize Check    
+    if paralyzed and findtype "pouch" backpack 38
+        @getlabel! backpack _bp
+        say  "[pouch"
+    elseif not cooldown 'Alert' and not findtype "pouch" backpack 38
+        ## no pouches
+        @getlabel! backpack _bp
+        overhead '= N o  P o u c h e s =' 34
+        cooldown 'Alert' 10000
+    endif
+    // ================================ BUFFS      
+    // === Buffs - Potions
+    if findtype 'White Potion' self and not hidden and not findbuff 'Strength'
+        @getlabel! backpack _bp
+        dclicktype 'White Potion' 
+        overhead 'Strength'
+        wait 650       
+    endif
+    if findtype 'Blue Potion' self and not hidden and not findbuff 'Agility'
+        @getlabel! backpack _bp
+        dclicktype 'Blue Potion' 
+        overhead 'Agility'            
+        wait 650       
+    endif    
+    if findtype 'Black Potion' self and not hidden and not findbuff 'Magic Resist Potion'
+        @getlabel! backpack _bp
+        dclicktype 'Black Potion' 
+        overhead 'Magic Resist'
+        wait 650       
+    endif        
+    // === stamina check
+    if diffstam > 10 and not hidden and findtype 'Red Potion' self  
+        @getlabel! backpack _bp
+        overhead 'Refresh'
+        dclicktype 'Red Potion'
+        wait 200
+    endif     
+    
+    // ================================ MAGERY TOOL SET
+    if skill 'magery' >= 30 
+        if _auto_cast_summons == 1 and skill 'magery' >= 100 and skill 'meditation' >= 80 and skill 'spirit speak' >= 80 and not cooldown 'move' and not cooldown 'Setting Trap' and not hidden and not casting and not targetexists
+            // ------------------------ Summon Elementals
+            // ------------------------ Summon Elementals
+            // ------------------------ Summon Elementals
+            if mana > 54 and followers < 4 and findtype '3963' self and findtype '3974' self and findtype '3981' self   
+                @getlabel! backpack _bp
+                cast 'earth Elemental'
+                //cast 'water elemental'
+                wait 100
+                while casting 
+                    wait 200
+                endwhile
+                say 'All Guard Me'
+            endif
+        elseif followers < 4 and skill 'magery' >= 100 and timer castSummonNagTimer >= castSummonNagThreshold
+            if not varexist _castSummonNagColor
+                @setvar! _castSummonNagColor 22
+            elseif _castSummonNagColor == 22
+                @setvar! _castSummonNagColor 33
+            elseif _castSummonNagColor == 33
+                @setvar! _castSummonNagColor 22
+            else
+                @setvar! _castSummonNagColor 22
+            endif
+            overhead 'cast summons' _castSummonNagColor
+            @settimer! castSummonNagTimer 0
+        endif
+
+        if skill 'magery' >=  80 and skill 'meditation' >= 80
+            if diffmana >= 30 and findtype '29012' backpack as shroom
+                getlabel shroom desc  
+                if 'magic mushroom' in desc and not cooldown 'Mushroom'
+                    overhead 'Eating a Magic Mushroom' 44 
+                    dclick shroom   
+                    getlabel backpack pingCheck
+                    cooldown 'Mushroom' 120000          
+                endif 
+            elseif not findtype '29012' backpack and diffmana < 50 and not cooldown 'move' and not cooldown 'Setting Trap' and not hidden and not casting and not targetexists and findtype 'Garlic' > 1 self and findtype 'ginseng' self and findtype 'Mandrake Root%s%' self
+                @getlabel! backpack _bp
+                cast 'create food'
+                wait 100
+                while casting 
+                    wait 100
+                endwhile  
+            endif
+        endif
+        
+        // ------------------------  Mage Buffs  
+        if skill 'magery' >= 80 and not findbuff 'magic reflection' and not cooldown 'Reflection' and mana > 20 and not cooldown 'move' and not cooldown 'Setting Trap' and not hidden and not casting and not targetexists and findtype 'Garlic' > 1 self and findtype 'Spiders Silk' > 1 self and findtype 'Mandrake Root%s%' > 1 self 
+            cast 'magic reflection'
+            wait 100
+            while casting 
+                wait 100
+            endwhile
+            wait 222
+            cooldown 'Reflection' 60000
+        endif 
+           
+        if skill 'magery' >= 30 and not findbuff 'reactive armor' and mana > 20 and findtype 'Garlic' > 1 self and findtype 'Spiders Silk' > 1 self and findtype 'Sulfurous Ash' > 1 self 
+            cast 'reactive armor'
+            wait 100
+            while casting 
+                wait 100
+            endwhile
+            wait 222
+        endif 
+        
+        // ------------------------ Spirit Speak
+        if skill 'spirit speak' >= 50 and followers >= 2 and not cooldown 'meditate' and not cooldown 'Spirit Speak' and not cooldown 'move' and not cooldown 'Setting Trap' and not hidden and not casting and not targetexists and findtype 'corpse' ground -1 -1 12 as energyCorpse
+            #overhead 'SpiritSpeak'
+            skill 'spiritSpeak'
+            cooldown 'Spirit Speak' 30000
+            if skill 'stealing' >= 80
+                cooldown 'Spirit Speak' 600000 
+            endif
+            @ignore energyCorpse    
+        endif   
+        // === Meditate
+        if diffmana > 50 and skill 'Magery' >= 80 and 'Meditation' >= 80 and not hidden and not cooldown 'move' and not cooldown 'Meditate'
+            skill 'meditation'
+            cooldown 'Meditate' 10100
+        endif   
+        // ------------------------ Magic Mushroom Cooldown Reset
+        if insysmsg 'You may now use another magic mushroom.'
+            cooldown 'Mushroom' 1
+        endif
+    endif
+    
+    // ================================ CHIVALRY BUFf TOOL SET
+    if skill 'Chivalry' >= 80 and not cooldown 'Hunting'
+        hotkey 'target closest grey monster' 
+        getlabel backpack pingCheck
+        if not insysmsg 'No one matching that was found on your screen.'  
+            if not hidden and not findbuff 'Divine Fury' and skill 'Chivalry' >= 85 
+                cast 'Divine Fury'
+                wait 50
+            endif      
+            if not hidden and not findbuff 'Dispel Evil' and skill 'Chivalry' >= 55 
+                cast 'Dispel Evil'
+                wait 50
+            endif   
+            if not hidden and not findbuff 'Enemy of One' and skill 'Chivalry' >= 80 
+                cast 'Enemy of One'
+                wait 50
+            endif           
+        endif
+    endif         
+
+    // ================================ COMBAT TOOL SET
+    if skill 'tactics' >= 80  
+        // ================================ WEAPON ABILITY PORTION    
+        if insysmsg 'Weapon ability ready.'
+            while not dead
+                if skill 'Arcane' > 50 and skill 'tinkering'
+                    say [WeaponAbility1
+                    break    
+                endif    
+                if skill 'archery' > 50 and skill 'swordsmanship' > 50
+                    say [WeaponAbility3
+                   break  
+                endif
+                if skill 'archery' > 50 
+                   say [WeaponAbility1
+                   break  
+                endif
+                if skill 'fencing' > 50 
+                    say [WeaponAbility2
+                    break  
+                endif    
+                if skill 'fishing' > 50 
+                    say [WeaponAbility2
+                    break  
+                endif              
+                if skill 'mace fighting' > 50 
+                    say [WeaponAbility1
+                    break 
+                endif
+                if skill 'swordsmanship' > 50 
+                    say [WeaponAbility3
+                    break
+                endif
+                if skill 'wrestling' > 50 
+                    say [WeaponAbility2          
+                    break                 
+                endif   
+                break
+            endwhile       
+        endif         
+        // ================================ EQUIP WEAPON
+
+        #if 1 == 2
+        if lhandempty and rhandempty
+            @getlabel!  backpack _bp
+            @getlabel!  backpack _bp
+            if not casting and not targetexists and not findbuff "Actively Meditating"
+            @getlabel!  backpack _bp
+            @getlabel!  backpack _bp
+
+
+                ## mainhand
+                if lhandempty and not casting  and not targetexists
+                    @getlabel! backpack _bp
+                    if @find! _t_equip_lhand  backpack
+                        @getlabel! backpack _bp
+                        dclick  _t_equip_lhand
+                        #lift _t_equip_lhand
+                        #drop self LeftHand
+                    else
+                        @unsetvar _t_equip_lhand
+                    endif
+                endif
+                
+                ## offhand
+                if rhandempty and not casting  and not targetexists
+                    @getlabel! backpack _bp
+                    if @find! _t_equip_rhand  backpack
+                        @getlabel! backpack _bp
+                        dclick  _t_equip_rhand
+                        #lift _t_equip_rhand
+                        #drop self RightHand
+                    else
+                        @unsetvar _t_equip_rhand
+                    endif
+                endif
+
+
+            endif
+        endif
+        #endif
+
+        #if not casting and 
+            # @getlabel! backpack _bp
+
+        
+            if 1 == 2 
+            if rhandempty and not targetexists and not casting and not findbuff "Actively Meditating"
+                @getlabel! backpack _bp
+                @getlabel! backpack _bp
+                @getlabel! backpack _bp
+                if @find! _t_equip_rhand  backpack
+                    @getlabel! backpack _bp
+                    if not casting
+                        @getlabel! backpack _bp
+                        dclick  _t_equip_rhand
+                        while queued
+                            @getlabel! backpack _bp
+                        endwhile
+                    endif
+                else
+                    @unsetvar _t_equip_rhand
+                endif
+            endif
+            
+            
+            if lhandempty and not targetexists and not casting and not findbuff "Actively Meditating"
+                @getlabel! backpack _bp
+                @getlabel! backpack _bp
+                @getlabel! backpack _bp
+                if @find! _t_equip_lhand  backpack
+                    @getlabel! backpack _bp
+                    if not casting
+                        @getlabel! backpack _bp
+                        dclick  _t_equip_lhand
+                        while queued
+                            @getlabel! backpack _bp
+                        endwhile
+                    endif
+                else
+                    @unsetvar _t_equip_lhand
+                endif
+            endif
+
+        endif
+
+        
+        while lhandempty and rhandempty 
+            break
+            @getlabel!  backpack _bp
+            if not casting and not targetexists and not findbuff "Actively Meditating"
+                @getlabel!  backpack _bp
+
+                if skill 'Fencing' >= 80 and rhandempty
+                    if @findtype! 'kryss' backpack  as _this1 or @findtype! 'kukri' backpack  as _this2
+                        @getlabel! backpack _bp
+                        if _this1 > 0
+                            dclick _this1 backpack 
+                        elseif _this2 > 0
+                             dclick _this2 backpack 
+                        endif
+                        overhead 'fencing'   
+                        say 'All Guard Me'  
+                        break
+                    endif        
+                endif
+                if skill 'Mace Fighting' >= 80 and rhandempty
+                    if findtype 'flail' backpack
+                        dclicktype 'flail' backpack
+                        overhead 'Flail' 
+                        say 'All Guard Me'      
+                        break
+                    endif     
+                endif
+                if skill 'Swordsmanship' >= 80 and rhandempty
+                    if findtype 'scimitar' backpack
+                        dclicktype 'scimitar' backpack
+                        overhead 'Scimitar'
+                        say 'All Guard Me'  
+                        break
+                    endif             
+                endif   
+                if skill 'Fishing' >= 80 and rhandempty
+                    if findtype 'trident' backpack 
+                        dclicktype 'trident' backpack
+                        overhead 'trident' 
+                        say 'All Guard Me'  
+                        break
+                    endif             
+                endif    
+                if skill 'Wrestling' >= 80 and rhandempty
+                    // caesti|fistblade|martial arts scroll
+                    if findtype 'martial arts scroll' backpack as weapon
+                        dclick weapon
+                        overhead 'Caesti'
+                        say 'All Guard Me'  
+                        break
+                    endif             
+                endif
+                break 
+            endif
+        endwhile
+    endif
+    ### endif tactics >= 80
+
+    // --- DISARM     
+    if skill 'armslore' >= 80 and not cooldown 'disarm'
+        say [disarm
+        getlabel backpack pingCheck 
+        wait 100
+        if insysmsg "You refrain from making disarm attempts."
+            say [disarm
+            getlabel backpack pingCheck   
+        endif      
+    endif 
+    // --- HAMSTRING [anatomy, arms lore, chiv, forensic, tracking, wrestling] or [archery, fencing, macing, swords]
+    if skill 'archery' >= 80 and skill 'swordsmanship' and not cooldown 'Hamstring'
+        say [hamstring
+        getlabel backpack pingCheck 
+        wait 100
+        cooldown 'Hamstring' 30000
+        wait 222
+        if insysmsg "You refrain from making hamstring attempts."
+            say [Hamstring
+            getlabel backpack pingCheck   
+            cooldown 'Hamstring' 30000
+        endif  
+    endif
+    if skill 'Wrestling' >= 80 and skill 'Anatomy' and not cooldown 'Hamstring'
+        say [hamstring
+        getlabel backpack pingCheck 
+        wait 100
+        cooldown 'Hamstring' 30000
+        wait 222
+        if insysmsg "You refrain from making hamstring attempts."
+            say [Hamstring
+            getlabel backpack pingCheck   
+            cooldown 'Hamstring' 30000
+        endif  
+    endif    
+
+    // ================================ TRAPPER TOOL SET
+    if skill 'tinkering' >= 80 and skill 'detecting hidden' >= 80 
+        // --- DETECTING HIDDEN aka detect hidden
+
+    if _auto_use_detect_hidden == 1 
+        if not position 3672 229 and not position 3673 229 and not position 3674 229 and not position 3675 229 and not position 3676 229 and not position 3672 230 and not position 3673 230 and not position 3674 230 and not position 3675 230 and not position 3676 230 and not position 3672 231 and not position 3673 231 and not position 3674 231 and not position 3675 231 and not position 3676 231 and not position 3672 232 and not position 3673 232 and not position 3674 232 and not position 3675 232 and not position 3676 232 and not position 3672 233 and not position 3673 233 and not position 3674 233 and not position 3675 233 and not position 3676 233
+        if  skill 'stealing' < 50 and timer 'searchTimer' > 20000 and not hidden and not cooldown 'Meditate' and diffmana < 20 and not findtype 'shovel' backpack and not targetexists 
+            overhead 'Searching Area' 44
+            skill 'detectinghidden'
+            settimer 'searchTimer' 0  
+            getlabel backpack pingCheck
+            target self
+        endif          
+        endif
+        endif
+        // -- TRAP
+        if insysmsg 'You may now detonate another trap.'  
+            cooldown 'Detonate' 1  
+        endif  
+        if insysmsg 'Killswitch triggered.'  
+            cooldown 'Detonate' 1  
+            overhead 'K I L L  S W I T C H' 76
+        endif 
+        if insysmsg 'You are no longer hindered'
+            cooldown 'Setting Trap' 1
+        endif
+    endif
+ 
+    // ================================ BARD TOOL SET
+    if skill 'musicianship' >= 80
+        if skill 'discordance' >= 80 and not findbuff 'Song of Discordance' and not hidden and not casting and not targetexists and findtype 'lute' self as 'mylute' 
+            skill 'discordance' 
+            getlabel backpack pingCheck  
+            target 'mylute'
+            getlabel backpack pingCheck  
+        endif  
+            
+    #    if skill 'peacemaking' >= 80 and not hidden and not targetexists and not casting and findtype 'lute' self as 'mylute' 
+    #        if not findbuff 'Song of Peacemaking'
+    #            skill 'peacemaking'
+    #            getlabel backpack pingCheck  
+    #            target 'mylute'
+    #            cooldown 'Peacemaking' 5100
+    #        endif        
+    #        if not cooldown 'Peacemaking' and not cooldown 'move'
+    #            skill 'peacemaking'
+    #            getlabel backpack pingCheck  
+    #            target 'self'
+    #            getlabel backpack pingCheck 
+    #            cooldown 'Peacemaking' 11000
+    #            getlabel backpack pingCheck
+    #            if insysmsg 'You fail to pacify'
+    #                cooldown 'Peacemaking' 5100
+    #            endif   
+    #        endif
+    #    endif
+    endif
+    
+    // ================================ LOCKSMITH TOOL SET
+    if skill 'lockpicking' >= 80 and skill 'Detecting Hidden' >= 80
+        // --- LOCATES CHEST ON SCREEN
+        if findtype 2475|29076|29089|3648|3649|3650|3651|3708 ground -1 -1 15 as chest
+            getlabel chest desc
+            if timer 'notification' >= 3000
+                if "lock" in desc
+                    overhead '{{desc}}' 2085 chest
+                    settimer 'notification' 0
+                else 
+                    overhead 'Already Picked' 22 chest
+                    settimer 'notification' 0               
+                    @setvar! lootInChest 1
+                endif  
+                if timerexists bchestopen
+                    removetimer bchestopen
+                endif                
+            endif
+        endif
+
+        if timer 'peeking' >= 2000 and findtype 2475|29076|29089|3648|3649|3650|3651|3708 ground -1 -1 2 as chest
+            if not hidden and skill "Hiding" >= 80
+                settimer 'peeking' 0
+                settimer 'notification' 0  
+                if not cooldown "Move" and not cooldown "Hiding" and not cooldown "Stealth" 
+                    warmode on
+                    warmode off
+                    pause 600
+                    getlabel backpack ping
+                    skill "Hiding"
+                    getlabel backpack ping
+                endif
+            endif        
+            dclick chest
+            settimer 'peeking' 0
+            overhead 'Peeking inside' 44
+            wait 1000
+            while findtype "54230|glass display|20049|Pig Iron|blackrock fragment|18705|55247|49482|53694|54570|53696|53876|50612|55420|53280|53473|54831|50278|49528|bottle set|entrail bucket|mounted stalaghorn|sea glass bulb|juggling daggers|st patricks cross|divination orb|mirror display|murder of crows|charmed cobra|prodigy fiddle|wilting rose belljar|scale of balance|screaming mandrake|statue of the siren|the final hour|55204|specimen jars|shattered weapon|bird cage|widows grief|54684|27612|49223|54591|54601|54718|7408|19948|58325|19959|19822|49730|49729|19944|19949|47613|47612|47611|47610|47611|4112|3986|3966|cathedral tapestry|Darkscale tapestry|large painting|landscape painting|portrait painting|figurine|statue|20291|44987|49730|47107|18653|45127|20103|47103|29363|47105|29361|43453|5899|47109|45250|41509|43447|18657|4025|51308|45156|51304|45214|28769|28799|28803|28765|45211|45248|51259|45220|51328|45218|3842|51327|45222|45241|51336|11858|51375|45282|54722|45255|45246|28795|44983|45235|45251|45238|51258|51314|28761|45236|51260|54718|18400|58325|45252|18656|47111|3839|45239|45242|45254|45281|45247|42241|45216|28775|2594|51321|3838|51318|5901|5905|45259|5903|48407|51302|4248|27611|15296|43166|5359|5981|4026|3985|25359|17686|3836|17087|5356|29030|24434|22336|29036|3843|29025|51098|29034|8826|51094|576|3827|22326|45315|3891|2539|39898|39896|39892|39918|39911|39916|39897|39905|39891|39917|39912|39909|39889|31047|31017|31049|31019|31055|31051|31053|31025|31027|31031|31041|54717|31021|31011|31023|31029|31043|31003|31035|31033|31045|31037|31002|20006|31169|31006|30999|31012|31009|30996|7109|7107|31128|31188|20014|31014|31004|31142|31001|31000|37181|31010|30998|31172|30988|30997|31038|31141|7947|20008|31005|31191|31008|31007|30994|30993|31182|30989|20012|31186|31178|31015|30991|20010|20016|31184|31190|30990|30995|31176|31180|30992|31130|5207|7031|7026|7034|7033|7027|7035|7029|5078|5063|5059|5105|5060|5138|5129|5201|5142|5143|5076|5106|7610|5139|5090|5103|5132|7177|5061|7181|7179|3920|5042|5127|5117|5185|5125|3938|5177|3937|5044|5121|3915|3909|3568|3932|5123|5144|5119|5056|5135|5187|5074|5089|3934|3913|3917|3721|5075|5046|5049|7170|5146|5205|5203|5115|5204|5040|5179|5070|5182|5085|5181|3719|7173|5131|3911|5101|7175|7169|3713|5112|22187|9917|3859|3862|3878|3865|3856|3873|3877|3834|3742|3762|3740|3763|10245|3572|3573|3571|3885|7127|4225|12686|19985|19981|19984|19982|19983|19991|19989|19986|19987|19988|19994|19995|19992|19993|19990|19980|19977|19976|19978|7154|19979|43423|3861" bchest as item
+                if not timerexists bchestopen
+                    createtimer bchestopen
+                    overhead "The treasure is mine!" 2091
+                endif                 
+                hotkey 'Grab Item' 
+                target item
+                while queued
+                    //donothing
+                endwhile
+                if insysmsg "That container cannot hold more weight."
+                    break
+                endif
+            endwhile
+            while findtype '3617|3821|3903|3962|3963|3972|3973|3974|3976|3980|3981|7163' bchest as item
+                if not timerexists bchestopen
+                    createtimer bchestopen
+                    overhead "The resources are mine!" 2091
+                endif
+                hotkey 'Grab Item' 
+                target item
+                while queued
+                    //donothing
+                endwhile
+                if insysmsg "That container cannot hold more weight."
+                    break
+                endif
+            endwhile 
+        endif               
+        
+        
+        // --- OPENING CHEST 
+        if not casting and findtype 2475|29076|29089|3648|3649|3650|3651|3708 ground -1 -1 2 as bchest and not targetexists
+            if not hidden and skill "Hiding" >= 80
+                settimer 'peeking' 0
+                settimer 'notification' 0  
+                if not cooldown "Move" and not cooldown "Hiding" and not cooldown "Stealth" 
+                    warmode on
+                    warmode off
+                    pause 600
+                    getlabel backpack ping
+                    skill "Hiding"
+                    getlabel backpack ping
+                endif
+            endif
+            if not gumpexists 736038070
+                clearsysmsg 
+                warmode on
+                warmode off
+                while queued
+                    //donothing
+                overhead 'queued NO gump'
+                endwhile   
+                // --- double clicks chest 
+                dclick bchest
+                @setvar "bchest" lastobject  
+                wait 200
+            endif        
+            
+            while timer 'openChestTimer' >= 1500 and gumpexists 736038070
+                clearsysmsg 
+                warmode on
+                warmode off
+                while queued
+                    //donothing
+                    overhead 'queued gump'
+                endwhile    
+                // --- begins to use disarm tools and lockpicks
+                getlabel bchest desc
+                wait 100
+                if "(locked and trapped)" in desc
+                    gumpresponse 7  
+                    overhead 'Disarming' 2085 chest
+                    settimer 'openChestTimer' 0
+                    settimer 'notification' 0
+                    break
+                endif                 
+                if "trap removal" in desc
+                    gumpresponse 7  
+                    overhead 'Partially Disarmed' 2085 chest
+                    settimer 'openChestTimer' 0
+                    settimer 'notification' 0
+                    dclicktype 'scissors' 
+                    break
+                endif   
+                if "lockpick" in desc
+                    gumpresponse 4  
+                    overhead 'Partially Unlock' 2085 chest
+                    settimer 'openChestTimer' 0
+                    settimer 'notification' 0
+                    if not cooldown 'Stealth'
+                        skill 'Stealth'
+                    endif
+                    break
+                endif                      
+                if "(locked)" in desc                
+                    gumpresponse 4 
+                    overhead 'Unlocking' 2085 chest
+                    settimer 'openChestTimer' 0 
+                    settimer 'notification' 0
+                    break 
+                endif      
+                if lootInChest = 0 
+                        overhead 'No Loot In Chest'
+                    break 
+                endif    
+                if find "bchest" ground -1 -1 2 as bchest and not targetexists 
+                    clearsysmsg 
+                    while findtype "54230|glass display|20049|Pig Iron|blackrock fragment|18705|55247|49482|53694|54570|53696|53876|50612|55420|53280|53473|54831|50278|49528|bottle set|entrail bucket|mounted stalaghorn|sea glass bulb|juggling daggers|st patricks cross|divination orb|mirror display|murder of crows|charmed cobra|prodigy fiddle|wilting rose belljar|scale of balance|screaming mandrake|statue of the siren|the final hour|55204|specimen jars|shattered weapon|bird cage|widows grief|54684|27612|49223|54591|54601|54718|7408|19948|58325|19959|19822|49730|49729|19944|19949|47613|47612|47611|47610|47611|4112|3986|3966|cathedral tapestry|Darkscale tapestry|large painting|landscape painting|portrait painting|figurine|statue|20291|44987|49730|47107|18653|45127|20103|47103|29363|47105|29361|43453|5899|47109|45250|41509|43447|18657|4025|51308|45156|51304|45214|28769|28799|28803|28765|45211|45248|51259|45220|51328|45218|3842|51327|45222|45241|51336|11858|51375|45282|54722|45255|45246|28795|44983|45235|45251|45238|51258|51314|28761|45236|51260|54718|18400|58325|45252|18656|47111|3839|45239|45242|45254|45281|45247|42241|45216|28775|2594|51321|3838|51318|5901|5905|45259|5903|48407|51302|4248|27611|15296|43166|5359|5981|4026|3985|25359|17686|3836|17087|5356|29030|24434|22336|29036|3843|29025|51098|29034|8826|51094|576|3827|22326|45315|3891|2539|39898|39896|39892|39918|39911|39916|39897|39905|39891|39917|39912|39909|39889|31047|31017|31049|31019|31055|31051|31053|31025|31027|31031|31041|54717|31021|31011|31023|31029|31043|31003|31035|31033|31045|31037|31002|20006|31169|31006|30999|31012|31009|30996|7109|7107|31128|31188|20014|31014|31004|31142|31001|31000|37181|31010|30998|31172|30988|30997|31038|31141|7947|20008|31005|31191|31008|31007|30994|30993|31182|30989|20012|31186|31178|31015|30991|20010|20016|31184|31190|30990|30995|31176|31180|30992|31130|5207|7031|7026|7034|7033|7027|7035|7029|5078|5063|5059|5105|5060|5138|5129|5201|5142|5143|5076|5106|7610|5139|5090|5103|5132|7177|5061|7181|7179|3920|5042|5127|5117|5185|5125|3938|5177|3937|5044|5121|3915|3909|3568|3932|5123|5144|5119|5056|5135|5187|5074|5089|3934|3913|3917|3721|5075|5046|5049|7170|5146|5205|5203|5115|5204|5040|5179|5070|5182|5085|5181|3719|7173|5131|3911|5101|7175|7169|3713|5112|22187|9917|3859|3862|3878|3865|3856|3873|3877|3834|3742|3762|3740|3763|10245|3572|3573|3571|3885|7127|4225|12686|19985|19981|19984|19982|19983|19991|19989|19986|19987|19988|19994|19995|19992|19993|19990|19980|19977|19976|19978|7154|19979|43423|3861" bchest as item
+                        if not timerexists bchestopen
+                            createtimer bchestopen
+                            overhead "The treasure is mine!" 2091
+                        endif                                    
+                        hotkey 'Grab Item' 
+                        target item
+                        wait 650
+                        while queued
+                            //donothing
+                        endwhile
+                        if insysmsg "That container cannot hold more weight."
+                            break
+                        endif
+                    endwhile
+                    while findtype '3617|3821|3903|3962|3963|3972|3973|3974|3976|3980|3981|7163' bchest as item
+                        if not timerexists bchestopen
+                            createtimer bchestopen
+                        overhead "The resources are mine!" 2091
+                        endif                                        
+                        hotkey 'Grab Item' 
+                        target item
+                        while queued
+                            //donothing
+                        endwhile
+                        if insysmsg "That container cannot hold more weight."
+                            break
+                        endif
+                    endwhile 
+                    settimer 'notification' 4000
+                endif          
+                break
+            @setvar! lootInChest 0 
+            endwhile     
+        endif 
+    endif
+    
+    // ================================ HARVEST TOOL SET
+    if skill 'mining' >= 40 and warmode and not hidden and not cooldown 'Harvest' and not casting and not targetexists 
+        // ========  LOAD TOOL
+        if rhandempty and lhandempty
+            overhead 'Finding Tool' 44
+            if findtype 'pickaxe' backpack as equiptTool
+                dclick equiptTool
+                wait 800
+            elseif not findtype 'pickaxe' and not cooldown 'No tools'
+                overhead '= No Mining Tools ='
+                warmode off
+                cooldown 'No Tools' 10000      
+            endif      
+        endif          
+        if findtype 'pickaxe' hand as HarvestTool 
+            dclick HarvestTool
+            waitfortarget 500
+            cooldown 'Harvest' 850
+            target self        
+        endif
+        // --- CALL OUT COLOR OF ORE
+        if insysmsg 'you dig some dull copper ore'
+            overhead 'Dull Copper Ore' 44
+        endif 
+        if insysmsg 'you dig some shadow ore'
+            overhead 'Shadow Ore' 44
+        endif 
+        if insysmsg 'you dig some copper ore'
+            overhead 'Copper Ore' 44
+        endif     
+        if insysmsg 'you dig some bronze ore'
+            overhead 'Bronze Ore' 44
+        endif       
+        if insysmsg 'you dig some golden ore'
+            overhead 'Golden Ore' 44
+        endif
+        if insysmsg 'you dig some agapite ore'
+            overhead 'Agapite Ore' 44
+        endif 
+        if insysmsg 'you dig some verite ore'
+            overhead 'Verite Ore' 44
+        endif   
+        if insysmsg 'you dig some valorite ore'
+            overhead 'Valorite Ore' 44
+        endif 
+        if insysmsg 'you dig some Avarite ore'
+            overhead 'Avarite Ore' 44
+        endif
+    
+    elseif skill 'lumberjacking' >= 40 and warmode and not hidden and not cooldown 'Harvest' and not casting and not targetexists
+        // ========  LOAD TOOL
+        if not hidden and rhandempty and lhandempty
+            overhead 'Finding Tool' 44
+            if findtype 'hatchet' backpack as equiptTool
+                dclick equiptTool
+                wait 800
+                elseif not findtype 'hatchet' and not cooldown 'No tools'
+                overhead '= No Lumberjacking Tools ='
+                warmode off
+                cooldown 'No Tools' 10000      
+            endif      
+        endif  
+        if findtype 'hatchet' hand as HarvestTool
+            dclick HarvestTool
+            waitfortarget 500
+            cooldown 'Harvest' 900  
+            target self
+            if targetexists 
+                target self  
+            endif
+        endif  
+        // --- CALL OUT COLOR OF LUMBER
+        if insysmsg 'you chop some dullwood'
+            overhead 'Dullwood Lumber' 44
+        endif 
+        if insysmsg 'you chop some shadowwood'
+            overhead 'Shadowwood Lumber' 44
+        endif 
+        if insysmsg 'you chop some copperwood'
+            overhead 'Copperwood Lumber' 44
+        endif     
+        if insysmsg 'you chop some bronzewood'
+            overhead 'Bronzewood Lumber' 44
+        endif       
+        if insysmsg 'you chop some goldenwood'
+            overhead 'Goldenwood Lumber' 44
+        endif
+        if insysmsg 'you chop some rosewood wood'
+            overhead 'Rosewood Lumber' 44
+        endif 
+        if insysmsg 'you chop some verewood'
+            overhead 'Verewood Lumber' 44
+        endif   
+        if insysmsg 'you chop some valewood'
+            overhead 'Valewood Lumber' 44
+        endif 
+        if insysmsg 'you chop some Avarwood'
+            overhead 'Avarwood Lumber' 44
+        endif    
+        // ======== RESOURCE CONVERSION           
+        if findtype '7133' self as log
+            dclick log
+            wait 500
+        endif       
+    elseif skill 'fishing' >= 40 and warmode and not hidden and not cooldown 'Harvest' and not casting and not targetexists 
+        // ========  LOAD TOOL
+        if not hidden and rhandempty and lhandempty
+            overhead 'Finding Tool' 44
+            if findtype 'fishing pole' backpack as equiptTool
+                dclick equiptTool
+                wait 800
+            elseif not findtype 'fishing pole' and not cooldown 'No tools'
+                overhead '= No Fishing Poles ='
+                warmode off
+                cooldown 'No Tools' 10000      
+            endif      
+        endif  
+        if findtype 'fishing pole' hand as HarvestTool
+            dclick HarvestTool
+            cooldown 'Harvest' 10000       
+        endif
+    endif
+    
+    // ================================ EQUIPT SHIELD
+    if lhandempty and skill 'magery' >= 80 and cooldown 'move' and findtype '7034' backpack as myShield
+        wait 222
+        if not casting and not targetexists 
+            while queued
+                //donothing
+                overhead 'queued Shield'
+                wait 111
+            endwhile   
+            dclick myShield
+            getlabel backpack pingCheck 
+            wait 100
+        endif
+    endif  
+     
+    // ================================ Recycle Section    
+    if insysmsg "What should I use these scissors on?" and findtype "sewing kit|saw|pen and ink|tongs|tool kit" backpack
+        hotkey 'Cancel Current Target'
+        getlabel backpack ping
+        if findtype '30765' self as mySatchel
+            menu 'mySatchel' 0
+        endif
+        if findtype 20496 backpack as IDwand
+            hotkey 'play script: Subs\sub_Recycle'    
+        endif
+    endif           
+    // ================================ SKINNING HIDES
+    if not hidden and not casting and findtype "corpse" ground -1 -1 2 and findtype 'Elven SpellBlade' self as 'blade'
+        dclick 'blade'
+        wft 850
+        target 'blade'
+        getlabel backpack pingCheck
+        @ignore harvestCorpse
+    endif 
+   
+    // ================================ MAGE HAT
+    if hidden and stam = maxstam and findtype '5912' backpack 
+        dclicktype '5912' 
+        wait 700 
+    endif 
+    if findtype '10136|21786|21940|31156|31212|31214|31243|31244|31280|31289|31320|31335|31354|31371|31383|31394|31399|31403' backpack as headware
+        dclick headware 
+        wait 700
+    endif  
+    
+    // ================================ ENVIRMENTAL EFFECTS BOSS ROOMS
+    
+    
+    
+#    // ================================ SEASONAL
+#    // --- Barbarian Plants, field of souls
+#    if findtype 22493|22495|26629|26633|26635|26683|26684|23882 ground -1 -1 2 as eatablePlants and not targetexists 
+#        dclick eatablePlants
+#        cooldown 'DOOMED' 30000
+#        wait 650
+#    endif  
+  
+    
+    wait 100    
+endwhile
+
+###################################  Dead Loop
+while dead 
+    overhead "Resurect" 34
+#    if gumpexists 2957810225
+#        gumpresponse 1 2957810225
+#        break
+#    endif
+    wait 2000
+endwhile
+
+################################### Dress & Restart
+wait 150
+if findtype 'horse' self
+    dclicktype 'horse'
+    wait 200
+endif
+skill 'meditate'
+wait 50
+say 'thank you'
+wait 1000
+hotkey 'play script: Subs\Home_Resupply'
+
+
+
+// Tool Set Mage
+// Tool Set Combat
+// Tool Set Tap
+// Tool Set Bard
+// Tool Set Rogue
+// Tool Set Harvesting
+
+// Health Aids
+// Health Potions
+// Health Magery
+// Health Chivalry
+// Health Cooking
+
+// Buffs Potions
+// Buffs Magery
+// Buffs Chivalry
+
+// Utility Recycle
+// Utility Skinning
+// Utility Mage Hat
+
+// Seasonal 
+
+// if warmode = on
+
+
+
+// v1.00 build base version
+// v1.01 added move regs into satchel 
+// rebuilt the mage catigory

@@ -1,0 +1,32 @@
+### 2026-02-24T01:23:10-08:00
+### 97ea055f2ef232d1bb6c1a8fdd8da33dbfc84ace commit refs/remotes/origin/Subs
+
+// Routing
+if name = 'a stranger'
+    hotkey 'play script: Events\Strangelands'
+endif
+
+if skill 'tinkering' >= 80 and skill 'Detecting Hidden' >= 80
+    hotkey 'play script: Advanced\_Master'
+endif
+if skill 'lockpicking' >= 80 and skill 'hiding' >= 80
+    hotkey 'play script: Advanced\_Master'
+endif
+
+if skill 'blacksmithy' >= 50 and skill 'tailoring' >= 50
+    stop
+endif   
+
+if skill 'fishing' >= 80 and skill 'tactics' >= 80
+    hotkey 'play script: Advanced\_MasterOcean'
+endif
+if skill 'Mining' >= 50
+    hotkey 'play script: Advanced\_MasterHarvester'
+endif
+if skill 'Lumberjacking' >= 50
+    hotkey 'play script: Advanced\_MasterHarvester'
+endif
+#if skill 'Magery' >= 80 and skill 'evalint' >= 80
+#    hotkey 'play script: Advanced\_MasterMage'
+#endif
+hotkey 'play script: Advanced\_Master'

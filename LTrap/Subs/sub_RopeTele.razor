@@ -1,0 +1,28 @@
+### 2026-02-24T01:23:10-08:00
+### 97ea055f2ef232d1bb6c1a8fdd8da33dbfc84ace commit refs/remotes/origin/Subs
+
+// ROPETELE
+if skill 'magery' >= 30 and not casting
+    overhead 'Casting Teleport'
+    cast "Teleport"
+    if cooldown 'Heat of Battle'
+        cooldown 'Teleport' 120000 
+    else
+        cooldown 'Teleport' 15000
+    endif
+endif
+
+if findtype "rope" backpack as rope
+    while queued
+        //donothing
+    endwhile
+    dclick rope
+    if cooldown 'Heat of Battle'
+        cooldown 'Rope' 120000
+    else
+        cooldown 'Rope' 15000
+    endif
+endif
+wait 600
+
+hotkey 'play script: Subs\Routing'

@@ -1,0 +1,2656 @@
+#### https://outlands.uorazorscripts.com/script/5bd6403e-2c3c-4873-bb3e-a00dea6fe7db
+
+#Auto-summoner ver.3.12
+
+#********** INFORMATION **********# 
+
+#Made by @dennozz on discord. 
+#Inspired/learned by other scrips in https://outlands.uorazorscripts.com/
+
+#This script will auto summon your desired followers and also auto heal you.
+
+#********** SET YOUR SETTINGS **********# 
+
+#--- summon one per script-run OR summon all ---#
+# summon-one: 1
+# summon-all: any-other-value
+@setvar! summon_one_or_all 1
+
+@removelist callOtherScript
+@createlist callOtherScript
+@pushlist callOtherScript 'play script: Subs\Routing'
+
+
+
+
+#if varexist _util__summoner__use_external_settings
+#    if _util__summoner__use_external_settings == 0
+
+@setvar! earthElementals 2
+@setvar! waterElementals 0
+@setvar! airElementals 0
+@setvar! fireElementals 0
+@setvar! summonDaemons 0
+@setvar! summonCreature 1
+@setvar! bladeSpirit 0
+@setvar! energyVortex 0
+### energy vortex
+### blade spirit :: only casts as 5th follower
+
+#--- Set Necromancy Spells ---#
+
+@setvar! NecroVengefulSpirit 0
+@setvar! NecroBloodOath 0
+@setvar! NecroWither 0
+
+#--- Set mushrooms ---#
+
+@setvar! mushroomCount 4
+@setvar! mushroomTimerCD 60000
+settimer mushroomTimer mushroomTimerCD
+
+#--- Set meditation ---#
+
+@setvar! useMeditation 1
+@setvar! meditateManaReach 50
+@setvar! meditateUntilManaReach 55
+
+#--- Set Mage auto heals ---#
+
+@setvar! miniHeal 1
+@setvar! greaterHeal 1
+@setvar! cureSpell 1
+
+#--- Set Mage Buffs ---#
+
+@setvar! magicReflect 0
+@setvar! bless 0
+@setvar! armorReflect 0
+@setvar! protectionSpell 0
+@setvar! miniumManaToBuff 50
+
+#--- Set potions ---#
+
+@setvar! drinkStr 1
+@setvar! drinkAgility 0
+@setvar! drinkMagicResist 0
+@setvar! drinkHeal 1
+@setvar! drinkCure 1
+@setvar! drinkRefresh 1
+
+@setvar! strengthLowerThan 100
+@setvar! staminaLowerThan 10
+
+#--- Auto healing hp diffs ---#
+
+@setvar! lowDiff 12 
+@setvar! medDiff 25
+@setvar! highDiff 40
+@setvar! extremeDiff 60
+@setvar! criticalDiff 75
+
+#--- Optional : Have a cooldown named `Heal Pot` ---#
+
+@setvar! healingPotCD 11000
+
+@setvar! maxwaittimeinms 650
+
+
+#### _util__summoner__use_external_settings
+#endif
+#endif
+
+
+
+
+
+
+#********** DO NOT EDIT FROM HERE BELOW **********# 
+
+
+
+if not dead 
+    #### copy of get hands from master
+    if @findlayer! self lefthand as _this
+        @getlabel! backpack _bp
+        @setvar  _t_equip_lhand  _this
+    else
+        if not varexist _t_equip_lhand  
+            overhead "no l-hand equipped - aka weapon" 44
+        endif
+        #@setvar!  _t_equip_lhand  0
+    endif
+
+
+    if @findlayer! self righthand as _this
+        @getlabel! backpack _bp
+        @setvar  _t_equip_rhand  _this
+    else
+        #if not varexist _t_equip_rhand  
+        #    overhead "no r-hand equipped - aka offhand" 44
+        #endif
+        #@setvar!  _t_equip_rhand  0
+    endif
+
+    if varexist _this
+        @unsetvar _this
+    endif
+endif
+
+
+
+
+
+
+if not varexist castingEarth 
+    @setvar! castingEarth 0
+endif
+if not varexist castingWater 
+    @setvar! castingWater 0
+endif
+if not varexist castingFire 
+    @setvar! castingFire 0
+endif
+if not varexist castingAir 
+    @setvar! castingAir 0
+endif
+if not varexist castingDaemon 
+    @setvar! castingDaemon 0
+endif
+if not varexist castingCreature 
+    @setvar! castingCreature 0
+endif
+if not varexist castingBlade
+    @setvar! castingBlade 0
+endif
+if not varexist castingEnergyVortex 
+    @setvar! castingEnergyVortex 0
+endif
+
+@setvar! necroGump 622436516
+@setvar! unholyPoints 0
+
+#-- elementals variables --#
+
+@setvar! maxFollowers 0
+@setvar! currentFollowers 0
+
+removelist maxFollowersList
+createlist maxFollowersList
+    
+if earthElementals  = 1
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+elseif earthElementals = 2
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x
+endif
+
+if waterElementals = 1
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+elseif waterElementals = 2
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x
+endif
+
+if airElementals  = 1
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+elseif airElementals  = 2
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x
+endif
+
+if fireElementals  = 1
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+elseif fireElementals  = 2
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x
+endif
+
+if summonDaemons  = 1
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+elseif summonDaemons  = 2
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x
+endif
+
+if summonCreature = 1
+    pushlist maxFollowersList x 
+elseif summonCreature = 2
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+elseif summonCreature = 3
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+elseif summonCreature = 4
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+elseif summonCreature = 5
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+endif
+
+
+if summon_one_or_all == 1
+if bladeSpirit = 1
+    pushlist maxFollowersList x 
+endif
+
+
+if energyVortex  = 1
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+elseif energyVortex  = 2
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x 
+    pushlist maxFollowersList x
+endif
+endif
+
+
+if list maxFollowersList = 0 
+    @setvar! maxFollowers 0
+    
+elseif list maxFollowersList = 1
+    @setvar! maxFollowers 1
+    
+elseif list maxFollowersList = 2
+    @setvar! maxFollowers 2
+    
+elseif list maxFollowersList = 3
+    @setvar! maxFollowers 3
+    
+elseif list maxFollowersList = 4
+    @setvar! maxFollowers 4
+else 
+    @setvar! maxFollowers 5
+endif
+
+if not varexist earthFirsty or followers = 0
+    @setvar! earthFirsty 0
+endif
+
+if not varexist earthSecondly or followers = 0
+    @setvar! earthSecondly 0
+endif
+
+if not varexist waterFirsty or followers = 0
+    @setvar! waterFirsty 0
+endif
+
+if not varexist waterSecondly or followers = 0
+    @setvar! waterSecondly 0
+endif
+
+if not varexist airFirsty or followers = 0
+    @setvar! airFirsty 0
+endif
+
+if not varexist airSecondly or followers = 0
+    @setvar! airSecondly 0
+endif
+
+if not varexist fireFirsty or followers = 0
+    @setvar! fireFirsty 0
+endif
+
+if not varexist fireSecondly or followers = 0
+    @setvar! fireSecondly 0
+endif
+
+if not varexist daemonFirsty or followers = 0
+    @setvar! daemonFirsty 0
+endif
+
+if not varexist daemonSecondly or followers = 0
+    @setvar! daemonSecondly 0
+endif
+
+if not varexist creatureFirsty or followers = 0
+    @setvar! creatureFirsty 0
+endif
+
+if not varexist creatureSecondly or followers = 0
+    @setvar! creatureSecondly 0
+endif
+
+if not varexist creatureThirdy or followers = 0
+    @setvar! creatureThirdy 0
+endif
+
+if not varexist creatureFourthy or followers = 0
+    @setvar! creatureFourthy 0
+endif
+
+if not varexist creatureFithy or followers = 0
+    @setvar! creatureFithy 0
+endif
+
+
+if not varexist bladeSpirit or followers = 0
+    @setvar! bladeFirsty 0
+endif
+
+if not varexist energyVortexFirsty or followers = 0
+    @setvar! energyVortexFirsty 0
+endif
+
+if not varexist energyVortexSecondly or followers = 0
+    @setvar! energyVortexSecondly 0
+endif
+
+
+
+#-- list creation --#
+
+if not listexists earthListy or followers = 0
+    removelist earthListy
+    createlist earthListy
+endif
+
+if not listexists waterListy or followers = 0
+    removelist waterListy
+    createlist waterListy
+endif
+
+if not listexists airListy or followers = 0
+    removelist airListy
+    createlist airListy
+endif
+
+if not listexists fireListy or followers = 0
+    removelist fireListy
+    createlist fireListy
+endif
+
+if not listexists daemonListy or followers = 0
+    removelist daemonListy
+    createlist daemonListy
+endif
+
+if not listexists creatureListy or followers = 0
+    removelist creatureListy
+    createlist creatureListy
+endif
+
+
+if not listexists bladeListy or followers = 0
+    removelist bladeListy
+    createlist bladeListy
+endif
+
+
+if not listexists energyVortexListy or followers = 0
+    removelist energyVortexListy
+    createlist energyVortexListy
+endif
+
+@setvar! globalMessageCD 5000
+settimer globalMessageTimer globalMessageCD
+
+@setvar! summonMsgCD 1500
+settimer summonMsgTimer summonMsgCD
+
+@setvar! manaMsgCD 2500
+settimer manaMsgTimer manaMsgCD
+
+@setvar! guardMessageCD 5000
+settimer guardMessageTimer guardMessageCD
+
+#--- Script msgs timers ---#
+
+@setvar! noRegsMessageCD 3000
+settimer noRegsMessageTimer noRegsMessageCD
+
+#--- Resources timers ---#
+
+@setvar! pouchMessageCD 5000
+settimer pouchMessageTimer pouchMessageCD
+
+@setvar! aidsMessageCD 4000
+settimer aidsMessageTimer aidsMessageCD
+
+@setvar! whiteMessageCD 3000
+settimer whiteMessageTimer whiteMessageCD
+
+@setvar! blueMessageCD 3000
+settimer blueMessageTimer blueMessageCD
+
+@setvar! blackMessageCD 2500
+settimer blackMessageTimer blackMessageCD
+
+@setvar! orangeMessageCD 2000
+settimer orangeMessageTimer orangeMessageCD
+
+@setvar! yellowMessageCD 1500
+settimer yellowMessageTimer yellowMessageCD
+
+@setvar! redMessageCD 1000
+settimer redMessageTimer redMessageCD
+
+#--- Magery buffs timers ---#
+
+@setvar! magicReflectCD 15000
+settimer magicReflectTimer 15000
+
+@setvar! armorReflectCD 15000
+settimer armorReflectTimer 15000
+
+@setvar! protectionCD 15000
+settimer protectionTimer 15000
+
+#sysmsg "MAX: {{maxFollowers}}" 34
+
+
+
+
+
+
+if 1 == 2
+foreach _itr in earthListy
+sysmsg "earth {{_itr}}"
+endfor
+
+foreach _itr in waterListy 
+sysmsg "water {{_itr}}"
+endfor
+
+
+foreach _itr in airListy
+sysmsg "air {{_itr}}"
+endfor
+
+
+foreach _itr in fireListy 
+sysmsg "fire {{_itr}}"
+endfor
+
+foreach _itr in daemonListy 
+sysmsg "daemon {{_itr}}"
+endfor
+
+foreach _itr in creatureListy 
+sysmsg "creature {{_itr}}"
+endfor
+
+
+foreach _itr in bladeListy 
+sysmsg "blade {{_itr}}"
+endfor
+
+
+foreach _itr in energyVortexListy 
+sysmsg "energy vortex {{_itr}}"
+endfor
+
+if  varexist earthFirsty
+  if earthFirsty != 0
+    sysmsg "earthFirsty  {{earthFirsty}}"
+  endif
+endif
+
+if  varexist earthSecondly
+  if earthSecondly != 0
+    sysmsg "earthSecondly  {{earthSecondly}}"
+  endif
+endif
+
+if  varexist waterFirsty
+  if waterFirsty != 0
+    sysmsg "waterFirsty  {{waterFirsty}}"
+  endif
+endif
+
+if  varexist waterSecondly
+  if waterSecondly != 0
+    sysmsg "waterSecondly  {{waterSecondly}}"
+  endif
+endif
+
+if  varexist airFirsty
+  if airFirsty != 0
+    sysmsg "airFirsty  {{airFirsty}}"
+  endif
+endif
+
+if  varexist airSecondly
+  if airSecondly != 0
+    sysmsg "airSecondly  {{airSecondly}}"
+  endif
+endif
+
+if  varexist fireFirsty
+  if fireFirsty != 0
+    sysmsg "fireFirsty  {{fireFirsty}}"
+  endif
+endif
+
+if  varexist fireSecondly
+  if fireSecondly != 0
+    sysmsg "fireSecondly  {{fireSecondly}}"
+  endif
+endif
+
+if  varexist daemonFirsty
+  if daemonFirsty != 0
+    sysmsg "daemonFirsty  {{daemonFirsty}}"
+  endif
+endif
+
+if  varexist daemonSecondly
+  if daemonSecondly != 0
+    sysmsg "daemonSecondly  {{daemonSecondly}}"
+  endif
+endif
+
+if  varexist creatureFirsty
+  if creatureFirsty != 0
+    sysmsg "creatureFirsty  {{creatureFirsty}}"
+  endif
+endif
+
+if  varexist creatureSecondly
+  if creatureSecondly != 0
+    sysmsg "creatureSecondly  {{creatureSecondly}}"
+  endif
+endif
+
+if  varexist creatureThirdy
+  if creatureThirdy != 0
+    sysmsg "creatureThirdy  {{creatureThirdy}}"
+  endif
+endif
+
+if  varexist creatureFourthy
+  if creatureFourthy != 0
+    sysmsg "creatureFourthy  {{creatureFourthy}}"
+  endif
+endif
+
+if  varexist creatureFithy
+  if creatureFithy != 0
+    sysmsg "creatureFithy  {{creatureFithy}}"
+  endif
+endif
+
+
+if  varexist bladeSpirit
+  if bladeSpirit != 0
+    sysmsg "bladeFirsty  {{bladeFirsty}}"
+  endif
+endif
+
+if  varexist energyVortexFirsty
+  if energyVortexFirsty != 0
+    sysmsg "energyVortexFirsty  {{energyVortexFirsty}}"
+  endif
+endif
+
+if  varexist energyVortexSecondly
+  if energyVortexSecondly != 0
+    sysmsg "energyVortexSecondly  {{energyVortexSecondly}}"
+  endif
+endif
+
+
+if airElementals != 0 and list airListy < airElementals and followers < 4 and diffhits < medDiff and not casting 
+    sysmsg "wtf        elseif airElementals != 0 and list airListy < airElementals and followers < 4 and diffhits < medDiff and not casting "
+endif
+
+            
+if airFirsty != 0 and dead airFirsty
+    if list airListy != 0
+        sysmsg "poplist airListy 'front'"
+    endif
+    sysmsg "@setvar! airFirsty 0"
+endif
+    
+if airSecondly != 0 and dead airSecondly 
+    if list airListy != 0
+    sysmsg "poplist airListy 'front'"
+    endif 
+    sysmsg "@setvar! airSecondly 0"
+endif
+
+stop
+endif
+
+
+
+
+
+
+
+
+
+
+@setvar! ranonce 0
+while not dead and ranonce == 0
+
+    if timer globalMessageTimer > globalMessageCD
+        overhead "* Auto summoning *" 11
+        settimer globalMessageTimer 0
+    endif
+
+#********* EAT TRAY FOOD *********
+    
+    if not findbuff "food" and findtype "tray" backpack as fody    
+        dclick fody
+        wait 200
+    endif
+        
+#********** AUTO HEALING START  **********#         
+
+    while diffhits >= lowDiff or paralyzed or poisoned
+    
+        #sysmsg "auto-healing activated" 11   
+        
+        #--- Trapped ---#
+        
+        if paralyzed 
+            if findtype "pouch" backpack 38 
+                yell "[pouch"            
+                wait 200
+            else
+                if timer pouchMessageTimer > pouchMessageCD
+                    overhead "Out of Pouches!" 34
+                    settimer pouchMessageTimer 0
+                endif
+            endif
+        endif
+            
+        #--- Self bandage ---#
+        
+        if diffhits >= 1 and not bandaging
+            if skill 'healing' >= 50 or skill "veterinary" >= 50
+                if findtype 'clean bandage%s%' backpack
+                
+                    if targetexists
+                        hotkey 'cancel current target'  
+                    endif
+                    dclicktype 'clean bandage%s%'
+                    waitfortarget maxwaittimeinms
+                    target 'self'
+                    wait 200            
+                else
+                    if timer aidsMessageTimer > aidsMessageCD
+                        overhead "Out of bandages" 34
+                        settimer aidsMessageTimer 0
+                    endif
+                endif
+            endif
+        endif
+        
+        #--- Drink str pot ---#
+        
+        if drinkStr = 1 and str < strengthLowerThan
+            if not findbuff "Strength" 
+                if findtype "White Potion" self
+                    dclicktype "White Potion"
+                    wait 200
+                else
+                    if timer whiteMessageTimer > whiteMessageCD
+                        overhead "Out of str pots" 34
+                        settimer whiteMessageTimer 0 
+                    endif
+                endif
+            endif
+        endif
+        
+        #--- Drink agility pot ---#
+        
+        if drinkAgility = 1
+            if not findbuff "Agility" 
+                if findtype "Blue Potion" self
+                    dclicktype "Blue Potion"
+                    wait 200
+                else
+                    if timer blueMessageTimer > blueMessageCD
+                        overhead "Out of agility pots" 34
+                        settimer blueMessageTimer 0 
+                    endif
+                endif
+            endif
+        endif
+            
+        #--- Drink magic resist pot ---#
+    
+        if drinkMagicResist = 1
+            if not findbuff "Magic Resist" 
+                if findtype "Black Potion" self
+                    dclicktype "Black Potion"
+                    wait 200
+                else
+                    if timer blackMessageTimer > blackMessageCD
+                        overhead "Out of resist pots" 34
+                        settimer blackMessageTimer 0
+                    endif
+                endif
+            endif
+        endif
+            
+        #--- Poisoned ---#
+        
+        if 1 = drinkCure or 1 = cureSpell
+            while poisoned
+                if findtype "Orange Potion" self
+                    dclicktype "Orange Potion"
+                    wait 200
+                else
+                    if timer orangeMessageTimer > orangeMessageCD
+                        overhead "Out of cure pots" 34
+                        settimer orangeMessageTimer 0
+                    endif
+                    
+                    if diffhits > highDiff or not findtype 3972 self or not findtype 3973 self
+                        break
+                    endif
+                    
+                    if skill 'magery' >= 40 and mana >= 6 and 1 = cureSpell and not casting
+                        cast 'cure'
+                        wait 50
+                        while not casting                   
+                            if targetexists
+                                hotkey 'cancel current target'
+                            endif
+                            cast 'cure'  
+                            wait 50
+                        endwhile  
+                        while not targetexists and casting
+                        endwhile
+                        waitfortarget maxwaittimeinms
+                        target 'self' 
+                        wait 200
+                    else 
+                        break
+                    endif
+                endif
+                
+            endwhile
+        endif
+            
+        #--- Drink Heal Pot ---#
+        
+        if diffhits >= highDiff and 1 = drinkHeal
+            if findtype "Yellow Potion" self as hPot
+                getlabel hPot potLabel
+                if "next" in potLabel
+                    #do nothing
+                else
+                    @setvar! ch 0
+                    
+                    if counttype 3852 self as c
+                        @setvar! ch c
+                    endif
+                    clearsysmsg  
+                    
+                    dclicktype 3852
+                    getlabel backpack xxx
+                    wait 200
+                                
+                    if ch != counttype 3852 self or insysmsg "potion satchel used"
+                        cooldown "Heal Pot" healingPotCD
+                    endif
+                endif
+            else
+                if timer yellowMessageTimer > yellowMessageCD
+                    overhead "Out of heals pots" 34
+                    settimer yellowMessageTimer 0
+                endif
+            endif
+        endif
+                
+        #--- Drink red pot ---#
+        
+        if stam < staminaLowerThan and 1 = drinkRefresh
+            if findtype "Red Potion" self
+                dclicktype "Red Potion"
+                wait 200
+            else
+                if timer redMessageTimer > redMessageCD
+                    overhead "Out of refresh pots" 34
+                    settimer redMessageTimer 0 
+                endif
+            endif
+        endif
+            
+        #--- Cast heals ---#
+        
+        if skill 'magery' >= 40 and diffhits >= lowDiff and diffhits < medDiff and mana >= 4 and miniHeal = 1 and not casting
+            cast 'heal'
+            while not casting                   
+                if targetexists
+                    hotkey 'cancel current target'
+                endif
+                cast 'heal'
+            endwhile  
+            
+            while not targetexists and casting
+            endwhile
+            
+            waitfortarget maxwaittimeinms
+            target 'self' 
+            wait 200  
+            
+        elseif skill 'magery' >= 60 and diffhits >= medDiff and diffhits <= highDiff mana >= 11 and greaterHeal = 1 and not casting
+            cast 'greater heal'         
+            while not casting                   
+                if targetexists
+                    hotkey 'cancel current target'
+                endif
+                cast 'greater heal'
+            endwhile  
+            
+            while not targetexists and casting
+                
+                #--- Poisoned ---#
+                
+                if 1 = drinkCure
+                    while poisoned
+                        if findtype "Orange Potion" self
+                            dclicktype "Orange Potion"
+                            wait 200
+                        else
+                            if timer orangeMessageTimer > orangeMessageCD
+                                overhead "Out of cure pots" 34
+                                settimer orangeMessageTimer 0
+                                break
+                            endif
+            
+                        endif
+                    endwhile
+                endif            
+            
+                #--- Drink Heal Pot ---#
+                
+                if diffhits >= highDiff and 1 = drinkHeal
+                    if findtype "Yellow Potion" self as hPot
+                        getlabel hPot potLabel
+                        if "next" in potLabel
+                            #do nothing
+                        else
+                            @setvar! ch 0
+                            
+                            if counttype 3852 self as c
+                                @setvar! ch c
+                            endif
+                            clearsysmsg  
+                            
+                            dclicktype 3852
+                            getlabel backpack xxx
+                            wait 200
+                                        
+                            if ch != counttype 3852 self or insysmsg "potion satchel used"
+                                cooldown "Heal Pot" healingPotCD
+                            endif
+                        endif
+                    else
+                        if timer yellowMessageTimer > yellowMessageCD
+                            overhead "Out of heals pots" 34
+                            settimer yellowMessageTimer 0
+                        endif
+                    endif
+                endif
+        
+            endwhile
+            
+            waitfortarget maxwaittimeinms
+            target 'self' 
+            wait 200 
+            
+        elseif skill 'magery' >= 40 and diffhits > highDiff and mana >= 4 and miniHeal = 1 and not casting
+            cast 'heal'     
+            while not casting                   
+                if targetexists
+                    hotkey 'cancel current target'
+                endif
+                cast 'heal' 
+            endwhile  
+            
+            while not targetexists and casting
+            endwhile
+            
+            waitfortarget maxwaittimeinms
+            target 'self' 
+            wait 200  
+        
+        endif 
+    
+    endwhile
+    
+#********** CHECK FOR ANY DEAD ELEMENTAL **********# 
+
+    while followers < maxFollowers and diffhits < medDiff and ranonce == 0
+
+        if counttype 29012 backpack = 0
+            while counttype 29012 backpack < mushroomCount
+                cast 'create food'
+                wait 100
+            endwhile
+        endif
+        
+        
+        if 1 = castingEarth 
+            sysmsg "fixing earth" 44
+            while findtype 158|14 ground -1 -1 12 as ele 
+                @getlabel! backpack _bp
+                menu ele 1
+                waitfortarget maxwaittimeinms
+                if targetexists 
+                    hotkey 'cancel current target'
+                    if ele != earthFirsty and ele != earthSecondly
+                        
+                        if earthFirsty = 0 
+                            @setvar! earthFirsty ele
+                            sysmsg "add earth 1" 11
+                            overhead "Earth 1" 634 ele
+                        else 
+                            @setvar! earthSecondly ele
+                            sysmsg "add earth 2" 11
+                            overhead "Earth 2" 634 ele
+                        endif
+                        
+                        break
+                    endif
+                endif
+                @ignore ele
+            endwhile    
+            @clearignore
+            @setvar! castingEarth 0
+            
+        elseif 1 = castingWater
+            sysmsg "fixing water" 44
+            while findtype 740|16 ground -1 -1 12 as ele 
+                @getlabel! backpack _bp
+                menu ele 1
+                waitfortarget maxwaittimeinms
+                if targetexists 
+                    hotkey 'cancel current target'
+                    if ele != waterFirsty and ele != waterSecondly
+                        
+                        if waterFirsty = 0 
+                            @setvar! waterFirsty ele
+                            sysmsg "add water 1" 11
+                            overhead "Water 1" 399 ele
+                        else 
+                            @setvar! waterSecondly ele
+                            sysmsg "add water 2" 11
+                            overhead "Water 2" 399 ele
+                        endif
+                        
+                        break
+                    endif
+                endif
+                @ignore ele
+            endwhile
+            @clearignore
+            @setvar! castingWater 0
+            
+        elseif 1 = castingAir   
+            while findtype 306|13 ground -1 -1 12 as ele 
+                @getlabel! backpack _bp
+                menu ele 1
+                waitfortarget maxwaittimeinms
+                if targetexists 
+                    hotkey 'cancel current target'
+                    if ele != airFirsty and ele != airSecondly
+                        
+                        if airFirsty = 0 
+                            @setvar! airFirsty ele
+                            sysmsg "add air 1" 11
+                            overhead "Air 1" 933 ele
+                        else 
+                            @setvar! airSecondly ele
+                            sysmsg "add air 2" 11
+                            overhead "Air 2" 933 ele
+                        endif
+                        
+                        break
+                    endif
+                endif
+                @ignore ele
+            endwhile    
+            @clearignore
+            @setvar! castingAir 0
+            
+        elseif 1 = castingFire
+            while findtype 24|15 ground -1 -1 12 as ele 
+                @getlabel! backpack _bp
+                menu ele 1
+                waitfortarget maxwaittimeinms
+                if targetexists 
+                    hotkey 'cancel current target'
+                    if ele != fireFirsty and ele != fireSecondly
+                        
+                        if fireFirsty = 0 
+                            @setvar! fireFirsty ele
+                            sysmsg "add fire 1" 11
+                            overhead "Fire 1" 353 ele
+                        else 
+                            @setvar! fireSecondly ele
+                            sysmsg "add fire 2" 11
+                            overhead "Fire 2" 353 ele
+                        endif
+                        
+                        break
+                    endif
+                endif
+                @ignore ele
+            endwhile
+            @clearignore
+            @setvar! castingFire 0
+            
+        elseif 1 = castingDaemon
+            while findtype 9|722 ground -1 -1 12 as ele 
+                menu ele 1
+                waitfortarget maxwaittimeinms
+                if targetexists 
+                    hotkey 'cancel current target'
+                    if ele != daemonFirsty and ele != daemonSecondly
+                        
+                        if daemonFirsty = 0 
+                            @setvar! daemonFirsty ele
+                            sysmsg "add daemon 1" 11
+                            overhead "Daemon 1" 11 ele
+                        else 
+                            @setvar! daemonSecondly ele
+                            sysmsg "add daemon 2" 235
+                            overhead "Daemon 2" 235 ele
+                        endif
+                        
+                        break
+                    endif
+                endif
+                @ignore ele
+            endwhile     
+            @clearignore
+            @setvar! castingDaemon 0
+            
+        elseif 1 = castingCreature
+            #while findtype 270|215|211|302|317|225|212|202|213|716|729|51|74|214|206|776|737|718|739|718|29|776|317|302|39|56|26|3|57|50|382 ground -1 -1 12 as ele 
+            while findtype "a primordial whelp|an aegis rat|a cougar|a wolf|a grizzly bear|a brown bear|a corpse eater|a familiar|a rock guar|a flamehound|a sand crab|a monitor hatchling|a firebat|a black bear|a muck|a polar bear|shallow water|a scorpion|a swamp spider|a searing lizard|a minion|a fire salamander|a fire ant|a silverback|a jaguar|an aegis mongbat|a cave bat|a primordial|a monitor|an asp|an imp|a winter wolf|a cave bear|a giant swamp slug|an aegis slime|a trapdoor spider|a chameleon|a searing imp|a dragon whelp|a drake whelp|a devilbat|a wolfhound|a blood ape|an army ant|a molten mongbat|a stinger|a rime guar|an aegis scorpion|a skulker|a komodo|a shade wolf|a husk crab|an aegis imp|a fire minion|a snowdrift|a spitting viper|a vampire bat" ground -1 -1 12 as ele 
+                @getlabel! backpack _bp
+                menu ele 1
+                waitfortarget maxwaittimeinms
+                if targetexists 
+                    hotkey 'cancel current target'
+                    if ele != creatureFirsty and ele != creatureSecondly and ele != creatureThirdy and ele != creatureFourthy and ele != creatureFithy
+                        
+                        if creatureFirsty = 0 
+                            @setvar! creatureFirsty ele
+                            sysmsg "Creature 1" 11
+                            overhead "Creature 1" 11 ele
+                        elseif creatureSecondly = 0 
+                            @setvar! creatureSecondly ele
+                            sysmsg "add creature 2" 11
+                            overhead "Creature 2" 11 ele
+                        elseif creatureThirdy = 0 
+                            @setvar! creatureThirdy ele
+                            sysmsg "add creature 3" 11
+                            overhead "Creature 3" 11 ele
+                        elseif creatureFourthy = 0 
+                            @setvar! creatureFourthy ele
+                            sysmsg "add creature 4" 11
+                            overhead "Creature 4" 11 ele
+                        elseif creatureFithy = 0 
+                            @setvar! creatureFithy ele
+                            sysmsg "add creature 5" 11
+                            overhead "Creature 5" 11 ele
+                        endif
+                        
+                        break
+                    endif
+                endif
+                @ignore ele
+            endwhile 
+            @clearignore
+            @setvar! castingCreature 0
+            
+
+            
+        elseif 1 = castingBlade
+            overhead "blades check existing"
+            while findtype 574|309 ground -1 -1 28 as ele 
+                @getlabel! backpack _bp
+                if ele != bladeFirsty
+                    
+                    if bladeFirsty = 0 
+                        @setvar! bladeFirsty ele
+                        sysmsg "add blade spirit 1" 11
+                        overhead "blade spirit 1" 11 ele
+                    endif
+                    
+                    break
+                endif
+
+#                menu ele 1
+#                waitfortarget maxwaittimeinms
+#                if targetexists 
+#                    hotkey 'cancel current target'
+#                    if ele != bladeFirsty
+#                        
+#                        if bladeFirsty = 0 
+#                            @setvar! bladeFirsty ele
+#                            sysmsg "add blade spirit 1" 11
+#                            overhead "blade spirit 1" 11 ele
+#                        endif
+#                        
+#                        break
+#                    endif
+#                endif
+                @ignore ele
+            endwhile     
+            @clearignore
+            @setvar! castingBlade 0
+            
+        elseif 1 = castingEnergyVortex
+            while findtype 13 ground -1 -1 28 as ele 
+                @getlabel! backpack _bp
+                menu ele 1
+                waitfortarget maxwaittimeinms
+                if targetexists 
+                    hotkey 'cancel current target'
+                    if ele != energyVortexFirsty and ele != energyVortexSecondly
+                        
+                    if energyVortexFirsty = 0 
+                            @setvar! energyVortexFirsty ele
+                            sysmsg "add energy vortex 1" 11
+                            overhead "energy vortex 1" 11 ele
+                        else 
+                            @setvar! energyVortexSecondly ele
+                            sysmsg "add energy vortex 2" 235
+                            overhead "energy vortex 2" 235 ele
+                        endif
+                        
+                        break
+                    endif
+                endif
+                @ignore ele
+            endwhile     
+            @clearignore
+            @setvar! castingEnergyVortex 0
+        endif
+        
+        if earthFirsty != 0 and dead earthFirsty
+            if list earthListy != 0
+                poplist earthListy "XearthFirsty"
+                sysmsg "pop earth 1"
+            endif 
+            @setvar! earthFirsty 0
+        endif
+            
+        if earthSecondly != 0 and dead earthSecondly
+            if list earthListy != 0
+                poplist earthListy "XearthSecondly"
+                sysmsg "pop earth 2"
+            endif  
+            @setvar! earthSecondly 0
+        endif
+            
+        if waterFirsty != 0 and dead waterFirsty
+            if list waterListy != 0
+                poplist waterListy "XwaterFirsty"
+                sysmsg "pop water 1"
+            endif
+            @setvar! waterFirsty 0
+        endif
+            
+        if waterSecondly != 0 and dead waterSecondly
+            if list waterListy != 0
+                poplist waterListy "XwaterSecondly"
+                sysmsg "pop water 2"
+            endif
+            @setvar! waterSecondly 0
+        endif
+            
+        if airFirsty != 0 and dead airFirsty
+            if list airListy != 0
+                poplist airListy "XairFirsty"
+            endif
+            @setvar! airFirsty 0
+        endif
+            
+        if airSecondly != 0 and dead airSecondly 
+            if list airListy != 0
+                poplist airListy "XairSecondly"
+            endif 
+            @setvar! airSecondly 0
+        endif
+            
+        if fireFirsty != 0 and dead fireFirsty 
+            if list fireListy != 0
+                poplist fireListy "XfireFirsty"
+            endif
+            @setvar! fireFirsty 0
+        endif
+            
+        if fireSecondly != 0 and dead fireSecondly 
+            if list fireListy != 0
+                poplist fireListy "XfireSecondly"   
+            endif 
+            @setvar! fireSecondly 0
+        endif
+            
+        if daemonFirsty != 0 and dead daemonFirsty
+            if list daemonListy != 0
+                poplist daemonListy "XdaemonFirsty"
+            endif
+            @setvar! daemonFirsty 0
+        endif
+            
+        if daemonSecondly != 0 and dead daemonSecondly 
+            if list daemonListy != 0
+                poplist daemonListy "XdaemonSecondly"
+            endif 
+            @setvar! daemonSecondly 0
+        endif
+            
+        if creatureFirsty != 0 and dead creatureFirsty 
+            if list creatureListy != 0
+                poplist creatureListy "XcreatureFirsty"
+                sysmsg "pop creature 1"
+            endif 
+            @setvar! creatureFirsty 0
+        endif
+            
+        if creatureSecondly != 0 and dead creatureSecondly 
+            if list creatureListy != 0
+            poplist creatureListy "XcreatureSecondly"
+                sysmsg "pop creature 2"
+            endif 
+            @setvar! creatureSecondly 0
+        endif
+            
+        if creatureThirdy != 0 and dead creatureThirdy 
+            if list creatureListy != 0
+                poplist creatureListy "XcreatureThirdy"
+                sysmsg "pop creature 3"
+            endif 
+            @setvar! creatureThirdy 0
+        endif
+            
+        if creatureFourthy != 0 and dead creatureFourthy 
+            if list creatureListy != 0
+                poplist creatureListy "XcreatureFourthy"
+                sysmsg "pop creature 4"
+            endif 
+            @setvar! creatureFourthy 0
+        endif
+            
+        if creatureFithy != 0 and dead creatureFithy 
+            if list creatureListy != 0
+                poplist creatureListy "XcreatureFithy"
+                sysmsg "pop creature 5"
+            endif 
+            @setvar! creatureFithy 0
+        endif
+
+
+        if bladeFirsty != 0 and dead bladeFirsty
+            if list bladeListy != 0
+                poplist bladeListy "XbladeFirsty"
+            endif
+            @setvar! bladeFirsty 0
+        endif
+            
+        if energyVortexFirsty != 0 and dead energyVortexFirsty
+            if list energyVortexListy != 0
+                poplist energyVortexListy "XenergyVortexFirsty"
+            endif
+            @setvar! energyVortexFirsty 0
+        endif
+            
+        if energyVortexSecondly != 0 and dead energyVortexSecondly 
+            if list energyVortexListy != 0
+                poplist energyVortexListy "XenergyVortexSecondly"
+            endif 
+            @setvar! energyVortexSecondly 0
+        endif        
+        
+#********* CREATE MUSHROOMS *********
+
+        if mana <= 50
+            if timer mushroomTimer > mushroomTimerCD
+                if counttype 29012 backpack as c
+                    @setvar! cm c
+                
+                    dclicktype 29012 backpack
+                    wait 200
+                    
+                    if cm != counttype 29012 backpack
+                        settimer mushroomTimer 0
+                    endif
+                else 
+                    overhead "No mushrooms found!" 34
+                endif
+            endif            
+        endif
+        
+        if mana < meditateManaReach and 1 = useMeditation
+            skill 'meditation'
+            getlabel backpack xxx
+            wait 200
+            if findbuff 'meditating'
+                while mana < meditateUntilManaReach and diffhits < medDiff
+                    #interrupt here if hp is low
+                    if not findbuff 'meditating'
+                        break
+                    endif
+                endwhile
+            endif
+        endif    
+    
+        if mana < 50
+            if timer manaMsgTimer > manaMsgCD
+                overhead "No mana to summon" 34
+                settimer manaMsgTimer 0
+            endif
+            break
+        endif
+        
+        @clearsysmsg
+        @setvar! wasInterrupted 0
+        
+#********** ACTIVATE NECROMANCER BAR IF USING ANY NECRO SPELLS **********# 
+        
+        if NecroVengefulSpirit = 1 or NecroBloodOath = 1
+            if findtype 'necromancer book' backpack
+                yell '[necromancyhotbar'
+                while not gumpexists 622436516
+                    yell '[necromancyhotbar'
+                    waitforgump 622436516 maxwaittimeinms
+                endwhile
+            endif
+        endif
+        
+#********** ACTIVATE NECROMANCER VENGEFUL SPIRIT SPELL **********# 
+        
+        if ingump "20/" 622436516
+            @setvar! unholyPoints 20
+        elseif ingump "19/" 622436516
+            @setvar! unholyPoints 19
+        elseif ingump "18/" 622436516
+            @setvar! unholyPoints 18
+        elseif ingump "17/" 622436516
+            @setvar! unholyPoints 17
+        elseif ingump "16/" 622436516
+            @setvar! unholyPoints 16
+        elseif ingump "15/" 622436516
+            @setvar! unholyPoints 15
+        elseif ingump "14/" 622436516
+            @setvar! unholyPoints 14
+        elseif ingump "13/" 622436516
+            @setvar! unholyPoints 13
+        elseif ingump "12/" 622436516
+            @setvar! unholyPoints 12
+        elseif ingump "11/" 622436516
+            @setvar! unholyPoints 11
+        elseif ingump "10/" 622436516
+            @setvar! unholyPoints 10
+        elseif ingump "9/" 622436516
+            @setvar! unholyPoints 9
+        elseif ingump "8/" 622436516
+            @setvar! unholyPoints 8
+        elseif ingump "7/" 622436516
+            @setvar! unholyPoints 7
+        elseif ingump "6/" 622436516
+            @setvar! unholyPoints 6
+        elseif ingump "5/" 622436516
+            @setvar! unholyPoints 5
+        elseif ingump "4/" 622436516
+            @setvar! unholyPoints 4
+        elseif ingump "3/" 622436516
+            @setvar! unholyPoints 3
+        elseif ingump "2/" 622436516
+            @setvar! unholyPoints 2
+        elseif ingump "1/" 622436516
+            @setvar! unholyPoints 1
+        else 
+            @setvar unholyPoints 0
+        endif
+        
+        if 1 = NecroVengefulSpirit and 0 < unholyPoints
+            clearsysmsg
+            yell '[vengefulspirit'
+            wait 200 
+            
+            while not insysmsg! "unholy symbols remaining" and not insysmsg! "you must wait another"
+                yell '[vengefulspirit'
+                wait 200
+            endwhile
+            
+            if insysmsg "unholy symbols"
+                say '[>Vengeful Spirits<]' 44
+            endif
+  
+        endif 
+        
+#********** ACTIVATE NECROMANCER BLOOD OATH SPELL **********# 
+        
+        if ingump "20/" 622436516
+            @setvar! unholyPoints 20
+        elseif ingump "19/" 622436516
+            @setvar! unholyPoints 19
+        elseif ingump "18/" 622436516
+            @setvar! unholyPoints 18
+        elseif ingump "17/" 622436516
+            @setvar! unholyPoints 17
+        elseif ingump "16/" 622436516
+            @setvar! unholyPoints 16
+        elseif ingump "15/" 622436516
+            @setvar! unholyPoints 15
+        elseif ingump "14/" 622436516
+            @setvar! unholyPoints 14
+        elseif ingump "13/" 622436516
+            @setvar! unholyPoints 13
+        elseif ingump "12/" 622436516
+            @setvar! unholyPoints 12
+        elseif ingump "11/" 622436516
+            @setvar! unholyPoints 11
+        elseif ingump "10/" 622436516
+            @setvar! unholyPoints 10
+        elseif ingump "9/" 622436516
+            @setvar! unholyPoints 9
+        elseif ingump "8/" 622436516
+            @setvar! unholyPoints 8
+        elseif ingump "7/" 622436516
+            @setvar! unholyPoints 7
+        elseif ingump "6/" 622436516
+            @setvar! unholyPoints 6
+        elseif ingump "5/" 622436516
+            @setvar! unholyPoints 5
+        elseif ingump "4/" 622436516
+            @setvar! unholyPoints 4
+        elseif ingump "3/" 622436516
+            @setvar! unholyPoints 3
+        elseif ingump "2/" 622436516
+            @setvar! unholyPoints 2
+        elseif ingump "1/" 622436516
+            @setvar! unholyPoints 1
+        else 
+            @setvar unholyPoints 0
+        endif
+                
+        if 1 = NecroBloodOath and 3 < unholyPoints
+            clearsysmsg
+            yell '[bloodoath'
+            wait 200 
+            
+            while not insysmsg! "unholy symbols remaining" and not insysmsg! "you must wait another"
+                yell '[bloodoath'
+                wait 200
+            endwhile
+            
+            if insysmsg "unholy symbols"
+                say '[>Blood Oath<]' 55
+            endif
+        endif
+        
+#********** ACTIVATE NECROMANCER WITHER SPELL **********# 
+        
+        if ingump "20/" 622436516
+            @setvar! unholyPoints 20
+        elseif ingump "19/" 622436516
+            @setvar! unholyPoints 19
+        elseif ingump "18/" 622436516
+            @setvar! unholyPoints 18
+        elseif ingump "17/" 622436516
+            @setvar! unholyPoints 17
+        elseif ingump "16/" 622436516
+            @setvar! unholyPoints 16
+        elseif ingump "15/" 622436516
+            @setvar! unholyPoints 15
+        elseif ingump "14/" 622436516
+            @setvar! unholyPoints 14
+        elseif ingump "13/" 622436516
+            @setvar! unholyPoints 13
+        elseif ingump "12/" 622436516
+            @setvar! unholyPoints 12
+        elseif ingump "11/" 622436516
+            @setvar! unholyPoints 11
+        elseif ingump "10/" 622436516
+            @setvar! unholyPoints 10
+        elseif ingump "9/" 622436516
+            @setvar! unholyPoints 9
+        elseif ingump "8/" 622436516
+            @setvar! unholyPoints 8
+        elseif ingump "7/" 622436516
+            @setvar! unholyPoints 7
+        elseif ingump "6/" 622436516
+            @setvar! unholyPoints 6
+        elseif ingump "5/" 622436516
+            @setvar! unholyPoints 5
+        elseif ingump "4/" 622436516
+            @setvar! unholyPoints 4
+        elseif ingump "3/" 622436516
+            @setvar! unholyPoints 3
+        elseif ingump "2/" 622436516
+            @setvar! unholyPoints 2
+        elseif ingump "1/" 622436516
+            @setvar! unholyPoints 1
+        else 
+            @setvar unholyPoints 0
+        endif
+                
+        if 1 = NecroWither and 4 < unholyPoints and skill 'necromancy' >= 90
+            clearsysmsg
+            yell '[wither'
+            wait 200 
+            
+            while not insysmsg! "unholy symbols remaining" and not insysmsg! "you must wait another"
+                yell '[wither'
+                wait 200
+            endwhile
+            
+            if insysmsg "unholy symbols"
+                say '[>Wither<]' 66
+            endif
+            
+        endif
+        
+#        if list earthListy = 0 
+#            #sysmsg "Earth List = 0"
+#        elseif list earthListy = 1
+#            #sysmsg "Earth List = 1"
+#        elseif list earthListy = 2
+#            #sysmsg "Earth List = 2"
+#        endif
+#        
+#        if list waterListy = 0 
+#            #sysmsg "Water List = 0"
+#        elseif list waterListy = 1
+#            #sysmsg "Water List = 1"
+#        elseif list waterListy = 2
+#            #sysmsg "Water List = 2"
+#        endif
+#        
+#        if list creatureListy = 0 
+#            #sysmsg "Creature List = 0"
+#        elseif list creatureListy = 1
+#            #sysmsg "Creature List = 1"
+#        elseif list creatureListy = 2
+#            #sysmsg "Creature List = 2"
+#        elseif list creatureListy = 2
+#            #sysmsg "Creature List = 2"
+#        elseif list creatureListy = 2
+#            #sysmsg "Creature List = 2"
+#        endif
+        
+        
+
+
+
+        if 1 == 0
+        if summonCreature != 0 
+            sysmsg "1:5 if summonCreature != 0"
+        endif
+        if list creatureListy < summonCreature 
+            sysmsg "2:5 if list creatureListy < summonCreature "
+        endif
+        if followers < 5 
+            sysmsg "3:5 if followers < 5 "
+        endif
+        if diffhits < medDiff 
+            sysmsg "4:5 diffhits < medDiff "
+        endif
+        if not casting 
+            sysmsg "5:5 if not casting"
+        endif
+
+       foreach _itr in creatureListy
+        sysmsg "creatureListy {{_itr}}"
+       endfor
+       endif
+       
+
+
+
+
+
+
+
+        sysmsg 'begin casting elementals...' 11
+        ## 3962  black pearl
+        ## 3963  blood moss+
+        ## 3974  mandrake root+
+        ## 3972  garlic
+        ## 3973  ginseng
+        ## 3981  spiders silk+
+        ## 3976  nightshade
+        ## 3980  sulfurous ash
+        #### TODO: find least-common-demonator in terms of regs for all elementals and newly-added blade spirit + energy vortex
+        if not findtype 3963 self or not findtype 3974 self or not findtype 3981 self
+            if timer noRegsMessageTimer > noRegsMessageCD
+                overhead 'Out of regs!' 34
+                settimer noRegsMessageTimer 0
+            endif
+        elseif fireElementals = 1 and not findtype 3980 self 
+            if timer noRegsMessageTimer > noRegsMessageCD
+                overhead 'Out of regs!' 34
+                settimer noRegsMessageTimer 0
+            endif
+        elseif summonDaemons = 1 and not findtype 3980 self 
+            if timer noRegsMessageTimer > noRegsMessageCD
+                overhead 'Out of regs!' 34
+                settimer noRegsMessageTimer 0
+            endif
+        elseif energyVortex = 1 and not findtype 3976 self
+            if timer noRegsMessageTimer > noRegsMessageCD
+                overhead 'Out of regs!' 34
+                settimer noRegsMessageTimer 0
+            endif
+        elseif bladeSpirit = 1 and not findtype 3976 self
+            if timer noRegsMessageTimer > noRegsMessageCD
+                overhead 'Out of regs!' 34
+                settimer noRegsMessageTimer 0
+            endif
+            
+#********** CAST EARTH ELEMENTAL **********# 
+    
+        elseif earthElementals != 0 and list earthListy < earthElementals and followers < 4 and diffhits < medDiff and not casting      
+        
+            cast 'Earth Elemental'
+            @setvar! castingEarth 1
+            while not casting                   
+                cast 'Earth Elemental'  
+                if targetexists
+                    hotkey 'cancel current target'
+                endif
+            endwhile  
+            
+            while not dead
+                
+                if diffhits >= medDiff
+                    @setvar! wasInterrupted 1 
+                    sysmsg "interrupted low health" 33
+                    interrupt
+                    break
+                endif
+                
+                if not casting
+                    getlabel backpack xxx
+                    wait 200
+                    
+                    if insysmsg "Your concentration"
+                        @setvar! wasInterrupted 1 
+                        sysmsg "interrupted concentration" 33   
+                    else 
+                        sysmsg "casting finished" 11
+                    endif
+                    
+                    break
+                endif
+                
+                if timer summonMsgTimer > summonMsgCD
+                    overhead "* summoning earth... *" 634
+                    sysmsg "* summoning earth... *" 634
+                    settimer summonMsgTimer 0
+                    settimer globalMessageTimer 0
+                endif
+                
+            endwhile
+
+            if 0 = wasInterrupted
+                sysmsg "Summon Earth Successful" 
+                #pushlist earthListy 'x' 'front'
+                
+                while not dead
+                    if findtype 158|14 ground -1 -1 12 as ele 
+                        @getlabel! backpack _bp
+                        menu ele 1
+                        waitfortarget maxwaittimeinms
+                        if targetexists 
+                            hotkey 'cancel current target'
+                            if ele != earthFirsty and ele != earthSecondly
+                                
+                                if earthFirsty = 0 
+                                    @setvar! earthFirsty ele
+                                    sysmsg "add earth 1" 11
+                                    overhead "Earth 1" 634 ele
+                                    pushlist earthListy "XearthFirsty"
+                                else 
+                                    @setvar! earthSecondly ele
+                                    sysmsg "add earth 2" 11
+                                    overhead "Earth 2" 634 ele
+                                    pushlist earthListy "XearthSecondly"
+                                endif
+                                
+                                break
+                            endif
+                        endif
+                        @ignore ele
+                    endif
+                endwhile
+                
+                @clearignore
+                @setvar! castingEarth 0
+            endif
+            
+#********** CAST WATER ELEMENTAL **********# 
+        
+        elseif waterElementals != 0 and list waterListy < waterElementals and followers < 4 and diffhits < medDiff and not casting
+            cast 'Water Elemental'
+            @setvar! castingWater 1
+            while not casting                   
+                cast 'Water Elemental'  
+                if targetexists
+                    hotkey 'cancel current target'
+                endif
+            endwhile 
+            
+            while not dead
+                
+                if diffhits >= medDiff
+                    @setvar! wasInterrupted 1 
+                    sysmsg "interrupted low health" 33
+                    interrupt
+                    break
+                endif
+                
+                if not casting
+                    getlabel backpack xxx
+                    wait 200
+                    
+                    if insysmsg "Your concentration"
+                        @setvar! wasInterrupted 1 
+                        sysmsg "interrupted concentration" 33   
+                    else 
+                        sysmsg "casting finished" 11
+                    endif
+                    
+                    break
+                endif
+                
+                if timer summonMsgTimer > summonMsgCD
+                    overhead "* summoning water... *" 399
+                    sysmsg "* summoning water... *" 399
+                    settimer summonMsgTimer 0
+                    settimer globalMessageTimer 0
+                endif
+                
+            endwhile
+
+            if 0 = wasInterrupted
+                sysmsg "Summon Water Successful" 
+                #pushlist waterListy 'x' 'front'
+                
+                while not dead
+                    if findtype 740|16 ground -1 -1 12 as ele 
+                        @getlabel! backpack _bp
+                        menu ele 1
+                        waitfortarget maxwaittimeinms
+                        if targetexists 
+                            hotkey 'cancel current target'
+                            if ele != waterFirsty and ele != waterSecondly
+                                
+                                if waterFirsty = 0 
+                                    @setvar! waterFirsty ele
+                                    sysmsg "add water 1" 11
+                                    overhead "Water 1" 399 ele
+                                    pushlist waterListy 'XwaterFirsty'
+                                else 
+                                    @setvar! waterSecondly ele
+                                    sysmsg "add water 2" 11
+                                    overhead "Water 2" 399 ele
+                                    pushlist waterListy 'XwaterSecondly'
+                                endif
+                                
+                                break
+                            endif
+                        endif
+                        @ignore ele
+                    endif
+                endwhile
+                
+                @clearignore
+                @setvar! castingWater 0
+            endif
+        
+#********** CAST AIR ELEMENTAL **********# 
+        
+        elseif airElementals != 0 and list airListy < airElementals and followers < 4 and diffhits < medDiff and not casting 
+            #sysmsg "WTF killed airListy"
+            #stop
+            cast 'Air Elemental'
+            @setvar! castingAir 1
+            while not casting                   
+                cast 'Air Elemental'  
+                if targetexists
+                    hotkey 'cancel current target'
+                endif
+            endwhile  
+            
+            while not dead
+                
+                if diffhits >= medDiff
+                    @setvar! wasInterrupted 1 
+                    sysmsg "interrupted low health" 33
+                    interrupt
+                    break
+                endif
+                
+                if not casting
+                    getlabel backpack xxx
+                    wait 200
+                    
+                    if insysmsg "Your concentration"
+                        @setvar! wasInterrupted 1 
+                        sysmsg "interrupted concentration" 33   
+                    else 
+                        sysmsg "casting finished" 11
+                    endif
+                    
+                    break
+                endif
+                
+                if timer summonMsgTimer > summonMsgCD
+                    overhead "* summoning air... *" 933
+                    sysmsg "* summoning air... *" 933
+                    settimer summonMsgTimer 0
+                    settimer globalMessageTimer 0
+                endif
+                
+            endwhile
+            
+            if 0 = wasInterrupted
+                sysmsg "Summon Air Successful" 
+                #pushlist airListy 'x' 'front'
+                
+                while not dead
+                    if findtype 306|13 ground -1 -1 12 as ele 
+                        @getlabel! backpack _bp
+                        menu ele 1
+                        waitfortarget maxwaittimeinms
+                        if targetexists 
+                            hotkey 'cancel current target'
+                            if ele != airFirsty and ele != airSecondly
+                                
+                                if airFirsty = 0 
+                                    @setvar! airFirsty ele
+                                    sysmsg "add air 1" 11
+                                    overhead "Air 1" 933 ele
+                                    pushlist airListy 'XairFirsty'
+                                else 
+                                    @setvar! airSecondly ele
+                                    sysmsg "add air 2" 11
+                                    overhead "Air 2" 933 ele
+                                    pushlist airListy 'XairSecondly'
+                                endif
+                                
+                                break
+                            endif
+                        endif
+                        @ignore ele
+                    endif
+                endwhile
+                @clearignore
+                @setvar! castingAir 0
+            endif
+        
+#********** CAST FIRE ELEMENTAL **********# 
+        
+        elseif fireElementals != 0 and list fireListy < fireElementals and followers < 4 and diffhits < medDiff and not casting                       
+            cast 'Fire Elemental'
+            @setvar! castingFire 1
+            while not casting                   
+                cast 'Fire Elemental'  
+                if targetexists
+                    hotkey 'cancel current target'
+                endif
+            endwhile  
+            
+            while not dead
+                
+                if diffhits >= medDiff
+                    @setvar! wasInterrupted 1 
+                    sysmsg "interrupted low health" 33
+                    interrupt
+                    break
+                endif
+                
+                if not casting
+                    getlabel backpack xxx
+                    wait 200
+                    
+                    if insysmsg "Your concentration"
+                        @setvar! wasInterrupted 1 
+                        sysmsg "interrupted concentration" 33   
+                    else 
+                        sysmsg "casting finished" 11
+                    endif
+                    
+                    break
+                endif
+                
+                if timer summonMsgTimer > summonMsgCD
+                    overhead "* summoning fire... *" 353
+                    sysmsg "* summoning fire... *" 353
+                    settimer summonMsgTimer 0
+                    settimer globalMessageTimer 0
+                endif
+                
+            endwhile
+            
+            if 0 = wasInterrupted
+                sysmsg "Summon Fire Successful" 
+                #pushlist fireListy 'x' 'front'
+                
+                while not dead
+                    if findtype 24|15 ground -1 -1 12 as ele 
+                        @getlabel! backpack _bp
+                        menu ele 1
+                        waitfortarget maxwaittimeinms
+                        if targetexists 
+                            hotkey 'cancel current target'
+                            if ele != fireFirsty and ele != fireSecondly
+                                
+                                if fireFirsty = 0 
+                                    @setvar! fireFirsty ele
+                                    sysmsg "add fire 1" 11
+                                    overhead "Fire 1" 353 ele
+                                    pushlist fireListy 'XfireFirsty'
+                                else 
+                                    @setvar! fireSecondly ele
+                                    sysmsg "add fire 2" 11
+                                    overhead "Fire 2" 353 ele
+                                    pushlist fireListy 'XfireSecondly'
+                                endif
+                                
+                                break
+                            endif
+                        endif
+                        @ignore ele
+                    endif
+                endwhile
+                @clearignore
+                @setvar! castingFire 0
+            endif
+            
+#********** CAST DAEMON **********# 
+        
+        elseif summonDaemons != 0 and list daemonListy < summonDaemons and followers < 4 and diffhits < medDiff and not casting                       
+            cast 'Summon Daemon'
+            @setvar! castingDaemon 1
+            while not casting                   
+                cast 'Summon Daemon'  
+                if targetexists
+                    hotkey 'cancel current target'
+                endif
+            endwhile  
+            
+            while not dead
+                
+                if diffhits >= medDiff
+                    @setvar! wasInterrupted 1 
+                    sysmsg "interrupted low health" 33
+                    interrupt
+                    break
+                endif
+                
+                if not casting
+                    getlabel backpack xxx
+                    wait 200
+                    
+                    if insysmsg "Your concentration"
+                        @setvar! wasInterrupted 1 
+                        sysmsg "interrupted concentration" 33   
+                    else 
+                        sysmsg "casting finished" 11
+                    endif
+                    
+                    break
+                endif
+                
+                if timer summonMsgTimer > summonMsgCD
+                    overhead "* summoning daemon... *" 235
+                    sysmsg "* summoning daemon... *" 235
+                    settimer summonMsgTimer 0
+                    settimer globalMessageTimer 0
+                endif
+                
+            endwhile
+            
+            if 0 = wasInterrupted
+                sysmsg "Summon Daemon Successful" 
+                #pushlist daemonListy 'x' 'front'
+                
+                while not dead
+                    if findtype 9|722 ground -1 -1 12 as ele 
+                        @getlabel! backpack _bp
+                        menu ele 1
+                        waitfortarget maxwaittimeinms
+                        if targetexists 
+                            hotkey 'cancel current target'
+                            if ele != daemonFirsty and ele != daemonSecondly
+                                
+                                if daemonFirsty = 0 
+                                    @setvar! daemonFirsty ele
+                                    sysmsg "add daemon 1" 11
+                                    overhead "Daemon 1" 11 ele
+                                    pushlist daemonListy 'XdaemonFirsty'
+                                else 
+                                    @setvar! daemonSecondly ele
+                                    sysmsg "add daemon 2" 235
+                                    overhead "Daemon 2" 235 ele
+                                    pushlist daemonListy 'XdaemonSecondly'
+                                endif
+                                
+                                break
+                            endif
+                        endif
+                        @ignore ele
+                    endif
+                endwhile
+                @clearignore
+                @setvar! castingDaemon 0
+            endif
+            
+#********** CAST SUMMON CREATURE **********# 
+        
+        elseif summonCreature != 0 and list creatureListy < summonCreature and followers < 5 and diffhits < medDiff and not casting                   
+            cast 'Summ. Creature'
+            @setvar! castingCreature 1
+            while not casting                   
+                cast 'Summ. Creature'  
+                if targetexists
+                    hotkey 'cancel current target'
+                endif
+            endwhile  
+            
+            while not dead
+                
+                if diffhits >= medDiff
+                    @setvar! wasInterrupted 1 
+                    sysmsg "interrupted low health" 33
+                    interrupt
+                    break
+                endif
+                
+                if not casting
+                    getlabel backpack xxx
+                    wait 200
+                    
+                    if insysmsg "Your concentration"
+                        @setvar! wasInterrupted 1 
+                        sysmsg "interrupted concentration" 33   
+                    else 
+                        sysmsg "casting finished" 11
+                    endif
+                    
+                    break
+                endif
+                
+                if timer summonMsgTimer > summonMsgCD
+                    overhead "* summon creature... *" 881
+                    sysmsg "* summon creature... *" 881
+                    settimer summonMsgTimer 0
+                    settimer globalMessageTimer 0
+                endif
+                
+            endwhile
+
+            if 0 = wasInterrupted
+                sysmsg "Summon Creature Successful" 
+                #pushlist creatureListy 'x' 'front'
+                while not dead
+                    # if findtype "an aegis rat|a black bear|a brown bear|a corpse eater|a cougar|a familiar|a firebat|a flamehound|a grizzly bear|a monitor hatchling|a muck|a polar bear|a primordial whelp|a rock guar|a sand crab|a scorpion|shallow water|a swamp spider|a wolf|an aegis mongbat|an asp|a cave bat|a cave bear|a fire ant|a fire salamander|a giant swamp slug|an imp|a jaguar|a minion|a monitor|a primordial|a searing lizard|a silverback|a winter wolf|an aegis slime|a blood ape|a chameleon|a devilbat|a dragon whelp|a drake whelp|a searing imp|a trapdoor spider|a wolfhound|an aegis imp|an aegis scorpion|an aquamarine smallshell|an army ant|a fire minion|a husk crab|a komodo|a molten mongbat|a rime guar|a ruby smallshell|a shade wolf|a skulker|a snowdrift|a spitting viper|a stinger|a vampire bat"  ground -1 -1 12 as ele 
+                    # if findtype 270|215|211|302|317|225|212|202|213|716|729|51|74|214|206|776|737|718|739|718|29|776|317|302|39|56|26|3|57|50|382 ground -1 -1 12 as ele 
+                    #### https://wiki.uooutlands.com/Spirit_Speak#Summon_Creature
+                        ### 2026-03 there is 59 of them;  
+#    ## pool 1
+#    215 an aegis rat
+#    211 a black bear
+#    211 a brown bear
+#    302 a corpse eater
+#    214 a cougar
+#    39 a familiar
+#    317 a firebat
+#    225 a flamehound
+#    212 a grizzly bear
+#    202 a monitor hatchling
+#    51 a muck
+#    213 a polar bear
+#    716 a primordial whelp
+#    270 a rock guar
+#    729 a sand crab
+#    717 a scorpion
+#    51 shallow water
+#    736 a swamp spider
+#    225 a wolf
+#    
+#    ## pool 2
+#    39 an aegis mongbat
+#    727 an asp
+#    317 a cave bat
+#    213 a cave bear
+#    739 a fire ant
+#    734 a fire salamander
+#    732 a giant swamp slug
+#    74 an imp
+#    244 a jaguar
+#    776 a minion
+#    206 a monitor
+#    730 a primordial
+#    206 a searing lizard
+#    29 a silverback
+#    225 a winter wolf
+#    
+#    ## pool 3
+#    51 an aegis slime
+#    29 a blood ape
+#    734 a chameleon
+#    386 a devilbat
+#    718 a dragon whelp
+#    718 a drake whelp
+#    74 a searing imp
+#    737 a trapdoor spider
+#    739 a wolfhound
+#    
+#    ## pool 4
+#    74 an aegis imp
+#    717 an aegis scorpion
+#    2475 an aquamarine smallshell
+#    738 an army ant
+#    776 a fire minion
+#    729 a husk crab
+#    206 a komodo
+#    39 a molten mongbat
+#    270 a rime guar
+#    2475 a ruby smallshell
+#    739 a shade wolf
+#    302 a skulker
+#    51 a snowdrift
+#    647 a spitting viper
+#    371 a stinger
+#    317 a vampire bat
+
+                    if findtype 202|206|211|212|213|214|215|225|244|2475|270|29|302|317|371|386|39|51|647|716|717|718|727|729|730|732|734|736|737|738|739|74|776   ground -1 -1 12 as ele 
+                    
+                        @getlabel! backpack _bp
+                        menu ele 1
+                        waitfortarget maxwaittimeinms
+                        if targetexists 
+                            hotkey 'cancel current target'
+                            if ele != creatureFirsty and ele != creatureSecondly and ele != creatureThirdy and ele != creatureFourthy and ele != creatureFithy
+                                
+                                if creatureFirsty = 0 
+                                    @setvar! creatureFirsty ele
+                                    sysmsg "add creature 1" 11 
+                                    overhead "Creature 1" 11 ele
+                                    pushlist creatureListy 'XcreatureFirsty'
+                                elseif creatureSecondly = 0 
+                                    @setvar! creatureSecondly ele
+                                    sysmsg "add creature 2" 11
+                                    overhead "Creature 2" 11 ele
+                                    pushlist creatureListy 'XcreatureSecondly'
+                                elseif creatureThirdy = 0 
+                                    @setvar! creatureThirdy ele
+                                    sysmsg "add creature 3" 11
+                                    overhead "Creature 3" 11 ele
+                                    pushlist creatureListy 'XcreatureThirdy'
+                                elseif creatureFourthy = 0 
+                                    @setvar! creatureFourthy ele
+                                    sysmsg "add creature 4" 11
+                                    overhead "Creature 4" 11 ele
+                                    pushlist creatureListy 'XcreatureFourthy'
+                                elseif creatureFithy = 0 
+                                    @setvar! creatureFithy ele
+                                    sysmsg "add creature 5" 11
+                                    overhead "Creature 5" 11 ele
+                                    pushlist creatureListy 'XcreatureFithy'
+                                endif
+                                
+                                break
+                            endif
+                        endif
+                        @ignore ele
+                    else
+                        sysmsg "should not get here - do an info on creature and add to list"
+                        break
+                    endif
+                endwhile
+                
+                @clearignore
+                @setvar! castingCreature 0
+            endif
+            
+#********** CAST BLADE SPIRITS **********#
+        
+        #elseif bladeSpirit != 0 and list bladeListy < bladeSpirit and followers < 5 and diffhits < medDiff and not casting
+        elseif bladeSpirit != 0 and summon_one_or_all == 1 and followers == 4 and diffhits < medDiff and not casting
+            @clearsysmsg
+            cast 'blade spirits'
+            @getlabel! backpack xxx
+            @setvar! castingBlade 1
+            while not casting         
+                cast 'blade spirits'  
+                @getlabel! backpack xxx
+                if targetexists
+                    hotkey 'cancel current target'
+                endif
+            endwhile  
+            @getlabel! backpack xxx
+            
+            while not dead
+                
+                if diffhits >= medDiff
+                    @setvar! wasInterrupted 1 
+                    sysmsg "interrupted low health" 33
+                    interrupt
+                    break
+                endif
+                
+                if not casting
+                    getlabel backpack xxx
+                    wait 200
+                    
+                    if insysmsg "Your concentration"
+                        @setvar! wasInterrupted 1 
+                        sysmsg "interrupted concentration" 33   
+                    else 
+                        sysmsg "casting finished" 11
+                        waitfortarget maxwaittimeinms
+                        target self
+                    endif
+                    
+                    break
+                endif
+                
+                if timer summonMsgTimer > summonMsgCD
+                    overhead "* summoning blade spirits... *" 903
+                    sysmsg "* summoning blade spirits... *" 903
+                    settimer summonMsgTimer 0
+                    settimer globalMessageTimer 0
+                endif
+                
+            endwhile
+            
+            if 0 = wasInterrupted
+                sysmsg "Summon Blade Spirits Successful" 
+                #pushlist bladeListy 'x' 'front'
+                
+                while not dead
+                    if findtype 574|309 ground -1 -1 28 as ele or insysmsg "Players are only allowed to control one of that creature type at a time"
+                        @getlabel! backpack _bp
+                        @setvar! bladeFirsty ele
+                        sysmsg "add blade spirit 1" 11
+                        overhead "blade spirit 1" 11 ele
+                        pushlist bladeListy 'XbladeFirsty'
+                        break
+#                        menu ele 1
+#                        waitfortarget maxwaittimeinms
+#                        if targetexists 
+#                            hotkey 'cancel current target'
+#                            if ele != bladeFirsty
+#                                
+#                                if bladeFirsty = 0 
+#                                    @setvar! bladeFirsty ele
+#                                    sysmsg "add blade spirit 1" 11
+#                                    overhead "blade spirit 1" 11 ele
+#                                endif
+#                                
+#                                break
+#                            endif
+#                        endif
+                        @ignore ele
+                    endif
+                        
+                endwhile
+                
+                @clearignore
+                @setvar! castingBlade 0
+            endif
+            
+#********** CAST ENERGY VORTEX **********#  TODO
+        
+        #elseif energyVortex != 0 and list energyVortexListy < energyVortex and followers < 4 and diffhits < medDiff and not casting
+        elseif energyVortex != 0  and summon_one_or_all == 1 and followers < 4 and diffhits < medDiff and not casting
+            cast 'Energy Vortex'
+            @setvar! castingEnergyVortex 1
+            while not casting                   
+                cast 'Energy Vortex'  
+                if targetexists
+                    hotkey 'cancel current target'
+                endif
+            endwhile  
+            
+            while not dead
+                
+                if diffhits >= medDiff
+                    @setvar! wasInterrupted 1 
+                    sysmsg "interrupted low health" 33
+                    interrupt
+                    break
+                endif
+                
+                if not casting
+                    getlabel backpack xxx
+                    wait 200
+                    
+                    if insysmsg "Your concentration"
+                        @setvar! wasInterrupted 1 
+                        sysmsg "interrupted concentration" 33   
+                    else 
+                        sysmsg "casting finished" 11
+                        waitfortarget maxwaittimeinms
+                        target self
+                    endif
+                    
+                    break
+                endif
+                
+                if timer summonMsgTimer > summonMsgCD
+                    overhead "* summoning energy vortex... *" 719
+                    sysmsg "* summoning energy vortex... *" 719
+                    settimer summonMsgTimer 0
+                    settimer globalMessageTimer 0
+                endif
+                
+            endwhile
+            
+            if 0 = wasInterrupted
+                sysmsg "Summon Energy Vortex Successful" 
+                #pushlist energyVortexListy 'x' 'front'
+                
+                while not dead
+                    if findtype 13 ground -1 -1 28 as ele 
+                        @getlabel! backpack _bp
+                        if energyVortexFirsty = 0 
+                            @setvar! energyVortexFirsty ele
+                            sysmsg "add energy vortex 1" 11
+                            overhead "energy vortex 1" 11 ele
+                            pushlist bladeListy 'XenergyVortexFirsty'
+                        else 
+                            @setvar! energyVortexSecondly ele
+                            sysmsg "add energy vortex 2" 235
+                            overhead "energy vortex 2" 235 ele
+                            pushlist bladeListy 'XenergyVortexSecondly'
+                        endif
+                        break
+#                        menu ele 1
+#                        waitfortarget maxwaittimeinms
+#                        if targetexists 
+#                            hotkey 'cancel current target'
+#                            if ele != energyVortexFirsty and ele != energyVortexSecondly
+#                                
+#                                if energyVortexFirsty = 0 
+#                                    @setvar! energyVortexFirsty ele
+#                                    sysmsg "add energy vortex 1" 11
+#                                    overhead "energy vortex 1" 11 ele
+#                                else 
+#                                    @setvar! energyVortexSecondly ele
+#                                    sysmsg "add energy vortex 2" 235
+#                                    overhead "energy vortex 2" 235 ele
+#                                endif
+#                                
+#                                break
+#                            endif
+#                        endif
+#                        @ignore ele
+                    endif
+                    
+                endwhile
+                @clearignore
+                @setvar! castingEnergyVortex 0
+            endif
+            
+        endif
+        
+
+        if followers > 0
+            if summon_one_or_all == 1
+                @setvar! ranonce 1
+            endif
+            say 'All Guard' 11
+            ## TODO
+        endif
+    
+    endwhile
+    
+    sysmsg "yay"
+
+    
+    
+
+#********** AUTO-MAGERY BUFFS IF NEEDED **********          
+
+    if magicReflect = 1 and skill 'magery' >= 70 and not findbuff "Magic Reflection" and mana >= miniumManaToBuff and diffhits < lowDiff
+        @getlabel! backpack _bp
+        if timer magicReflectTimer > magicReflectCD
+            cast 'Magic Reflection'
+            while not casting and diffhits < lowDiff    
+                getlabel backpack xxx
+                wait 200
+                if insysmsg "that spell will not" or insysmsg "that spell is already"
+                    settimer magicReflectTimer 0
+                    break  
+                endif
+                if targetexists
+                    hotkey 'cancel current target'
+                endif
+                cast 'Magic Reflection'
+            endwhile 
+            
+            while casting and diffhits < highDiff   
+            
+                #--- Poisoned ---#
+                
+                if 1 = drinkCure
+                    while poisoned
+                        if findtype "Orange Potion" self
+                            dclicktype "Orange Potion"
+                            wait 200
+                        else
+                            if timer orangeMessageTimer > orangeMessageCD
+                                overhead "Out of cure pots" 34
+                                settimer orangeMessageTimer 0
+                                break
+                            endif
+            
+                        endif
+                    endwhile
+                endif            
+            
+                #--- Drink Heal Pot ---#
+                
+                if diffhits >= highDiff and 1 = drinkHeal
+                    if findtype "Yellow Potion" self as hPot
+                        getlabel hPot potLabel
+                        if "next" in potLabel
+                            #do nothing
+                        else
+                            @setvar! ch 0
+                            
+                            if counttype 3852 self as c
+                                @setvar! ch c
+                            endif
+                            clearsysmsg  
+                            
+                            dclicktype 3852
+                            getlabel backpack xxx
+                            wait 200
+                                        
+                            if ch != counttype 3852 self or insysmsg "potion satchel used"
+                                cooldown "Heal Pot" healingPotCD
+                            endif
+                        endif
+                    else
+                        if timer yellowMessageTimer > yellowMessageCD
+                            overhead "Out of heals pots" 34
+                            settimer yellowMessageTimer 0
+                        endif
+                    endif
+                endif
+                
+            endwhile
+            wait 200  
+        endif    
+    endif
+    
+    if armorReflect = 1 and skill 'magery' >= 30 and not findbuff "Reactive Armor" and mana >= miniumManaToBuff and diffhits < lowDiff
+        if timer magicReflectTimer > magicReflectCD
+            cast 'Reactive Armor'
+            while not casting and diffhits < highDiff       
+                getlabel backpack xxx
+                wait 200
+                if insysmsg "that spell will not" or insysmsg "that spell is already"
+                    settimer armorReflectTimer 0
+                    break  
+                endif
+                if targetexists
+                    hotkey 'cancel current target'
+                endif
+                cast 'Reactive Armor'
+            endwhile  
+            
+            while casting and diffhits < lowDiff   
+            endwhile
+            wait 200  
+        endif    
+    endif     
+    
+    if protectionSpell = 1 and skill 'magery' >= 40 and not findbuff "Protection" and mana >= miniumManaToBuff and diffhits < lowDiff
+        cast 'Protection'
+        while not casting and diffhits < highDiff 
+            if targetexists
+                hotkey 'cancel current target'
+            endif
+            cast 'Protection'
+        endwhile  
+        while casting and diffhits < lowDiff   
+        endwhile
+        wait 200  
+    endif 
+    
+    if bless = 1 and skill 'magery' >= 50 and not findbuff "Cunning" and mana >= miniumManaToBuff and diffhits < lowDiff
+        sysmsg 'blessing..'
+        cast 'Bless'         
+        while not casting and diffhits < highDiff                   
+            if targetexists
+                hotkey 'cancel current target'
+            endif
+            cast 'Bless'
+            wait 50
+        endwhile  
+        
+        while not targetexists and casting
+        endwhile
+        
+        waitfortarget maxwaittimeinms
+        target 'self' 
+        wait 200  
+    endif  
+    
+    
+
+    
+    
+    
+    
+    
+    
+
+        #if not casting and 
+            # @getlabel! backpack _bp
+
+            #### weapon
+            if lhandempty and not targetexists and not casting and not findbuff "Actively Meditating"
+                @getlabel! backpack _bp
+                @getlabel! backpack _bp
+                @getlabel! backpack _bp
+                if @find! _t_equip_lhand  backpack
+                    @getlabel! backpack _bp
+                    if not casting
+                        @getlabel! backpack _bp
+                        dclick  _t_equip_lhand
+                        #lift _t_equip_lhand
+                        #drop self LeftHand
+                        while queued
+                            @getlabel! backpack _bp
+                        endwhile
+                    endif
+                else
+                    @unsetvar _t_equip_lhand
+                endif
+            endif
+
+            #### offhand
+            if rhandempty and not targetexists and not casting and not findbuff "Actively Meditating"
+                @getlabel! backpack _bp
+                @getlabel! backpack _bp
+                @getlabel! backpack _bp
+                if @find! _t_equip_rhand  backpack
+                    @getlabel! backpack _bp
+                    if not casting
+                        @getlabel! backpack _bp
+                        dclick  _t_equip_rhand
+                        #lift _t_equip_rhand
+                        #drop self RightHand
+                        while queued
+                            @getlabel! backpack _bp
+                        endwhile
+                    endif
+                else
+                    @unsetvar _t_equip_rhand
+                endif
+            endif
+            
+            
+
+
+            #endif
+
+
+
+    
+    #    summon_one_or_all == 0  LOOP
+    #       followers == max   goto-script 
+    #    one == 1   goto-script then/or break
+    if summon_one_or_all == 0
+        #overhead "summon_one_or_all 0 :: {{summon_one_or_all}}"
+        if followers == maxFollowers and listexists callOtherScript 
+            if list callOtherScript > 0
+                foreach _a_script in callOtherScript
+                    @removelist callOtherScript
+                    hotkey _a_script
+                endfor
+            endif
+        endif
+    else
+        #overhead "summon_one_or_all else :: {{summon_one_or_all}}"
+        if listexists callOtherScript 
+            if list callOtherScript > 0
+                foreach _a_script in callOtherScript
+                    @removelist callOtherScript
+                    hotkey _a_script
+                endfor
+            endif
+        endif
+        @setvar! ranonce 1
+        break
+        #overhead "after break wtf"
+    endif
+    
+endwhile
+#
