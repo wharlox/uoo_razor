@@ -1,0 +1,66 @@
+
+@setvar! _shelf_serial  0x4B41ED97
+@setvar! _number_of_shrooms_to_make 2000
+
+
+@setvar! _number_of_shrooms_before_shelfing 10
+
+removelist  _util__create_magic_mushroom
+createlist  _util__create_magic_mushroom
+
+removelist  _util__create_mm__loop
+createlist  _util__create_mm__loop
+
+while not dead and list _util__create_magic_mushroom < _number_of_shrooms_to_make
+        #overhead "loop create magic mushroom"
+        if mana < 4
+            skill Meditation
+            @getlabel! backpack _bp
+            while mana < 100
+                @getlabel! backpack _bp
+            endwhile
+        endif
+
+        if targetexists
+            hotkey 'cancel current target'
+        endif
+
+        if list _util__create_mm__loop >= _number_of_shrooms_before_shelfing
+            menu _shelf_serial 0
+            waitfortarget
+            target 'self'
+            waitforgump 3232825965
+            gumpclose 3232825965
+            @getlabel! backpack _bp
+            menu _shelf_serial 1
+            @clearlist _util__create_mm__loop
+        endif
+
+        cast 'create food'
+        @getlabel! backpack _bp
+
+        @getlabel! backpack _bp
+        while casting
+            @getlabel! backpack _bp
+        endwhile
+        @getlabel! backpack _bp
+        while queued
+        endwhile
+
+        @pushlist  _util__create_magic_mushroom "never gonna give you up"
+        @pushlist  _util__create_mm__loop  "never gonna let you down"
+
+endwhile
+
+menu _shelf_serial 0
+waitfortarget
+target 'self'
+waitforgump 3232825965
+gumpclose 3232825965
+@getlabel! backpack _bp
+menu _shelf_serial 1
+
+
+sysmsg "magic shrooms are baked"
+overhead "magic shrooms are baked"
+#

@@ -1,0 +1,44 @@
+
+#sysmsg "_util_msg - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\_util__hands__get_weapon_shield"
+
+
+
+#### weapon
+if @findlayer! self lefthand as _this
+    @getlabel! backpack _bp
+    @setvar  _t_equip_lhand  _this
+else
+    if not varexist _t_equip_lhand  
+        overhead "no l-hand equipped - aka weapon" 44
+        sysmsg "no l-hand equipped - aka weapon" 44
+    endif
+    #@setvar!  _t_equip_lhand  0
+endif
+
+
+#### offhand
+if @findlayer! self righthand as _this
+    @getlabel! backpack _bp
+    @setvar  _t_equip_rhand  _this
+else
+    if not varexist _t_equip_rhand  
+        overhead "no r-hand equipped - aka offhand" 44
+        sysmsg "no r-hand equipped - aka offhand" 44
+    endif
+    #@setvar!  _t_equip_rhand  0
+endif
+
+
+if varexist _this
+    @unsetvar _this
+endif
+
+    
+@getlabel! backpack _bp
+
+
+
+#### continue script chain
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+#

@@ -1,0 +1,267 @@
+
+sysmsg "deposit bank - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\_util__open_all_player_bags"
+
+
+@setvar!  _util__open_all_player_bags__only_root_adventures_satchel  1
+
+@setvar!  _util__open_all_player_bags__do_not_open_empty_in_root  1
+@setvar!  _util__open_all_player_bags__do_not_open_decoys  1
+### decoys requires a list of serial numbers in list-var  _util__open_all_player_bags__do_not_open_decoys   _deposit_loadout_chain_loot_pouch_decoys
+
+@setvar!  _util__open_all_player_bags__do_not_open_empty_above_2_depth  1
+
+#### _util__open_all_player_bags__max_depth :: 42 is the max
+@setvar!  _util__open_all_player_bags__max_depth  3
+
+
+
+
+
+dclick backpack
+
+
+@removelist _pouches__01
+@createlist _pouches__01
+
+
+if not listexists _util__open_player_bags__depth
+    #@removelist _depth
+    @createlist _util__open_player_bags__depth
+    @pushlist _util__open_player_bags__depth 1
+    @pushlist _util__open_player_bags__depth 2
+    @pushlist _util__open_player_bags__depth 3
+    @pushlist _util__open_player_bags__depth 4
+    @pushlist _util__open_player_bags__depth 5
+    @pushlist _util__open_player_bags__depth 6
+    @pushlist _util__open_player_bags__depth 7
+    @pushlist _util__open_player_bags__depth 8
+    @pushlist _util__open_player_bags__depth 9
+    @pushlist _util__open_player_bags__depth 10
+    @pushlist _util__open_player_bags__depth 11
+    @pushlist _util__open_player_bags__depth 12
+    @pushlist _util__open_player_bags__depth 13
+    @pushlist _util__open_player_bags__depth 14
+    @pushlist _util__open_player_bags__depth 15
+    @pushlist _util__open_player_bags__depth 16
+    @pushlist _util__open_player_bags__depth 17
+    @pushlist _util__open_player_bags__depth 18
+    @pushlist _util__open_player_bags__depth 19
+    @pushlist _util__open_player_bags__depth 20
+    @pushlist _util__open_player_bags__depth 21
+    @pushlist _util__open_player_bags__depth 22
+    @pushlist _util__open_player_bags__depth 23
+    @pushlist _util__open_player_bags__depth 24
+    @pushlist _util__open_player_bags__depth 25
+    @pushlist _util__open_player_bags__depth 26
+    @pushlist _util__open_player_bags__depth 27
+    @pushlist _util__open_player_bags__depth 28
+    @pushlist _util__open_player_bags__depth 29
+    @pushlist _util__open_player_bags__depth 30
+    @pushlist _util__open_player_bags__depth 31
+    @pushlist _util__open_player_bags__depth 32
+    @pushlist _util__open_player_bags__depth 33
+    @pushlist _util__open_player_bags__depth 34
+    @pushlist _util__open_player_bags__depth 35
+    @pushlist _util__open_player_bags__depth 36
+    @pushlist _util__open_player_bags__depth 37
+    @pushlist _util__open_player_bags__depth 38
+    @pushlist _util__open_player_bags__depth 39
+    @pushlist _util__open_player_bags__depth 40
+    @pushlist _util__open_player_bags__depth 41
+    @pushlist _util__open_player_bags__depth 42
+endif
+
+
+@clearignore
+@ignore backpack
+
+@removelist _trapped_pouches_with_satchels
+@createlist _trapped_pouches_with_satchels
+
+#### todo trapped pouch
+## (0 items, 33 stones)
+##   note the trapped pouch
+##   try to pull reagent/potion satchles out (to root-backpack?)
+##   open them
+##   then place back into said trapped pouch
+
+@removelist  _util__open_all_player_bags__do_not_open_decoys__tmp_list
+@createlist  _util__open_all_player_bags__do_not_open_decoys__tmp_list
+#### make a copy of the decoy list to speed up processing later
+if _util__open_all_player_bags__do_not_open_decoys == 1 and listexists _deposit_loadout_chain_loot_pouch_decoys
+    foreach _itr in _deposit_loadout_chain_loot_pouch_decoys
+        @pushlist _util__open_all_player_bags__do_not_open_decoys__tmp_list  _itr
+    endfor
+endif
+
+
+foreach _a_depth in _util__open_player_bags__depth
+    @setvar! _found_to_open 0
+
+    if _a_depth == _util__open_all_player_bags__max_depth
+        sysmsg  "open all bags, not opening beyond depth {{_util__open_all_player_bags__max_depth}}"  48
+        break
+    endif
+    
+
+    ## pouch :: 3705
+    while @findtype! "pouch" backpack -1 -1 _a_depth as _this
+        @getlabel! _this _this_label
+        @ignore _this
+        @setvar! _this_to_open 0
+        #sysmsg _this_label
+        if hue _this == 38
+            if "(0 items, 0 stones)" in _this_label
+            elseif "(0 items, " in _this_label
+                @pushlist  _trapped_pouches_with_satchels  _this 
+            endif
+        else
+            if 1 == _a_depth
+                if _util__open_all_player_bags__do_not_open_empty_in_root == 1
+                    if "(0 items" in _this_label
+                    else
+                        @setvar! _this_to_open 1
+                        #@setvar! _found_to_open 1
+                        #dclick _this
+                    endif
+                endif
+            elseif 2 == _a_depth
+                @setvar! _this_to_open 1
+                #@setvar! _found_to_open 1
+                #dclick _this
+            else
+                if _util__open_all_player_bags__do_not_open_empty_above_2_depth == 1
+                    if "(0 items" in _this_label
+                    else
+                        @setvar! _this_to_open 1
+                        #@setvar! _found_to_open 1
+                        #dclick _this
+                    endif
+                endif
+            endif
+        endif
+
+        if _this_to_open == 1 and _util__open_all_player_bags__do_not_open_decoys == 1
+            foreach _itr in _util__open_all_player_bags__do_not_open_decoys__tmp_list
+                if _itr == _this
+                    @setvar! _this_to_open 0
+                    @poplist _util__open_all_player_bags__do_not_open_decoys__tmp_list  _this
+                    break
+                endif
+            endfor
+        endif
+
+        if _this_to_open == 1
+            @setvar! _found_to_open 1
+            dclick _this
+        endif
+    endwhile
+
+
+    
+    ## 3701 :: backpack
+    ## 3702 :: bag
+    ## 30765 :: wizard-s satchel :: reagent satchel
+    ## 31262 :: potion satchel :: alchemists satchel
+    ## 12215 :: quiver
+    while @findtype! 3701|3702|30765|31262|12215 backpack -1 -1 _a_depth as _this
+        @getlabel! _this _this_label
+        @ignore _this
+        @setvar! _this_to_open 0
+        #sysmsg _this_label
+        if 1 == _a_depth
+            if _util__open_all_player_bags__do_not_open_empty_in_root == 1
+                if "(0 items" in _this_label
+                else
+                    @setvar! _this_to_open 1
+                    #@setvar! _found_to_open 1
+                    #dclick _this
+                endif
+            endif
+        elseif 2 == _a_depth
+            @setvar! _this_to_open 1
+            #@setvar! _found_to_open 1
+            #dclick _this
+        else
+            if _util__open_all_player_bags__do_not_open_empty_above_2_depth == 1
+                if "(0 items" in _this_label
+                else
+                    @setvar! _this_to_open 1
+                    #@setvar! _found_to_open 1
+                    #dclick _this
+                endif
+            endif
+        endif
+
+        if _this_to_open == 1 and _util__open_all_player_bags__do_not_open_decoys == 1
+            foreach _itr in _util__open_all_player_bags__do_not_open_decoys__tmp_list
+                if _itr == _this
+                    @setvar! _this_to_open 0
+                    @poplist _util__open_all_player_bags__do_not_open_decoys__tmp_list  _this
+                    break
+                endif
+            endfor
+        endif
+
+        if _this_to_open == 1
+            @setvar! _found_to_open 1
+            dclick _this
+        endif
+    endwhile
+
+
+    
+    ## 24246 :: adventurer-s satchel :: book bind
+    if _util__open_all_player_bags__only_root_adventures_satchel != 1
+        while @findtype! "book bind" backpack -1 -1 _a_depth as _this
+            @getlabel! _this _this_label
+            @ignore _this
+            #sysmsg _this_label
+            @setvar! _found_to_open 1
+            dclick _this
+        endwhile
+    endif
+
+    if _found_to_open == 0
+        break
+    endif
+
+
+endfor
+
+
+
+
+
+## 24246 :: adventurer-s satchel :: book bind
+if _util__open_all_player_bags__only_root_adventures_satchel == 1
+    while @findtype! "book bind" backpack -1 -1 1 as _this
+        @getlabel! _this _this_label
+        @ignore _this
+        #sysmsg _this_label
+        dclick _this
+    endwhile
+endif
+
+
+
+## 30765 :: wizard-s satchel :: reagent satchel
+## 31262 :: potion satchel :: alchemists satchel
+## 12215 :: quiver
+while @findtype! 30765|31262|12215 self -1 -1 1 as _this
+    @getlabel! _this _this_label
+    @ignore _this
+    #sysmsg _this_label
+    dclick _this
+endwhile
+
+
+
+
+#### continue script chain
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+foreach _itr in _util_continue_script_chain 
+    hotkey _itr
+endfor
+#
