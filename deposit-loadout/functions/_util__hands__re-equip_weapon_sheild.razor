@@ -9,7 +9,7 @@ if lhandempty and not casting  and not targetexists
     if @find! _t_equip_lhand  backpack
         @getlabel! backpack _bp
         #dclick  _t_equip_lhand
-        lift _t_equip_rhand
+        lift _t_equip_lhand
         drop self LeftHand
     else
         @unsetvar _t_equip_lhand
