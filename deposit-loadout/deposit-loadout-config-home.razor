@@ -6,8 +6,19 @@
 
 
 
+#### list initilization - do not edit
+if not listexists __util__do_not_ban__list
+    @createlist  __util__do_not_ban__list
+endif
+
+
+
+#### configs to edit below
+
 @setvar! _util__msg_delay_ms 10000
 
+
+@pushlist  __util__do_not_ban__list  0x0
 
 
 #### conditional shelf-withdrawal based on skills
