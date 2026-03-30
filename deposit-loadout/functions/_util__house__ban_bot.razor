@@ -1,0 +1,80 @@
+
+#sysmsg "util house ban bot - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\_util__house__ban_bot"
+
+
+#### list initializations - edit options below
+if not listexists _util__house__ban_bot__ignores
+    @createlist  _util__house__ban_bot__ignores
+endif
+
+if not listexists __util__do_not_ban__list
+    @createlist  __util__do_not_ban__list
+endif
+
+
+
+
+
+#### editable options - use >info on a player and add their serial, one per line
+# @pushlist  __util__do_not_ban__list  0x0
+
+
+
+
+
+#### logic - dont edit below
+### cleanup tmp items
+while inlist  __util__do_not_ban__list  0  
+    @poplist  __util__do_not_ban__list  0
+endwhile
+while  inlist  __util__do_not_ban__list  0x0
+    @poplist  __util__do_not_ban__list  0x0
+endwhile
+
+if not dead
+    @clearsysmsg
+
+    if targetexists
+        hotkey 'cancel current target'
+    endif
+
+    hotkey 'Next non-friendly player target'
+    @getlabel! backpack _bp
+
+    if not insysmsg 'No one matching that was found on your screen.'
+        @setvar!  _target  lasttarget
+        if  not inlist  _util__house__ban_bot__ignores  _target  and  not inlist  __util__do_not_ban__list
+            say "i ban thee" 
+            wft 500
+            target _target
+            @getlabel! backpack _bp
+            if insysmsg "You cannot eject a friend of the house!"
+                @pushlist  _util__house__ban_bot__ignores  removeTarget 
+            endif  
+        endif
+    endif
+
+    while queued
+    endwhile
+endif
+
+
+#wait 600
+#sysmsg "util house ban bot - complete"
+
+
+
+
+#### continue script chain
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+foreach _itr in _util_continue_script_chain 
+    hotkey _itr
+endfor
+#if listexists _script_chain and list _script_chain > 0
+#    poplist _script_chain front
+#    foreach _a_script in _script_chain
+#        hotkey _a_script
+#    endfor
+#endif
+#
