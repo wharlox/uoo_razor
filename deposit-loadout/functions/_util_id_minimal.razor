@@ -360,6 +360,7 @@ elseif  _util_id__mode  ==  3  or  _util_id__mode  ==  4
     // id a single item
     if list _util_id__items_id__todo > 0
         foreach _itr in _util_id__items_id__todo
+
             @clearignore
             #### WAS 2026-03-16 @settimer  _util_id_lantern__time_since_last_id  0
             ###### moved-reenabled to findtype above - want to ensure if we find an item in container we have a chance to id it. if refreshed or script first run
@@ -421,7 +422,7 @@ elseif  _util_id__mode  ==  3  or  _util_id__mode  ==  4
                 ## if not exist, remove from list, do not try to id-it
                 @poplist    _util_id__items_id__todo  _itr
             endif
-
+            @settimer  _util_id_lantern__time_since_last_id  0
             // ensure only 1 item is IDd at a time to allow other processing
             break
         endfor

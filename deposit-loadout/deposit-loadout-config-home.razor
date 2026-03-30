@@ -6,8 +6,37 @@
 
 
 
+#### list initilization - do not edit
+if not listexists __util__do_not_ban__list
+    @createlist  __util__do_not_ban__list
+else
+    @clearlist  __util__do_not_ban__list
+endif
+
+if not listexists __loadout__shelf__manual_withdrawal__potion_satchel
+    @createlist  __loadout__shelf__manual_withdrawal__potion_satchel
+else
+    @clearlist  __loadout__shelf__manual_withdrawal__potion_satchel
+endif
+
+
+
+#### configs to edit below
+
 @setvar! _util__msg_delay_ms 10000
 
+
+## exclude players from being banned from house. >info on a player, one serial per line 
+@pushlist  __util__do_not_ban__list  0x0
+
+## cookie-crumb list of chests including potion satchel
+@pushlist  __loadout__shelf__manual_withdrawal__potion_satchel  0x484F8780
+@pushlist  __loadout__shelf__manual_withdrawal__potion_satchel  0x49E2F0AE
+
+@setvar!  __loadout__shelf__manual_withdrawal__get_num_lesser_magic_resist_pots  0
+if name == "_toon_name_"
+    @setvar!  __loadout__shelf__manual_withdrawal__get_num_lesser_magic_resist_pots  20
+endif
 
 
 #### conditional shelf-withdrawal based on skills

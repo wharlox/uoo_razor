@@ -46,7 +46,7 @@ endif
 
 if not hidden and mana > 20 and skill 'magery' >= 50 and hp < 120
     @getlabel! backpack _bp
-    cast 'bless'
+    cast "bless"
     wait 100
     if not insysmsg 'You do not have that spell'
         while casting 

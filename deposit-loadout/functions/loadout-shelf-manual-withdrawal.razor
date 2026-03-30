@@ -171,6 +171,53 @@ endif
 
 
 
+#@pushlist  __loadout__shelf__manual_withdrawal__potion_satchel  0x484F8780
+#@pushlist  __loadout__shelf__manual_withdrawal__potion_satchel  0x49E2F0AE
+
+#@setvar!  __loadout__shelf__manual_withdrawal__get_num_lesser_magic_resist_pots  20
+
+
+
+#### get lesser magic resist pots
+if not listexists __loadout__shelf__manual_withdrawal__potion_satchel
+    @createlist  __loadout__shelf__manual_withdrawal__potion_satchel
+endif
+if not varexist __loadout__shelf__manual_withdrawal__get_num_lesser_magic_resist_pots
+    @setvar  __loadout__shelf__manual_withdrawal__get_num_lesser_magic_resist_pots  0
+endif
+if  1 == 1 and list __loadout__shelf__manual_withdrawal__potion_satchel > 0  and __loadout__shelf__manual_withdrawal__get_num_lesser_magic_resist_pots > 0  and counttype 3846 backpack -1 -1 < __loadout__shelf__manual_withdrawal__get_num_lesser_magic_resist_pots
+    @setvar!  _src_potion_satchel_root  0x0
+    @setvar!  _src_potion_satchel  0x0
+    foreach _itr in __loadout__shelf__manual_withdrawal__potion_satchel
+        if _src_potion_satchel_root == 0x0
+            @setvar!  _src_potion_satchel_root  _itr
+        endif
+        @setvar! _src_potion_satchel  _itr
+        dclick _itr
+        wait 500
+    endfor
+    #find serial source hue qty range
+    if @findtype! 3846  _src_potion_satchel  -1 -1 1 as _this_pot
+        if @findtype!  "alchemists satchel"  self -1 -1 -1  as _this_satchel
+            @setvar!  _dst_potion_satchel  _this_satchel
+        else
+            @setvar!  _dst_potion_satchel  backpack
+        endif
+        lift  _this_pot  __loadout__shelf__manual_withdrawal__get_num_lesser_magic_resist_pots
+        drop  _dst_potion_satchel  60 60
+        wait 500
+        while queued
+        endwhile
+    endif
+    dclick _src_potion_satchel_root
+    @unsetvar!  _src_potion_satchel_root
+    @unsetvar!  _src_potion_satchel
+endif
+
+
+
+
+
 while queued
 endwhile
 

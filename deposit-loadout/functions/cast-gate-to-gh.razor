@@ -33,18 +33,19 @@ endif
 
 #### check if a lantern is on or off
 if varexist _this_lantern_serial
+    @setvar!  _this_lantern_on  0
     if @findtype! _this_lantern_on_id ground _this_lantern_hue any 4 as _this
-        @getlabel! backpack _tmp
+        #@getlabel! backpack _tmp
         ## findtype  ID  ground  HUE  any  4
         if _this == _this_lantern_serial
             @setvar!  _this_lantern_on  1
         endif
-    elseif @findtype! _this_lantern_off_id ground _this_lantern_hue any 4 as _this
-        @getlabel! backpack _tmp
-        ## findtype  ID  ground  HUE  any  4
-        if _this == _this_lantern_serial
-            @setvar!  _this_lantern_on  0
-        endif
+    #elseif @findtype! _this_lantern_off_id ground _this_lantern_hue any 4 as _this
+    #    #@getlabel! backpack _tmp
+    #    ## findtype  ID  ground  HUE  any  4
+    #    if _this == _this_lantern_serial
+    #        @setvar!  _this_lantern_on  0
+    #    endif
     endif
 endif
 

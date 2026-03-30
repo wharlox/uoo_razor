@@ -33,16 +33,16 @@ if _this_shelf__do_resupply == 1
         ## shelf Resupply
         if find _a_shelf ground  -1 -1 2
             menu _a_shelf 1
-            @getlabel!  _a_shelf  _tmp_label
+            #@getlabel!  _a_shelf  _tmp_label
         endif
     endfor
-    @getlabel! backpack _tmp_label
+    #@getlabel! backpack _tmp_label
 endif
 
 
 
 while queued
-    @getlabel! backpack _tmp_label
+    #@getlabel! backpack _tmp_label
 endwhile
 
 

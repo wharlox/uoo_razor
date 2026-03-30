@@ -82,9 +82,10 @@ if _disable_mastery_link_tome == 1
     poplist _tome_gumps front
 endif
 
+
 if _tome_use_context_menu == 1
     foreach _a_tome in _tome_list
-        if _a_time != 0
+        if _a_tome != 0
             menu _a_tome 0
             #wait _tome_context_menu_wait
             @getlabel! _a_tome _tmp_label
@@ -92,7 +93,7 @@ if _tome_use_context_menu == 1
     endfor
 else
     foreach _a_tome in _tome_list
-        if _a_time != 0
+        if _a_tome != 0
             dclick _a_tome
             if poplist _tome_gumps front as _a_tome_gump
                 waitforgump _a_tome_gump
