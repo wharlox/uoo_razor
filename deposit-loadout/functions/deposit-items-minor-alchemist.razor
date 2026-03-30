@@ -24,6 +24,7 @@ while @findtype! "keg"  backpack as _this
 
     lift  _this 60000
     drop  _this_chest  -1 -1 -1
+    wait 500
     #@getlabel! backpack _this_label
     while queued
         #@getlabel! backpack _this_label
@@ -38,7 +39,7 @@ endwhile
 ##### potions
 @setvar!  _this_chest  _deposit_loadout__chest__minor_potions
 while @findtype!  3851|3849|3852|3847|3850|3854|3846|3848|3853  backpack as _this
-    #@ignore! _this
+    @ignore! _this
     @getlabel! _this _this_label
     sysmsg _this_label 11
 
@@ -51,6 +52,7 @@ while @findtype!  3851|3849|3852|3847|3850|3854|3846|3848|3853  backpack as _thi
 
     lift  _this 60000
     drop  _this_chest  -1 -1 -1
+    wait 500
     #@getlabel! backpack _this_label
     while queued
         #@getlabel! backpack _this_label
