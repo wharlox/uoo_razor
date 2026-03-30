@@ -17,8 +17,10 @@ while timer _restock_timer <= _max_time_for_deposit_stockpile_loop_ms
     #@getlabel! _this_stockpile_serial _tmp_label
     #wait 150
 
-    @getlabel! _this_stockpile_serial _tmp_label
+    #@getlabel! _this_stockpile_serial _tmp_label
 
+while queued
+endwhile
     while 1 == 1
         if insysmsg "You do not find any items that could be added to a Resource Stockpile"
             @settimer! _restock_timer _max_time_for_deposit_stockpile_loop_ms
