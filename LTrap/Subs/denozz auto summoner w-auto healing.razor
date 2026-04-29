@@ -25,18 +25,29 @@
 
 #if varexist _util__summoner__use_external_settings
 #    if _util__summoner__use_external_settings == 0
-
-@setvar! earthElementals 2
-@setvar! waterElementals 0
-@setvar! airElementals 0
-@setvar! fireElementals 0
-@setvar! summonDaemons 0
-@setvar! summonCreature 1
-@setvar! bladeSpirit 0
-@setvar! energyVortex 0
-### energy vortex
-### blade spirit :: only casts as 5th follower
-
+if varexist _trap__summon__earthElementals and varexist _trap__summon__waterElementals
+    @setvar! earthElementals  _trap__summon__earthElementals
+    @setvar! waterElementals  _trap__summon__waterElementals
+    @setvar! airElementals    _trap__summon__airElementals
+    @setvar! fireElementals   _trap__summon__fireElementals
+    @setvar! summonDaemons    _trap__summon__summonDaemons
+    @setvar! summonCreature   _trap__summon__summonCreature
+    @setvar! bladeSpirit      _trap__summon__bladeSpirit
+    @setvar! energyVortex     _trap__summon__energyVortex
+else
+    @setvar! earthElementals 2
+    @setvar! waterElementals 0
+    @setvar! airElementals 0
+    @setvar! fireElementals 0
+    @setvar! summonDaemons 0
+    @setvar! summonCreature 1
+    @setvar! bladeSpirit 0
+    @setvar! energyVortex 0
+    ### energy vortex
+    ### blade spirit :: only casts as 5th follower
+endif
+    
+    
 #--- Set Necromancy Spells ---#
 
 @setvar! NecroVengefulSpirit 0
@@ -109,33 +120,33 @@ settimer mushroomTimer mushroomTimerCD
 
 
 
-if not dead 
-    #### copy of get hands from master
-    if @findlayer! self lefthand as _this
-        @getlabel! backpack _bp
-        @setvar  _t_equip_lhand  _this
-    else
-        if not varexist _t_equip_lhand  
-            overhead "no l-hand equipped - aka weapon" 44
-        endif
-        #@setvar!  _t_equip_lhand  0
-    endif
-
-
-    if @findlayer! self righthand as _this
-        @getlabel! backpack _bp
-        @setvar  _t_equip_rhand  _this
-    else
-        #if not varexist _t_equip_rhand  
-        #    overhead "no r-hand equipped - aka offhand" 44
-        #endif
-        #@setvar!  _t_equip_rhand  0
-    endif
-
-    if varexist _this
-        @unsetvar _this
-    endif
-endif
+#if not dead 
+#    #### copy of get hands from master
+#    if @findlayer! self lefthand as _this
+#        @getlabel! backpack _bp
+#        @setvar  _t_equip_lhand  _this
+#    else
+#        if not varexist _t_equip_lhand  
+#            overhead "no l-hand equipped" 44
+#        endif
+#        #@setvar!  _t_equip_lhand  0
+#    endif
+#
+#
+#    if @findlayer! self righthand as _this
+#        @getlabel! backpack _bp
+#        @setvar  _t_equip_rhand  _this
+#    else
+#        #if not varexist _t_equip_rhand  
+#        #    overhead "no r-hand equipped" 44
+#        #endif
+#        #@setvar!  _t_equip_rhand  0
+#    endif
+#
+#    if varexist _this
+#        @unsetvar _this
+#    endif
+#endif
 
 
 
@@ -2571,55 +2582,110 @@ while not dead and ranonce == 0
     
     
 
-        #if not casting and 
-            # @getlabel! backpack _bp
+#        #if not casting and 
+#            # @getlabel! backpack _bp
+#
+#            #### weapon
+#            if lhandempty and not targetexists and not casting and not findbuff "Actively Meditating"
+#                @getlabel! backpack _bp
+#                @getlabel! backpack _bp
+#                @getlabel! backpack _bp
+#                if @find! _t_equip_lhand  backpack
+#                    @getlabel! backpack _bp
+#                    if not casting
+#                        @getlabel! backpack _bp
+#                        dclick  _t_equip_lhand
+#                        #lift _t_equip_lhand
+#                        #drop self LeftHand
+#                        while queued
+#                            @getlabel! backpack _bp
+#                        endwhile
+#                    endif
+#                else
+#                #    @unsetvar _t_equip_lhand
+#                endif
+#            endif
+#
+#            #### offhand
+#            if rhandempty and not targetexists and not casting and not findbuff "Actively Meditating"
+#                @getlabel! backpack _bp
+#                @getlabel! backpack _bp
+#                @getlabel! backpack _bp
+#                if @find! _t_equip_rhand  backpack
+#                    @getlabel! backpack _bp
+#                    if not casting
+#                        @getlabel! backpack _bp
+#                        dclick  _t_equip_rhand
+#                        #lift _t_equip_rhand
+#                        #drop self RightHand
+#                        while queued
+#                            @getlabel! backpack _bp
+#                        endwhile
+#                    endif
+#                else
+#                #    @unsetvar _t_equip_rhand
+#                endif
+#            endif
+#            
+#            
+#
+#
+#            #endif
 
-            #### weapon
-            if lhandempty and not targetexists and not casting and not findbuff "Actively Meditating"
-                @getlabel! backpack _bp
-                @getlabel! backpack _bp
-                @getlabel! backpack _bp
-                if @find! _t_equip_lhand  backpack
-                    @getlabel! backpack _bp
-                    if not casting
-                        @getlabel! backpack _bp
-                        dclick  _t_equip_lhand
-                        #lift _t_equip_lhand
-                        #drop self LeftHand
-                        while queued
-                            @getlabel! backpack _bp
-                        endwhile
-                    endif
-                else
-                #    @unsetvar _t_equip_lhand
-                endif
-            endif
 
-            #### offhand
-            if rhandempty and not targetexists and not casting and not findbuff "Actively Meditating"
-                @getlabel! backpack _bp
-                @getlabel! backpack _bp
-                @getlabel! backpack _bp
+
+
+
+    if varexist _rhand_in_use and varexist _t_equip_rhand and varexist _t_equip_lhand
+        if _rhand_in_use == 1
+            if rhandempty and not casting  
                 if @find! _t_equip_rhand  backpack
                     @getlabel! backpack _bp
-                    if not casting
-                        @getlabel! backpack _bp
-                        dclick  _t_equip_rhand
-                        #lift _t_equip_rhand
-                        #drop self RightHand
-                        while queued
-                            @getlabel! backpack _bp
-                        endwhile
-                    endif
-                else
-                #    @unsetvar _t_equip_rhand
+                    dclick  _t_equip_rhand
+                    wait 504
                 endif
             endif
-            
-            
+        else
+            if lhandempty and  not casting
+                if @find! _t_equip_lhand  backpack
+                    @getlabel! backpack _bp
+                    dclick  _t_equip_lhand
+                    wait 504
+                endif
+            endif
+        endif
+        while queued
+        endwhile
 
 
-            #endif
+
+        if rhandempty and not casting  
+            @getlabel! backpack _bp
+            if @find! _t_equip_rhand  backpack
+                @getlabel! backpack _bp
+                dclick  _t_equip_rhand
+                wait 504
+            endif
+        endif
+        while queued
+        endwhile
+
+        if lhandempty and  not casting
+            @getlabel! backpack _bp
+            if @find! _t_equip_lhand  backpack
+                @getlabel! backpack _bp
+                dclick  _t_equip_lhand
+                wait 504
+            endif
+        endif
+        while queued
+        endwhile
+    endif
+
+
+
+
+
 
 
 

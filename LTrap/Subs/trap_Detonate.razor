@@ -6,7 +6,8 @@
 clearsysmsg 
 if name = 'a stranger' 
     getlabel backpack pingCheck
-    dclicktype '29447'
+    #dclicktype '29447'
+    whisper "[DetonateTrap"
     getlabel backpack pingCheck 
     if insysmsg 'You detonate a ground trap.'
         if skill 'detecting hidden' <= 80      
@@ -35,51 +36,63 @@ endif
 
 
 
+## shield, parry dagger, buckler, 2-h weapons
+#@setvar  _lhand_in_use 0
+#@setvar  _lhand_in_use_is_shield  0
 
-if lhandempty and  not casting
-    #@getlabel! backpack _bp
+## 1-h weapons, fist-weapons
+#@setvar  _rhand_in_use 0
 
-    #### weapon
-        if @find! _t_equip_lhand  backpack
+
+if _rhand_in_use == 1
+    if rhandempty and not casting  
+        if @find! _t_equip_rhand  backpack
             @getlabel! backpack _bp
-            if not casting
-                @getlabel! backpack _bp
-                dclick  _t_equip_lhand
-                #lift _t_equip_lhand
-                #drop self LeftHand
-                while queued
-                    @getlabel! backpack _bp
-                endwhile
-            endif
-        else
-            @unsetvar _t_equip_lhand
+            dclick  _t_equip_rhand
+            sysmsg "detonate rhand equip - _rhand_in_use {{_rhand_in_use}}" 79
         endif
     endif
-
+else
+    if lhandempty and  not casting
+        if @find! _t_equip_lhand  backpack
+            @getlabel! backpack _bp
+            dclick  _t_equip_lhand
+            sysmsg "detonate lhand equip - _rhand_in_use {{_rhand_in_use}}" 79
+        endif
+    endif
 endif
-
-
+while queued
+endwhile
 
 
 getlabel backpack pingCheck
-dclicktype '29447'
+#dclicktype '29447'
+whisper "[DetonateTrap"
 getlabel backpack pingCheck
 if insysmsg 'You detonate a ground trap.'  
     cooldown 'Detonate' 15100  
 endif  
-    
 
 
-#### offhand
+
+
 if rhandempty and not casting  
     @getlabel! backpack _bp
     if @find! _t_equip_rhand  backpack
         @getlabel! backpack _bp
         dclick  _t_equip_rhand
-        #lift _t_equip_rhand
-        #drop self RightHand
-    else
-        @unsetvar _t_equip_rhand
+        @getlabel! backpack _bp
+    endif
+endif
+while queued
+endwhile
+
+if lhandempty and  not casting
+    @getlabel! backpack _bp
+    if @find! _t_equip_lhand  backpack
+        @getlabel! backpack _bp
+        dclick  _t_equip_lhand
+        @getlabel! backpack _bp
     endif
 endif
 while queued

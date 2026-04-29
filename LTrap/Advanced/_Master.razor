@@ -10,11 +10,34 @@
 @clearignore 
 overhead 'Master'
 
-@setvar! _auto_use_detect_hidden 1
+@setvar!  _auto_use_detect_hidden  1
+@setvar!  _auto_use_skinner  0
+@setvar!  _auto_cast_gheal  1
+@setvar!  _nag_no_pouches  1
+## _target_mode__closest_monster__or__smart  --  0 for closest, 1 for smart
+@setvar!  _target_mode__closest_monster__or__smart  0
+
+
+
+@setvar! _trap__summon__earthElementals 2
+@setvar! _trap__summon__waterElementals 0
+@setvar! _trap__summon__airElementals 0
+@setvar! _trap__summon__fireElementals 0
+@setvar! _trap__summon__summonDaemons 0
+@setvar! _trap__summon__summonCreature 1
+@setvar! _trap__summon__bladeSpirit 0
+@setvar! _trap__summon__energyVortex 0    
+### energy vortex
+### blade spirit :: only casts as 5th follower
+
+
+
+
+
 
 
 if not timerexists "searchTimer"
-    createtimer "searchTimer"
+    createtimer "searchTimerrr"
     settimer 'searchTimer' 10000
 endif
 if not timerexists 'notification'
@@ -34,6 +57,11 @@ if not timerexists 'findChestTimerReset'
     createtimer 'findChestTimerReset'
     settimer 'findChestTimerReset' 2000
 endif
+if not listexists _ignore_corpse__spirit_speak
+    @createlist _ignore_corpse__spirit_speak
+endif
+
+
 
 // _auto_cast_summons
 // 0 disable
@@ -54,20 +82,39 @@ endif
 
 if not dead 
 
-    if @findlayer! self lefthand as _this
-        @getlabel! backpack _bp
+    ## shield, parry dagger, buckler, 2-h weapons
+    @setvar  _lhand_in_use 0
+    @setvar  _lhand_in_use_is_shield  0
+    if @findlayer self lefthand as _this
+        @getlabel _this _label
+        sysmsg "lhand {{_label}}" 99
         @setvar  _t_equip_lhand  _this
-    else
-        if not varexist _t_equip_lhand  
-            overhead "no l-hand equipped - aka weapon" 44
+        if "shield" in _label or "buckler" in _label or "parry dagger" in _label
+            @setvar _lhand_in_use_is_shield 1
+        elseif varexist _t_equip_rhand
+            ## if not sheild, then 2-h weapon - ignore rhand
+            @unsetvar _t_equip_rhand
         endif
+        @setvar  _lhand_in_use 1
+    else
+        #if not varexist _t_equip_lhand  
+        #    overhead "no l-hand equipped - aka weapon" 44
+        #endif
         #@setvar!  _t_equip_lhand  0
     endif
 
-
-    if @findlayer! self righthand as _this
-        @getlabel! backpack _bp
+    ## 1-h weapons, fist-weapons
+    @setvar  _rhand_in_use 0
+    if @findlayer self righthand as _this
+        @getlabel _this _label
+        sysmsg "rhand {{_label}}" 99
         @setvar  _t_equip_rhand  _this
+        @setvar _rhand_in_use 1
+        if "fistblade" in _label or "cestus" in _label or "martial manual" in _label
+            @setvar    _lhand_in_use 0
+            @setvar    _lhand_in_use_is_shield  0
+            @unsetvar  _t_equip_lhand
+        endif
     else
         #if not varexist _t_equip_rhand  
         #    overhead "no r-hand equipped - aka offhand" 44
@@ -75,11 +122,13 @@ if not dead
         #@setvar!  _t_equip_rhand  0
     endif
 
+     
 
     if varexist _this
         @unsetvar _this
     endif
 endif
+
 
 
 
@@ -126,7 +175,8 @@ while not dead
     if not hidden and poisoned and not cooldown 'Cure Potion' and findtype 'Orange Potion' self
         wait 200 
         overhead 'Drinking cures!'
-        dclicktype 'Orange Potion'
+        #dclicktype 'Orange Potion'
+        potion "cure"
         cooldown 'Cure Potion' 1000
     endif
     // === Cure - Mage 
@@ -146,13 +196,15 @@ while not dead
     // === Heal - Potion 
     if not hidden and diffhits > 20 and not cooldown 'Heal Potion' and not targetexists
         if not hidden and findtype 'Yellow Potion' self and skill 'alchemy' >= 80
-            dclicktype 'Yellow Potion'
+            potion "heal"
+            #dclicktype 'Yellow Potion'
             wait 200
             overhead 'Drinking heal!'
             wait 200
             cooldown 'Heal Potion' 7200           
         elseif not hidden and findtype 'Yellow Potion' self 
-            dclicktype 'Yellow Potion'
+            potion "heal"
+            #dclicktype 'Yellow Potion'
             wait 200
             overhead 'Drinking heal!'
             wait 200
@@ -161,16 +213,18 @@ while not dead
     endif
     
     // === Heal Greater - Mage 
-    if not hidden and diffhits > 35 and not casting and not targetexists and not cooldown 'Move' and skill 'magery' >= 60 and not cooldown 'Setting Trap' and findtype '3972' self and findtype '3973' self and findtype '3974' self and mana > 54 
-        cast 'Greater Heal'
-        wait 100
-        while casting 
+    if _auto_cast_gheal == 1
+        if not hidden and diffhits > 35 and not casting and not targetexists and not cooldown 'Move' and skill 'magery' >= 60 and not cooldown 'Setting Trap' and findtype '3972' self and findtype '3973' self and findtype '3974' self and mana > 54 
+            cast 'Greater Heal'
             wait 100
-        endwhile
-        wft 200
-        target self
-        wait 210
-    endif  
+            while casting 
+                wait 100
+            endwhile
+            wft 200
+            target self
+            wait 210
+        endif  
+    endif
     
     // === Heal - Bandage 
     if not hidden and findtype "clean bandage%s%" self and not bandaging and not targetexists and skill 'healing' > 0 and hp < maxhits 
@@ -205,7 +259,7 @@ while not dead
     if paralyzed and findtype "pouch" backpack 38
         @getlabel! backpack _bp
         say  "[pouch"
-    elseif not cooldown 'Alert' and not findtype "pouch" backpack 38
+    elseif not cooldown 'Alert' and not findtype "pouch" backpack 38 and _nag_no_pouches == 1
         ## no pouches
         @getlabel! backpack _bp
         overhead '= N o  P o u c h e s =' 34
@@ -215,13 +269,15 @@ while not dead
     // === Buffs - Potions
     if findtype 'White Potion' self and not hidden and not findbuff 'Strength'
         @getlabel! backpack _bp
-        dclicktype 'White Potion' 
+        #dclicktype 'White Potion' 
+        potion "strength"
         overhead 'Strength'
         wait 650       
     endif
     if findtype 'Blue Potion' self and not hidden and not findbuff 'Agility'
         @getlabel! backpack _bp
-        dclicktype 'Blue Potion' 
+        #dclicktype 'Blue Potion' 
+        potion "agility"
         overhead 'Agility'            
         wait 650       
     endif    
@@ -235,7 +291,8 @@ while not dead
     if diffstam > 10 and not hidden and findtype 'Red Potion' self  
         @getlabel! backpack _bp
         overhead 'Refresh'
-        dclicktype 'Red Potion'
+        #dclicktype 'Red Potion'
+        potion "refresh"
         wait 200
     endif     
     
@@ -309,17 +366,20 @@ while not dead
         endif 
         
         // ------------------------ Spirit Speak
-        if skill 'spirit speak' >= 50 and followers >= 2 and not cooldown 'meditate' and not cooldown 'Spirit Speak' and not cooldown 'move' and not cooldown 'Setting Trap' and not hidden and not casting and not targetexists and findtype 'corpse' ground -1 -1 12 as energyCorpse
-            #overhead 'SpiritSpeak'
-            skill 'spiritSpeak'
-            cooldown 'Spirit Speak' 30000
-            if skill 'stealing' >= 80
-                cooldown 'Spirit Speak' 600000 
+        if skill 'spirit speak' >= 50 and  followers >= 2 and not cooldown 'meditate' and not cooldown 'Spirit Speak' and not cooldown 'move' and not cooldown 'Setting Trap' and not hidden and not casting and not targetexists and findtype 'corpse' ground -1 -1 12 as energyCorpse
+            if not inlist _ignore_corpse__spirit_speak   energyCorpse
+                # overhead 'SpiritSpeak {{energyCorpse}}'
+                skill 'spiritSpeak'
+                cooldown 'Spirit Speak' 30000
+                if skill 'stealing' >= 80
+                    cooldown 'Spirit Speak' 600000 
+                endif
+                @pushlist  _ignore_corpse__spirit_speak  energyCorpse
             endif
-            @ignore energyCorpse    
+            #@ignore energyCorpse    
         endif   
         // === Meditate
-        if diffmana > 50 and skill 'Magery' >= 80 and 'Meditation' >= 80 and not hidden and not cooldown 'move' and not cooldown 'Meditate'
+        if diffmana > 50 and skill 'Magery' >= 80 and skill 'Meditation' >= 80 and not hidden and not cooldown 'move' and not cooldown 'Meditate'
             skill 'meditation'
             cooldown 'Meditate' 10100
         endif   
@@ -390,8 +450,66 @@ while not dead
             endwhile       
         endif         
         // ================================ EQUIP WEAPON
+        
 
-        #if 1 == 2
+        
+        
+        
+        if lhandempty or rhandempty
+            if not casting and not targetexists and not findbuff "Actively Meditating"
+                @getlabel! backpack _bp
+                if _rhand_in_use == 1
+                    if rhandempty and not casting  and not targetexists and not findbuff "Actively Meditating"
+                        if @find! _t_equip_rhand  backpack
+                            @getlabel! backpack _bp
+                            dclick  _t_equip_rhand
+                            wait 300
+                        endif
+                    endif
+                else
+                    if lhandempty and  not casting  and not targetexists and not findbuff "Actively Meditating"
+                        if @find! _t_equip_lhand  backpack
+                            @getlabel! backpack _bp
+                            dclick  _t_equip_lhand
+                            wait 300
+                        endif
+                    endif
+                endif
+                while queued
+                endwhile
+            endif
+        endif
+
+
+        if rhandempty and not casting  and not targetexists and not findbuff "Actively Meditating"
+            @getlabel! backpack _bp
+            if @find! _t_equip_rhand  backpack  and not targetexists and not findbuff "Actively Meditating"
+                @getlabel! backpack _bp
+                dclick  _t_equip_rhand
+                @getlabel! backpack _bp
+                wait 300
+            endif
+        endif
+        while queued
+        endwhile
+
+        if lhandempty and  not casting  and not targetexists and not findbuff "Actively Meditating"
+            @getlabel! backpack _bp
+            if @find! _t_equip_lhand  backpack  and not targetexists and not findbuff "Actively Meditating"
+                @getlabel! backpack _bp
+                dclick  _t_equip_lhand
+                @getlabel! backpack _bp
+                wait 300
+            endif
+        endif
+        while queued
+        endwhile
+        
+        
+        
+        
+
+        if 1 == 2
         if lhandempty and rhandempty
             @getlabel!  backpack _bp
             @getlabel!  backpack _bp
@@ -429,13 +547,14 @@ while not dead
 
             endif
         endif
-        #endif
+        endif
+        
 
         #if not casting and 
             # @getlabel! backpack _bp
 
         
-            if 1 == 2 
+            if 1 == 3 
             if rhandempty and not targetexists and not casting and not findbuff "Actively Meditating"
                 @getlabel! backpack _bp
                 @getlabel! backpack _bp
@@ -960,13 +1079,15 @@ while not dead
         endif
     endif           
     // ================================ SKINNING HIDES
-    if not hidden and not casting and findtype "corpse" ground -1 -1 2 and findtype 'Elven SpellBlade' self as 'blade'
+    if _auto_use_skinner == 1
+    if not hidden and not casting and findtype "corpse" ground -1 -1 2 as harvestCorpse  and findtype 'Elven SpellBlade' self as 'blade'
         dclick 'blade'
         wft 850
         target 'blade'
         getlabel backpack pingCheck
         @ignore harvestCorpse
     endif 
+    endif
    
     // ================================ MAGE HAT
     if hidden and stam = maxstam and findtype '5912' backpack 
@@ -980,7 +1101,43 @@ while not dead
     
     // ================================ ENVIRMENTAL EFFECTS BOSS ROOMS
     
+
     
+    if  insysmsg "This mechanic is only available on the Test Shard"  and  findtype "wooden cage" backpack as cage
+        dclick cage
+        if findtype "carrot%s%"
+            lifttype "carrot%s%" 1
+            @drop 'ground'
+        endif
+        wait 600
+    endif
+
+
+    ######## temp ice-node detection
+    if not varexist _util_spam__delay 
+        @setvar _util_spam__delay 2269
+    endif
+    if not timerexists _util_spam__timer
+        @settimer  _util_spam__timer  _util_spam__delay
+    endif
+
+    @clearignore
+    @unsetvar _this
+    ## find serial src hue qty range
+    ## an ice node :: spell effect :: 57445 :: 2234
+    ## lightning
+    while findtype 57445 ground -1 -1 -1 as _this
+        @getlabel!  _this  _label
+        if "an ice node" in _label
+            if timer _util_spam__timer  >=  _util_spam__delay
+                overhead "***** {{_label}}"  44 _this  
+                overhead "ice node on screen" 66
+                @settimer  _util_spam__timer  0
+            endif
+        endif
+        @ignore _this
+    endwhile
+
     
 #    // ================================ SEASONAL
 #    // --- Barbarian Plants, field of souls
@@ -990,7 +1147,7 @@ while not dead
 #        wait 650
 #    endif  
   
-    
+
     wait 100    
 endwhile
 
