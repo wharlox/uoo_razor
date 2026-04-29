@@ -24,6 +24,7 @@ if listexists _script_chain
             endif
             wait _util_continue_script_chain_delay_ms
             #sysmsg "next: {{_a_script}}" 22
+            #sysmsg "msg timer {{_util_debug_msg_timer}}" 22
             hotkey _a_script
         endfor
     endif

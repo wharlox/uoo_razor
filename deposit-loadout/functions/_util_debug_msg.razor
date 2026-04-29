@@ -2,8 +2,13 @@
 #sysmsg "_util_msg - start"
 #@setvar! _this_script "Play Script: deposit-loadout\functions\_util_msg"
 
+if not timerexists _util_debug_msg_timer
+    sysmsg "msg - just started"
+else
+    sysmsg "msg {{_util_debug_msg_timer}}"
+endif
 
-sysmsg "msg"
+@settimer _util_debug_msg_timer 0
 
 
 

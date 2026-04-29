@@ -22,15 +22,18 @@ sysmsg "loadout organizer - start" 165
 
 
 
+## was 500 seemed slow
+## 375-378, 380 385 rareer- bugged a few times
+@setvar! _loadout_shelf__wait_after_drop  50
 
-@setvar! _loadout_shelf__wait_after_drop  500
 
 
 
+@setvar! _debug_this_ 0
 @drop backpack 0 0 0
 while queued
 endwhile
-@getlabel! backpack _bp
+#@getlabel! backpack _bp
 
 
 
@@ -55,6 +58,7 @@ endif
 
 
 if @findtype! "pouch" backpack  0 -1 1 as _loot_pouch
+    wait 80
     @getlabel! _loot_pouch _tmp_label
     overhead "{{_loot_pouch}} :: {{_tmp_label}}"
 
@@ -75,7 +79,7 @@ else
     sysmsg "no untrapped pouch directly within backpack" 55
     overhead "no untrapped pouch directly within backpack" 55
 endif
-
+@clearsysmsg
 @clearignore
 @setvar!  _loadout_organizer__still_going_overhead__color  6
 @setvar!  _loadout_organizer__still_going_overhead__time 2000
@@ -85,7 +89,8 @@ if @find!  _deposit_loadout_chain_loot_pouch  backpack 0 -1 -1 as _loot_pouch
     ##  move all other untrapped pouches within loot-pouch
     ## onl applies to untrapped pouches direclty within backpack, not nested
     while @findtype! "pouch"  backpack 0 -1 1 as _other_pouch
-        @getlabel! _other_pouch _tmp_label
+        wait 80
+        #@getlabel! _other_pouch _tmp_label
         lift _other_pouch
         drop _loot_pouch 44 65 0
         wait _loadout_shelf__wait_after_drop
@@ -151,8 +156,12 @@ if @find!  _deposit_loadout_chain_loot_pouch  backpack 0 -1 -1 as _loot_pouch
                         endwhile
                         #@getlabel! backpack _tmp_label
                         #wait 200
-                        @ignore! _trap_pouch
-                        poplist _trap_pouch_spares front
+                        if insysmsg "You must wait another moment before you may pick up an item from here"
+                        else
+                            @ignore! _trap_pouch
+                            poplist _trap_pouch_spares front
+                        endif
+
                         break
                     endfor
                 else
@@ -161,9 +170,12 @@ if @find!  _deposit_loadout_chain_loot_pouch  backpack 0 -1 -1 as _loot_pouch
                     #drop backpack 91 64 0
                     drop  backpack  _loadout_shelf_pouch_in_backpack__x  _loadout_shelf_pouch_in_backpack__y  0
                     wait _loadout_shelf__wait_after_drop
-                    @ignore! _trap_pouch
                     while queued
                     endwhile
+                    if insysmsg "You must wait another moment before you may pick up an item from here"
+                    else
+                        @ignore! _trap_pouch
+                    endif
                 endif
                 #@getlabel! backpack _tmp_label
             else
@@ -181,10 +193,11 @@ if @find!  _deposit_loadout_chain_loot_pouch  backpack 0 -1 -1 as _loot_pouch
     elseif _is_re_run == 1
         while @findtype! "pouch" backpack 38 -1 1 as _trap_pouch
             if timer _loadout_organizer__still_going_overhead > _loadout_organizer__still_going_overhead__time
-                overhead "... still organizing ..."  _loadout_organizer__still_going_overhead__color
+                overhead "... still organizing 1 ..."  _loadout_organizer__still_going_overhead__color
                 @settimer _loadout_organizer__still_going_overhead 0
             endif
-            @getlabel! _trap_pouch _tmp_label
+            #@getlabel! _trap_pouch _tmp_label
+            wait 80
                 #if "pouch (0 items, 0 stones)" in _tmp_label
                     ## drop trapped pouches in backpack over same pixel as loot-pouch
                     lift  _trap_pouch
@@ -193,7 +206,10 @@ if @find!  _deposit_loadout_chain_loot_pouch  backpack 0 -1 -1 as _loot_pouch
                     wait _loadout_shelf__wait_after_drop
                 #else
                 #endif
-                @ignore! _trap_pouch
+                if insysmsg "You must wait another moment before you may pick up an item from here"
+                else
+                    @ignore! _trap_pouch
+                endif
 
             while queued
             endwhile
@@ -206,20 +222,25 @@ if @find!  _deposit_loadout_chain_loot_pouch  backpack 0 -1 -1 as _loot_pouch
 
 
 
-
+    @setvar _tmp 80
+    @setvar _tmp 5
     ## potion satchel
     while @findtype! "alchemists satchel" backpack as _this
         if timer _loadout_organizer__still_going_overhead > _loadout_organizer__still_going_overhead__time
-            overhead "... still organizing ..."  _loadout_organizer__still_going_overhead__color
+            overhead "... still organizing 2a ..."  _loadout_organizer__still_going_overhead__color
             @settimer _loadout_organizer__still_going_overhead 0
         endif
-        @ignore _this
-        @getlabel! _this _tmp_label
+        wait _tmp
+        #@getlabel! _this _tmp_label
         lift _this 1
         drop _loot_pouch 64 114 0
         wait _loadout_shelf__wait_after_drop
         while queued
         endwhile
+        if insysmsg "You must wait another moment before you may pick up an item from here"
+        else
+            @ignore _this
+        endif
         #@getlabel! backpack _tmp_label
         #wait 100
         #dclick _this
@@ -227,16 +248,20 @@ if @find!  _deposit_loadout_chain_loot_pouch  backpack 0 -1 -1 as _loot_pouch
     ##
     while @findtype! "alchemists satchel" self -1 -1 1 as _this
         if timer _loadout_organizer__still_going_overhead > _loadout_organizer__still_going_overhead__time
-            overhead "... still organizing ..."  _loadout_organizer__still_going_overhead__color
+            overhead "... still organizing 2b ..."  _loadout_organizer__still_going_overhead__color
             @settimer _loadout_organizer__still_going_overhead 0
         endif
-        @ignore _this
-        @getlabel! _this _tmp_label
+        wait _tmp
+        #@getlabel! _this _tmp_label
         lift _this 1
         drop _loot_pouch 64 114 0
         wait _loadout_shelf__wait_after_drop
         while queued
         endwhile
+        if insysmsg "You must wait another moment before you may pick up an item from here"
+        else
+            @ignore _this
+        endif
         #@getlabel! backpack _tmp_label
         #wait 100
         #dclick _this
@@ -249,16 +274,20 @@ if @find!  _deposit_loadout_chain_loot_pouch  backpack 0 -1 -1 as _loot_pouch
     ## reagent satchel
     while @findtype! "reagent satchel" backpack as _this
         if timer _loadout_organizer__still_going_overhead > _loadout_organizer__still_going_overhead__time
-            overhead "... still organizing ..."  _loadout_organizer__still_going_overhead__color
+            overhead "... still organizing 3a ..."  _loadout_organizer__still_going_overhead__color
             @settimer _loadout_organizer__still_going_overhead 0
         endif
-        @ignore _this
-        @getlabel! _this _tmp_label
+        wait _tmp
+        #@getlabel! _this _tmp_label
         lift _this 1
         drop _loot_pouch 74 152 0
         wait _loadout_shelf__wait_after_drop
         while queued
         endwhile
+        if insysmsg "You must wait another moment before you may pick up an item from here"
+        else
+            @ignore _this
+        endif
         #@getlabel! backpack _tmp_label
         #wait 100
         #dclick _this
@@ -266,16 +295,20 @@ if @find!  _deposit_loadout_chain_loot_pouch  backpack 0 -1 -1 as _loot_pouch
     ##
     while @findtype! "reagent satchel" self -1 -1 1 as _this
         if timer _loadout_organizer__still_going_overhead > _loadout_organizer__still_going_overhead__time
-            overhead "... still organizing ..."  _loadout_organizer__still_going_overhead__color
+            overhead "... still organizing 3b ..."  _loadout_organizer__still_going_overhead__color
             @settimer _loadout_organizer__still_going_overhead 0
         endif
-        @ignore _this
-        @getlabel! _this _tmp_label
+        wait _tmp
+        #@getlabel! _this _tmp_label
         lift _this 1
         drop _loot_pouch 44 114 0
         wait _loadout_shelf__wait_after_drop
         while queued
         endwhile
+        if insysmsg "You must wait another moment before you may pick up an item from here"
+        else
+            @ignore _this
+        endif
         #@getlabel! backpack _tmp_label
         #wait 100
         #dclick _this
@@ -296,7 +329,7 @@ else
     sysmsg "loot pouch not found in backpack" 55
     overhead "loot pouch not found in backpack" 55
 endif
-@getlabel! backpack _tmp_label
+#@getlabel! backpack _tmp_label
 
 while queued
 endwhile
@@ -306,7 +339,9 @@ sysmsg "loadout organizer - complete" 165
 
 
 
-
+if _debug_this_ == 1
+    stop
+endif
 #### continue script chain
 hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
 foreach _itr in _util_continue_script_chain 

@@ -34,7 +34,7 @@ endif
 @pushlist  __loadout__shelf__manual_withdrawal__potion_satchel  0x49E2F0AE
 
 @setvar!  __loadout__shelf__manual_withdrawal__get_num_lesser_magic_resist_pots  0
-if name == "_toon_name_"
+if name == "_toon_name__main"
     @setvar!  __loadout__shelf__manual_withdrawal__get_num_lesser_magic_resist_pots  20
 endif
 
@@ -44,10 +44,12 @@ endif
 ## 0 to disable, 1 to enable
 
 ## 0, 1, 2, 3, 4, 5, 6 
-@setvar! __deposit_loadout__shelf_withdrawal__skinning__commodities__1_2_3_4_5_6  2
+@setvar! __deposit_loadout__shelf_withdrawal__skinning__commodities__1_2_3_4_5_6  0
+#2
 
 ## get a basic skinning knife
-@setvar! __deposit_loadout__shelf_withdrawal__skinning__basic_knife__0_1  1
+@setvar! __deposit_loadout__shelf_withdrawal__skinning__basic_knife__0_1  0
+#1
 
 
 
@@ -64,9 +66,9 @@ endif
 @setvar!  _deposit_loadout__stockpile  0x56E3DC06
 @setvar!  _deposit_loadout__shelf  0x4B41ED97
 
-#@setvar!  _deposit_loadout__user_to_recycle  "_toon_name_"
+#@setvar!  _deposit_loadout__user_to_recycle  "_toon_name__main"
 @setvar! _deposit_loadout__recycle_with_current_user 0
-if name == "_toon_name_"
+if name == "_toon_name__main"
     @setvar! _deposit_loadout__recycle_with_current_user 1
 endif
 

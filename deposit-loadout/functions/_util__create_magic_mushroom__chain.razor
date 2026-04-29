@@ -1,0 +1,106 @@
+
+
+#sysmsg "_util_debug_msg - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\_util__create_magic_mushroom__chain"
+
+
+
+@setvar! _shelf_serial  _deposit_loadout__shelf
+@setvar! _number_of_shrooms_to_make 2000
+
+
+@setvar! _number_of_shrooms_to_make_per_run 10
+## make 10 and uses 50 mana ~ 15s
+
+
+@setvar! _number_of_shrooms_before_shelfing 10
+@removelist  _util__create_magic_mushroom_per_run
+@createlist  _util__create_magic_mushroom_per_run
+
+
+if not listexists _util__create_magic_mushroom
+  # removelist  _util__create_magic_mushroom
+  @createlist  _util__create_magic_mushroom
+endif
+
+if not listexists  _util__create_mm__loop
+  # removelist  _util__create_mm__loop
+  @createlist  _util__create_mm__loop
+endif
+
+## 180000 == 3mins
+@setvar!  _util__create_mm__timer__delay  180000
+if not timerexists _util__create_mm__timer
+    @settimer _util__create_mm__timer  _util__create_mm__timer__delay
+endif
+    
+if list _util__create_magic_mushroom < _number_of_shrooms_to_make
+if timer _util__create_mm__timer >= _util__create_mm__timer__delay
+    while not dead and list _util__create_magic_mushroom_per_run < _number_of_shrooms_to_make_per_run
+        #overhead "loop create magic mushroom"
+        if mana < 4
+            skill Meditation
+            @getlabel! backpack _bp
+            while mana < 100
+                @getlabel! backpack _bp
+            endwhile
+            break
+        endif
+
+        if targetexists
+            hotkey 'cancel current target'
+        endif
+
+        if list _util__create_mm__loop >= _number_of_shrooms_before_shelfing
+            menu _shelf_serial 0
+            waitfortarget
+            target 'self'
+            waitforgump 3232825965
+            gumpclose 3232825965
+            @getlabel! backpack _bp
+            menu _shelf_serial 1
+            @clearlist _util__create_mm__loop
+        endif
+
+        cast 'create food'
+        @getlabel! backpack _bp
+
+        @getlabel! backpack _bp
+        while casting
+            @getlabel! backpack _bp
+        endwhile
+        @getlabel! backpack _bp
+        while queued
+        endwhile
+
+        @pushlist  _util__create_magic_mushroom "never gonna give you up"
+        @pushlist  _util__create_mm__loop  "never gonna let you down"
+        @pushlist  _util__create_magic_mushroom_per_run "never"
+
+    endwhile
+
+
+    menu _shelf_serial 0
+    waitfortarget
+    target 'self'
+    waitforgump 3232825965
+    gumpclose 3232825965
+    @getlabel! backpack _bp
+    menu _shelf_serial 1
+
+
+    sysmsg "magic shrooms are baked"
+    overhead "magic shrooms are baked"
+    @settimer _util__create_mm__timer 0
+endif
+endif
+
+# sysmsg "deposit shelf - complete"
+
+
+#### continue script chain
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+foreach _itr in _util_continue_script_chain 
+    hotkey _itr
+endfor
+#

@@ -10,35 +10,55 @@ overhead "_chain start"
 removelist _script_chain
 createlist _script_chain
 
-#pushlist _script_chain "Play Script: deposit-loadout\functions\_util_debug_msg"
+if name == "_toon_name__house_bitch"
+    #### house utility toon
+    pushlist _script_chain "Play Script: deposit-loadout\functions\_util_debug_msg"
 
-pushlist _script_chain "Play Script: deposit-loadout\deposit-loadout-config-home"
+    pushlist _script_chain "Play Script: deposit-loadout\deposit-loadout-config-home"
 
-pushlist _script_chain "Play Script: deposit-loadout\functions\_util__house__ban_bot"
-
-
-#pushlist _script_chain "Play Script: deposit-loadout\functions\crafting-salvage-wiz-hat"
-#pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-stockpile"
-##pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-shelf-all"
-
-pushlist _script_chain "Play Script: deposit-loadout\functions\loadout-shelf-resupply"
-
-pushlist _script_chain "Play Script: deposit-loadout\functions\cast-gate-to-gh"
-pushlist _script_chain "Play Script: deposit-loadout\functions\hide-if-not-hidden"
+    ##req wiz qumoire#pushlist _script_chain "Play Script: deposit-loadout\functions\_util__create_magic_mushroom__chain"
+    pushlist _script_chain "Play Script: deposit-loadout\functions\_util__house__ban_bot"
 
 
-pushlist _script_chain "Play Script: deposit-loadout\functions\_util__house__ban_bot"
-pushlist _script_chain "Play Script: deposit-loadout\functions\_util_id_lantern_controller"
+    #pushlist _script_chain "Play Script: deposit-loadout\functions\crafting-salvage-wiz-hat"
+    #pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-stockpile"
+    ##pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-shelf-all"
+
+    pushlist _script_chain "Play Script: deposit-loadout\functions\loadout-shelf-resupply"
+
+    pushlist _script_chain "Play Script: deposit-loadout\functions\cast-gate-to-gh"
+    pushlist _script_chain "Play Script: deposit-loadout\functions\hide-if-not-hidden"
 
 
-#pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-loadout-time-summary"
-#@setvar! _wait_dynamic 30000
-@setvar! _wait_dynamic 3000
-#unsetvar _wait_dynamic 
-#pushlist _script_chain "Play Script: deposit-loadout\functions\wait-dynamic"
+    pushlist _script_chain "Play Script: deposit-loadout\functions\_util__house__ban_bot"
+    pushlist _script_chain "Play Script: deposit-loadout\functions\_util_id_lantern_controller"
 
-#pushlist _script_chain "Play Script: deposit-loadout\house-util-loop"
 
+    #pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-loadout-time-summary"
+    #@setvar! _wait_dynamic 30000
+    @setvar! _wait_dynamic 3000
+    #unsetvar _wait_dynamic 
+    #pushlist _script_chain "Play Script: deposit-loadout\functions\wait-dynamic"
+
+    #pushlist _script_chain "Play Script: deposit-loadout\house-util-loop"
+
+else
+    hotkey "Play Script: deposit-loadout\functions\_util__house__ban_bot_loop"
+    #### all other toons - simple ban bot
+
+    #pushlist _script_chain "Play Script: deposit-loadout\functions\_util_debug_msg"
+
+    pushlist _script_chain "Play Script: deposit-loadout\deposit-loadout-config-home"
+
+    ##req wiz qumoire#pushlist _script_chain "Play Script: deposit-loadout\functions\_util__create_magic_mushroom__chain"
+    pushlist _script_chain "Play Script: deposit-loadout\functions\_util__house__ban_bot"
+
+    pushlist _script_chain "Play Script: deposit-loadout\functions\_util__trombone"
+    
+    pushlist _script_chain "Play Script: deposit-loadout\functions\hide-if-not-hidden"
+
+    
+endif
 
 
 
