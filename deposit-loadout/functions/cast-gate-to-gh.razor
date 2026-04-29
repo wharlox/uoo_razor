@@ -63,7 +63,8 @@ endif
 @setvar!  _this_gate_exists  0
 #### if caster detects a moongate at CLOSE-TO player-location - range 0 and 1 are broken
 if @findtype! "blue moongate" ground 0 1 1 as _this or  @findtype! 30528 ground 2091 1 1 as _that
-    @getlabel! backpack _tmp
+    #@getlabel! backpack _tmp
+    wait 100
     #sysmsg "this1 {{_this}}"
     #sysmsg "that1 {{_that}}"
     if mana > 53 and _this_lantern_on == 1 and _this_mode_dispel_existing_gate == 1
@@ -76,15 +77,23 @@ if @findtype! "blue moongate" ground 0 1 1 as _this or  @findtype! 30528 ground 
             hotkey 'cancel current target'
         endif
         cast 'dispel field'
-        @getlabel! backpack _tmp
-
-        @getlabel! backpack _tmp
+        while not casting 
+            cast 'dispel field'
+        endwhile
         while casting
+        endwhile
+        wait 80
+        if 1 == 2
             @getlabel! backpack _tmp
-        endwhile
-        @getlabel! backpack _tmp
-        while queued
-        endwhile
+
+            @getlabel! backpack _tmp
+            while casting
+                @getlabel! backpack _tmp
+            endwhile
+            @getlabel! backpack _tmp
+            while queued
+            endwhile
+        endif
         
         #sysmsg "this2 {{_this}}"
         #sysmsg "that2 {{_that}}"
@@ -113,27 +122,34 @@ if mana > 39 and _this_lantern_on == 1  and  _this_gate_exists == 0
 
     @clearsysmsg
 
-    dclick _this_tome_serial
-    waitforgump 167090027 650
-    ## tome page
-    gumpresponse _this_tome_page
-    waitforgump 167090027 650
-    ## cast gate
-    gumpresponse 12
-    @getlabel! backpack _tmp
-
-    @getlabel! backpack _tmp
+    while not casting
+        dclick _this_tome_serial
+        waitforgump 167090027 650
+        ## tome page
+        gumpresponse _this_tome_page
+        waitforgump 167090027 650
+        ## cast gate
+        gumpresponse 12
+    endwhile
     while casting
-        @getlabel! backpack _tmp
     endwhile
-    @getlabel! backpack _tmp
-    while queued
-    endwhile
-    @getlabel! backpack _tmp
     #wait 100
+    if 1 == 1
+        @getlabel! backpack _tmp
+
+        @getlabel! backpack _tmp
+        while casting
+            @getlabel! backpack _tmp
+        endwhile
+        @getlabel! backpack _tmp
+        while queued
+        endwhile
+        @getlabel! backpack _tmp
+        #wait 100
+    endif
 
     if insysmsg "you open a magical gate to another location"
-        @getlabel! backpack _tmp
+        #@getlabel! backpack _tmp
         #@getlabel! backpack _tmp
         sysmsg "dclick lanter"
         dclick _this_lantern_serial

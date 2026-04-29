@@ -2,24 +2,45 @@
 sysmsg "repair bench - start"
 #@setvar! _this_script "Play Script: deposit-loadout\functions\repair-bench-jaseowns"
 
+
 ## from https://outlands.uorazorscripts.com/script/11fd0082-1e79-4aa8-8015-b62fac929481
-if @findtype! "repair bench" ground -1 -1 2 as bench
-    clearsysmsg 
-    dclick bench
-    @getlabel! backpack jaseowns_PingCheck
-    if insysmsg "You do not have any items equipped or in your backpack in need of repairs."
-        // continue
+@setvar  _util__repair__break_loop  0
+@clearignore
+while _util__repair__break_loop == 0 and @findtype! "repair bench" ground -1 -1 2 as bench
+    @getlabel bench _label
+    if "[0/" in _label
+        overhead "a repair bench is out of charges!"
+        sysmsg "a repair bench is out of charges!"
+        @ignore bench
     else
-        settimer lilJaseTimer 0
-        while timer lilJaseTimer <= 5000 
-            if insysmsg "Repair"
-                break
-            endif
-        endwhile
-        overhead "Repair took: {{lilJaseTimer}}"
-        removetimer lilJaseTimer
+        clearsysmsg 
+        dclick bench
+        #wait 100
+        @getlabel! backpack jaseowns_PingCheck
+        if insysmsg "You do not have any items equipped or in your backpack in need of repairs."
+            @setvar  _util__repair__break_loop  1
+            wait 1000
+        elseif insysmsg "That repair bench is out of charges"
+            overhead "a repair bench is out of charges!"
+            sysmsg "a repair bench is out of charges!"
+            @ignore bench
+            wait 1000
+        else
+            settimer lilJaseTimer 0
+            @setvar _util__repair__break_repairing_loop  0
+            while _util__repair__break_repairing_loop == 0 and timer lilJaseTimer <= 5000 
+                if insysmsg "Repair"
+                    @setvar  _util__repair__break_loop  1
+                    @setvar _util__repair__break_repairing_loop  1
+                endif
+            endwhile
+            overhead "Repair took: {{lilJaseTimer}}"
+            @removetimer lilJaseTimer
+            @unsetvar _util__repair__break_repairing_loop
+        endif
     endif
-endif
+endwhile
+@unsetvar _util__repair__break_loop
 sysmsg "repair bench - complete"
 
 

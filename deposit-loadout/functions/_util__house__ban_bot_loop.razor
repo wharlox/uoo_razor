@@ -1,8 +1,6 @@
-
-#sysmsg "util house ban bot - start"
-#@setvar! _this_script "Play Script: deposit-loadout\functions\_util__house__ban_bot"
-
-
+if not timerexists _util_loop
+    @settimer _util_loop 0
+endif
 #### list initializations - edit options below
 if not listexists _util__house__ban_bot__ignores
     @createlist  _util__house__ban_bot__ignores
@@ -27,6 +25,11 @@ endif
 
 
 
+
+
+
+
+
 #### logic - dont edit below
 ### cleanup tmp items
 while inlist  __util__do_not_ban__list  0  
@@ -36,12 +39,21 @@ while  inlist  __util__do_not_ban__list  0x0
     @poplist  __util__do_not_ban__list  0x0
 endwhile
 
+@setvar __util_ban_bot_sound__delay  6150
+if not timerexists _sound
+    @settimer  _sound  __util_ban_bot_sound__delay
+endif
+
 
 if not dead
     @clearsysmsg
 
     if targetexists
         hotkey 'cancel current target'
+    endif
+    
+    if not hidden
+        skill "hiding"
     endif
 
     hotkey 'Next non-friendly player target'
@@ -59,10 +71,22 @@ if not dead
             if insysmsg "You cannot eject a friend of the house!"
                 @pushlist  _util__house__ban_bot__ignores  _target 
             endif  
-            if insysmsg "This person is already banned" or insysmsg "has been banned from this house"
+            if insysmsg "This person is already banned"
                 @pushlist  __util__house__ban_bot__banned  _target
-                @setvar  _util__trombone  1
             endif
+            if  insysmsg "has been banned from this house"
+                @pushlist  __util__house__ban_bot__banned  _target
+                if timer _sound >= __util_ban_bot_sound__delay
+                    if findtype 'sackbut'
+                        dclicktype 'sackbut'
+                    elseif findtype 'bamboo flute'
+                        dclicktype 'bamboo flute'
+                    endif
+                    @settimer  _sound  0
+                    #cooldown 'skill' 6150
+                endif
+            endif
+
         endif
     endif
     
@@ -75,22 +99,6 @@ if __util__auto_close_house_gump == 1 and gumpexists 2490201206
     gumpclose 2490201206
 endif
 
+loop
 
-#wait 600
-#sysmsg "util house ban bot - complete"
-
-
-
-
-#### continue script chain
-hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
-foreach _itr in _util_continue_script_chain 
-    hotkey _itr
-endfor
-#if listexists _script_chain and list _script_chain > 0
-#    poplist _script_chain front
-#    foreach _a_script in _script_chain
-#        hotkey _a_script
-#    endfor
-#endif
 #

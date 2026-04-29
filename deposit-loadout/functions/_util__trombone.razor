@@ -1,0 +1,43 @@
+
+#sysmsg "_util_msg - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\_util__trombone"
+
+
+
+
+
+if not varexist _util__trombone
+    @setvar  _util__trombone  0
+endif
+
+
+
+@setvar __util_ban_bot_sound__delay  6150
+if not timerexists _sound
+    @settimer  _sound  __util_ban_bot_sound__delay
+endif
+
+
+if timer _sound >= __util_ban_bot_sound__delay and _util__trombone == 1
+    if findtype 'sackbut' backpack -1 -1 -1
+        dclicktype 'sackbut'
+        @settimer  _sound  0
+        @setvar  _util__trombone  0
+    endif
+endif
+
+
+
+
+
+#sysmsg "_util_id_minimal - complete"
+
+
+
+#### continue script chain
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+foreach _itr in _util_continue_script_chain 
+    hotkey _itr
+endfor
+
+#
