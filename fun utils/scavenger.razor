@@ -1,0 +1,118 @@
+overhead "activate custom scavenger"
+
+@removelist  _util__scavenger__list
+@createlist  _util__scavenger__list
+
+
+## cloth
+@pushlist _util__scavenger__list  5990
+
+## black pearl
+@pushlist _util__scavenger__list  3962
+## blodmoss
+@pushlist _util__scavenger__list  3963
+## mandrake
+@pushlist _util__scavenger__list  3974
+## garlic
+@pushlist _util__scavenger__list  3972
+## ginseng
+@pushlist _util__scavenger__list  3973
+## spider silk
+@pushlist _util__scavenger__list  3981
+## nightshade
+@pushlist _util__scavenger__list  3976
+## ash
+@pushlist _util__scavenger__list  3980
+
+## pen and ink
+@pushlist _util__scavenger__list  4032
+@pushlist _util__scavenger__list  0x1bd7
+@pushlist _util__scavenger__list  0x1bf2
+@pushlist _util__scavenger__list  0x1539
+@pushlist _util__scavenger__list  0x1517
+@pushlist _util__scavenger__list  0x1f7b
+@pushlist _util__scavenger__list  0x152e
+@pushlist _util__scavenger__list  0x170f
+@pushlist _util__scavenger__list  0x1515
+@pushlist _util__scavenger__list  0x1537
+@pushlist _util__scavenger__list  0x1c01
+@pushlist _util__scavenger__list  0x1718
+@pushlist _util__scavenger__list  0x0f0e
+@pushlist _util__scavenger__list  0x1f59
+@pushlist _util__scavenger__list  0x5736
+@pushlist _util__scavenger__list  0x1dba
+@pushlist _util__scavenger__list  0x13e3
+@pushlist _util__scavenger__list  0x0f9d
+@pushlist _util__scavenger__list  0x0fc0
+@pushlist _util__scavenger__list  0x0e9b
+@pushlist _util__scavenger__list  0x097f
+@pushlist _util__scavenger__list  0x1034
+@pushlist _util__scavenger__list  0x0fbb
+@pushlist _util__scavenger__list  0x097f
+@pushlist _util__scavenger__list  0xa617
+@pushlist _util__scavenger__list  0x10e4
+@pushlist _util__scavenger__list  0x7149
+@pushlist _util__scavenger__list  0x0efa
+@pushlist _util__scavenger__list  0x1eb8
+@pushlist _util__scavenger__list  0x0a28
+@pushlist _util__scavenger__list  0x0fbf
+@pushlist _util__scavenger__list  0x1eba
+@pushlist _util__scavenger__list  0x0f39
+@pushlist _util__scavenger__list  0x14fd
+@pushlist _util__scavenger__list  0x0fb5
+@pushlist _util__scavenger__list  0x7923
+@pushlist _util__scavenger__list  0x0f06
+@pushlist _util__scavenger__list  0x0e79
+@pushlist _util__scavenger__list  0x0f3f
+@pushlist _util__scavenger__list  0x1bfb
+@pushlist _util__scavenger__list  0x13ce
+@pushlist _util__scavenger__list  0x13c7
+
+
+
+
+
+
+
+
+
+@setvar  _util__scavenger__pickup__time  500
+@removetimer  _util__scavenger__pickup
+@settimer  _util__scavenger__pickup  _util__scavenger__pickup__time
+
+while not dead
+
+@removelist  _util__scavenger__found
+@createlist  _util__scavenger__found
+    @clearignore 
+    foreach  _itr  in  _util__scavenger__list
+        #overhead _itr
+        while @findtype  _itr  ground -1 -1 2 as _found
+            if timer _util__scavenger__pickup >=  _util__scavenger__pickup__time
+                hotkey "Grab Item"
+                wft 500
+                target _found
+                #lift _found  
+                #60000
+                #@drop backpack -1 -1 -1
+                @settimer  _util__scavenger__pickup  0
+            else
+                @pushlist  _util__scavenger__found  _found
+            endif
+            @ignore  _found
+        endwhile
+    endfor
+
+    foreach _itr in  _util__scavenger__found
+        if timer _util__scavenger__pickup >=  _util__scavenger__pickup__time
+            hotkey "Grab Item"
+            wft 500
+            target _itr
+            #@lift _itr 60000
+            #@drop backpack -1 -1 -1
+            @settimer  _util__scavenger__pickup  0
+        endif
+    endfor
+
+endwhile
+#

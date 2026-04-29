@@ -1,0 +1,425 @@
+
+### lib-survey  -  mega script  - helper
+
+### quests
+# NPC Darrell - Refuse the Refuse - 23h repeatable - in lyceaum
+# NPC Pindar - Beacon Balancing - 23h repeatable - in lyceaum
+
+# NPC Veda
+#   First Measures of the Aether - lyceaum nodes
+#   Foundations of Earth - lyceaum nodes
+#   Flames of the Aetherium - inferno monsters
+#   Measuring the Frozen Current - cav nodes
+# NPC Volf
+#   First Calibration - lyceaum nodes
+#   The Veins Beneath - lyceaum nodes
+
+
+#### _tmp_timer - overhead frequency of ground items
+@setvar _tmp_timer 500
+
+#### _tmp_scan_backpack__frequency - how often to search backpack for quest-items
+@setvar   _tmp_scan_backpack__frequency  10000
+
+
+
+
+
+
+@settimer  _overheads  _tmp_timer
+@settimer _tmp_scan_backpack__timer  _tmp_scan_backpack__frequency
+
+
+
+if not listexists _added_super_ignore
+    @createlist _added_super_ignore
+endif
+#@clearlist  _added_super_ignore
+
+
+
+while not dead
+
+
+    if timer _tmp_scan_backpack__timer  >= _tmp_scan_backpack__frequency
+
+        if varexist _aether_thing
+            @unsetvar _aether_thing
+        endif
+        if varexist _air_thing
+            @unsetvar _air_thing
+        endif
+        if varexist _earth_thing
+            @unsetvar _earth_thing
+        endif
+        if varexist _fire_thing
+            ## also ice_thing
+            @unsetvar _fire_thing
+        endif
+        if varexist _crystal_fragment_thing
+            @unsetvar _crystal_fragment_thing
+        endif
+
+        if varexist _stalagmite_thing
+            @unsetvar _stalagmite_thing
+        endif
+        if varexist _sweep_refuse_thing
+            @unsetvar _sweep_refuse_thing
+        endif
+        if varexist _crystal_pedastal_thing
+            @unsetvar _crystal_pedastal_thing
+            # aka - an aetheric tuning fork  -  war fork  -  5124  -  2599
+            # find crystal pedastal - an aetheric beacon
+        endif
+
+
+
+
+        @clearignore
+        if findtype 61949 backpack as _this
+            @getlabel! _this _label
+            @setvar  _aether_thing  _this
+            sysmsg "aether node gather :: {{_label}}"
+        endif
+        while findtype 3718 backpack as _this
+            @getlabel! _this _label
+            if "survey pick (quest item)" in _label
+                @setvar _stalagmite_thing  _this
+                sysmsg "stalagmite gem gather :: {{_label}}"
+            endif
+            @ignore _this
+        endwhile
+        while findtype 53789 backpack as _this
+            @getlabel! _this _label
+            if "lens of aetheric earth" in _label
+                @setvar _earth_thing  _this
+                sysmsg "earth node gather :: {{_label}}"
+            elseif "lens of aetheric fire" in _label or "lens of aetheric ice" in _label
+                @setvar _fire_thing  _this
+                sysmsg "monster gather - inferno - cav :: {{_label}}"
+            elseif "a magic lens" in _label
+                @setvar _crystal_fragment_thing  _this
+                sysmsg "crystal fragments gather - lyceaum :: {{_label}}"
+            else
+                @setvar  _air_thing  _this
+                sysmsg "air node gather :: {{_label}}"
+            endif
+            @ignore _this
+        endwhile
+        while findtype 5124 backpack 2599 -1 -1 as _this
+            @getlabel! _this _label
+            if "an aetheric tuning fork" in _label
+                @setvar _crystal_pedastal_thing  _this
+                sysmsg "crystal pedastal gather :: {{_label}}"
+            endif
+            @ignore _this
+        endwhile
+        ## broom
+        if findtype 27631 backpack as _this
+            @getlabel! _this _label
+            if "new lycaeum broom" in _label
+                @setvar _sweep_refuse_thing  _this
+                sysmsg "refuse broom gather :: {{_label}}"
+            endif
+        endif
+        ## find serial src hue qty range
+        
+        @settimer _tmp_scan_backpack__timer  0
+    endif
+
+
+
+
+
+    #while not dead
+    
+
+
+    @clearignore
+    @setvar _found 0
+    ## aether|air|earth|aetherium seep|refuse|crystalline fragment|crystal pedastal
+    while findtype 14201|57445|57445|41558|4335|41542|12244   ground -1 -1 -1 as _node 
+        @getlabel! _node _label
+        if not inlist _added_super_ignore  _node
+            if "an aether node" in _label and varexist _aether_thing
+                @setvar _found 1
+                if timer _overheads  >= _tmp_timer
+                    overhead "******  {{_label}}" 44  _node
+                    @settimer  _overheads  0 
+                endif
+            elseif "an air node" in _label and varexist _air_thing
+                @setvar _found 1
+                if timer _overheads  >= _tmp_timer
+                    overhead "******  {{_label}}" 44  _node
+                    @settimer  _overheads  0 
+                endif
+            elseif "an earth node" in _label and varexist _earth_thing
+                @setvar _found 1
+                if timer _overheads  >= _tmp_timer
+                    overhead "******  {{_label}}" 44  _node
+                    @settimer  _overheads  0 
+                endif
+            elseif "an ice node" in _label and varexist _fire_thing
+                @setvar _found 1
+                if timer _overheads  >= _tmp_timer
+                    overhead "******  {{_label}}" 44  _node
+                    @settimer  _overheads  0 
+                endif
+            elseif varexist _sweep_refuse_thing
+                ## refuse garbage
+                if "efuse" in _label  or "arbage" in _label
+                    @setvar _found 1
+                    if timer _overheads  >= _tmp_timer
+                        overhead "******  {{_label}}" 44  _node
+                        @settimer  _overheads  0 
+                    endif
+                endif
+            elseif "an " in _label and " seep" in _label  and varexist _stalagmite_thing
+                @setvar _found 1
+                if timer _overheads  >= _tmp_timer
+                    overhead "******  {{_label}}" 44  _node
+                    @settimer  _overheads  0 
+                endif
+            elseif "crystalline fragment" in _label  and varexist _crystal_fragment_thing
+                @setvar _found 1
+                if timer _overheads  >= _tmp_timer
+                    overhead "******  {{_label}}" 44  _node
+                    @settimer  _overheads  0 
+                endif
+            elseif "aetheric beacon" in _label  and varexist _crystal_pedastal_thing
+                ## an aetheric beacon  -   crystal pedastal  -  12244  -  2599
+                @setvar _found 1
+                if timer _overheads  >= _tmp_timer
+                    overhead "******  {{_label}}" 44  _node
+                    @settimer  _overheads  0 
+                endif
+            #else
+            #    @setvar _found 1
+            #    if timer _overheads  >= _tmp_timer
+            #        overhead "{{_label}}" 44  _node
+            #        @settimer  _overheads  0 
+            #    endif
+            #    
+            endif
+        #else
+        #    @ignore _label
+        endif
+        @ignore _node
+    endwhile
+
+
+    
+    
+    
+    
+    
+
+    ##### click em
+    @clearignore
+    ## aether
+    while varexist _aether_thing and findtype  14201   ground -1 -1 2 as _node 
+        @getlabel! _node _label
+        @clearsysmsg
+        if  not inlist _added_super_ignore  _node
+            if "an aether node" in _label
+                dclick _aether_thing
+                wft 500
+                target _node 
+                @getlabel! backpack _bp
+                if insysmsg "you have already" or insysmsg "sample from the node"
+                    overhead "_ITEM DONE_"
+                    @pushlist _added_super_ignore  _node
+                endif
+                if  insysmsg "you have already completed this task"
+                    sysmsg "_DONE WITH QUEST_"
+                    overhead "_DONE WITH QUEST_"
+                endif
+            endif
+        endif
+        @ignore _node
+    endwhile
+    
+
+
+    @clearignore
+    ## crystalline fragment - crystal fragments
+    while varexist _crystal_fragment_thing and findtype  41542   ground -1 -1 2 as _node 
+        @getlabel! _node _label
+        @clearsysmsg
+        if  not inlist _added_super_ignore _node
+            if "crystalline fragment" in _label
+                dclick _crystal_fragment_thing
+                wft 1500
+                target _node 
+                @getlabel! backpack _bp
+                if insysmsg "you have already" or insysmsg "sample from the node" or insysmsg "You use the"
+                    overhead "_ITEM DONE_"
+                    @pushlist _added_super_ignore  _node
+                endif
+                if insysmsg "What do you wish to use this on"
+                    if not varexist _wtf_no_done_msg
+                        @setvar _wtf_no_done_msg 0
+                    else
+                        if _wtf_no_done_msg == 0
+                            @setvar _wtf_no_done_msg 1
+                        elseif _wtf_no_done_msg == 1
+                            @setvar _wtf_no_done_msg 2
+                        elseif _wtf_no_done_msg == 2
+                            @setvar _wtf_no_done_msg 3
+                        elseif _wtf_no_done_msg == 3
+                            overhead "_ITEM PROBABLY DONE_"
+                            @pushlist _added_super_ignore  _node
+                        endif
+                    endif
+                endif
+                            
+                if  insysmsg "you have already completed this task"
+                    sysmsg "_DONE WITH QUEST_"
+                    overhead "_DONE WITH QUEST_"
+                endif
+            endif
+        endif
+        @ignore _node
+    endwhile
+    
+
+    
+
+    @clearignore
+    ## an aetheric beacon  -  crystal pedastal  -  12244  -  2599
+    while varexist _crystal_pedastal_thing  and findtype  12244   ground -1 -1 2 as _node 
+        @getlabel! _node _label
+        @clearsysmsg
+        if  not inlist _added_super_ignore  _node
+            if "an aetheric beacon" in _label
+                dclick _crystal_pedastal_thing
+                #wft 500
+                wait 500
+                target _node 
+                @getlabel! backpack _bp
+                if insysmsg "You give the Aetheric beacon a ping" or insysmsg "You have already"
+                    overhead "_ITEM DONE_"
+                    @pushlist _added_super_ignore  _node
+                endif
+                if  insysmsg "you have already completed this task"
+                    sysmsg "_DONE WITH QUEST_"
+                    overhead "_DONE WITH QUEST_"
+                endif
+            endif
+        endif
+        @ignore _node
+    endwhile
+
+    
+
+
+    @clearignore
+    ## air earth - earth - ice
+    if varexist _air_thing or varexist _earth_thing
+    while findtype  57445    ground -1 -1 2 as _node 
+        @getlabel! _node _label
+        @clearsysmsg
+        if  not inlist _added_super_ignore _node
+            if "an air node"  in _label and "node" in _label
+                dclick _air_thing
+                wft 500
+                target _node 
+                @getlabel! backpack _bp
+                if insysmsg "you have already" or insysmsg "sample from the node"
+                    overhead "_ITEM DONE_"
+                    @pushlist _added_super_ignore  _node
+                endif
+                if  insysmsg "you have already completed this task"
+                    sysmsg "_DONE WITH QUEST_"
+                    overhead "_DONE WITH QUEST_"
+                endif
+            elseif "an earth node"  in _label and "node" in _label
+                dclick _earth_thing
+                wft 500
+                target _node 
+                @getlabel! backpack _bp
+                if insysmsg "you have already" or insysmsg "sample from the node"
+                    overhead "_ITEM DONE_"
+                    @pushlist _added_super_ignore  _node
+                endif
+                if  insysmsg "you have already completed this task"
+                    sysmsg "_DONE WITH QUEST_"
+                    overhead "_DONE WITH QUEST_"
+                endif
+            elseif "an ice node"  in _label and "node" in _label
+                dclick _fire_thing
+                wft 500
+                target _node 
+                @getlabel! backpack _bp
+                if insysmsg "you have already" or insysmsg "sample from the node"
+                    overhead "_ITEM DONE_"
+                    @pushlist _added_super_ignore  _node
+                endif
+                if  insysmsg "you have already completed this task"
+                    sysmsg "_DONE WITH QUEST_"
+                    overhead "_DONE WITH QUEST_"
+                endif
+            endif
+        endif
+        
+
+        @ignore _node
+    endwhile
+    endif
+ 
+
+    
+
+    @clearignore
+    ## refuse - garbage
+    while varexist _sweep_refuse_thing and findtype  4335   ground -1 -1 2 as _node 
+        @getlabel! _node _label
+        @clearsysmsg
+        if  not inlist _added_super_ignore _node
+            if "refuse" in _label
+            dclick _node
+            #dclick _sweep_refuse_thing
+            #wft 500
+            #target _node 
+            @getlabel! backpack _bp
+            if insysmsg "sweeps up the refuse"
+                overhead "_ITEM DONE_"
+                @pushlist _added_super_ignore  _node
+            endif
+            if  insysmsg "you have already completed this task"
+                sysmsg "_DONE WITH QUEST_"
+                overhead "_DONE WITH QUEST_"
+            endif
+            endif
+        endif
+        @ignore _node
+    endwhile
+    
+    
+    
+    @clearignore
+    ## stalagmite gem
+    while varexist _stalagmite_thing and findtype  41558   ground -1 -1 2 as _node 
+        @getlabel! _node _label
+        @clearsysmsg
+        if  not inlist _added_super_ignore _node
+            if "an aetherium seep" in _label
+            dclick _stalagmite_thing
+            wft 500
+            target _node 
+            @getlabel! backpack _bp
+            if insysmsg "you have already" or insysmsg "you harvest an aetherium core from the seep"
+                overhead "_ITEM DONE_"
+                @pushlist _added_super_ignore  _node
+            endif
+            if  insysmsg "you have already completed this task"
+                sysmsg "_DONE WITH QUEST_"
+                overhead "_DONE WITH QUEST_"
+            endif
+            endif
+        endif
+        @ignore _node
+    endwhile
+
+wait 150
+endwhile

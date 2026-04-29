@@ -1,0 +1,211 @@
+
+sysmsg "__start"
+if not listexists _util__lyceaum__quest__zoo_foods
+    @createlist  _util__lyceaum__quest__zoo_foods
+else
+    @clearlist  _util__lyceaum__quest__zoo_foods
+endif
+
+if not listexists  _util__lyceaum__quest__zoo_foods__baskets
+    @createlist  _util__lyceaum__quest__zoo_foods__baskets
+else
+    @clearlist  _util__lyceaum__quest__zoo_foods__baskets
+endif
+if 1 == 1
+@clearlist  _util__lyceaum__quest__zoo_foods__baskets
+
+endif
+
+## pumpkin - pumpkin%s% - 3178
+## cabbage - head%s% of cabbage - 3195 - 1378
+## corn - ear%s% of corn - 3199
+## carrot - carrot%s% - 3191
+## pear - pear%s% - 2452
+## apple - apple%s% - 2512
+## onion - onion%s% - 3181
+## tomato - peach%es% - 2514 - 2117
+## lettuce - peach%es% - 3184
+## grapes - grape bunch%es% - 2513
+## jar of honey - jar%s% of honey - 2540
+## squash - squash - 3186
+## figs - gourd%s% - 3173 - 2631
+
+
+## debug ish, 15 needed for quest
+@setvar _util__lyceaum__quest__zoo_foods__max_carry_food  15
+
+@setvar  _util__lyceaum__quest__zoo_foods__overhead_color  37
+@setvar  _util__lyceaum__quest__zoo_foods__overhead_spam__ms  3500
+@settimer  _util__lyceaum__quest__zoo_foods__overhead_spam__timer  _util__lyceaum__quest__zoo_foods__overhead_spam__ms
+
+@setvar  _util__lyceaum__quest__zoo_foods__item_overhead_spam__ms  1700
+@settimer  _util__lyceaum__quest__zoo_foods__item_overhead_spam__timer  _util__lyceaum__quest__zoo_foods__item_overhead_spam__ms
+
+@setvar  _util__lyceaum__quest__zoo_foods__got_foods  0
+
+@clearignore
+while not dead 
+
+    if  _util__lyceaum__quest__zoo_foods__got_foods  ==  0
+        ## count existing foods
+        while list _util__lyceaum__quest__zoo_foods < _util__lyceaum__quest__zoo_foods__max_carry_food and findtype 3178|3195|3199|3191|2452|2512|3181|2514|3184|2513|2540|3186|3173  backpack  -1 -1 -1  as _this
+            sysmsg "found in backpack"
+            @ignore _this
+            if not inlist _util__lyceaum__quest__zoo_foods  _this
+                sysmsg "  add to list {{_this}}"
+                @pushlist  _util__lyceaum__quest__zoo_foods  _this
+            endif
+        endwhile
+        
+
+
+        while list _util__lyceaum__quest__zoo_foods < _util__lyceaum__quest__zoo_foods__max_carry_food
+            if timer _util__lyceaum__quest__zoo_foods__overhead_spam__timer  >  _util__lyceaum__quest__zoo_foods__overhead_spam__ms
+                overhead  "pickup food from lyceaum farm"  _util__lyceaum__quest__zoo_foods__overhead_color
+                @settimer  _util__lyceaum__quest__zoo_foods__overhead_spam__timer  0
+            endif
+            
+            if timer _util__lyceaum__quest__zoo_foods__item_overhead_spam__timer   >  _util__lyceaum__quest__zoo_foods__item_overhead_spam__ms
+                @settimer  _util__lyceaum__quest__zoo_foods__item_overhead_spam__timer  0
+                @clearignore 
+                while  findtype 3178|3195|3199|3191|2452|2512|3181|2514|3184|2513|2540|3186|3173  ground  -1 -1 20  as _this 
+                    #wait 50
+                    overhead  "* food *"  44  _this
+                    @ignore _this
+                endwhile
+                
+                
+                @clearignore
+                while  findtype 3178|3195|3199|3191|2452|2512|3181|2514|3184|2513|2540|3186|3173  ground  -1 -1 2  as _this 
+                    lift _this
+                    drop backpack
+                    wait 500
+                    @pushlist  _util__lyceaum__quest__zoo_foods  _this
+                endwhile
+            endif
+     
+        endwhile
+        
+        @setvar  _util__lyceaum__quest__zoo_foods__got_foods  1
+    endif
+
+
+
+
+
+    if  _util__lyceaum__quest__zoo_foods__got_foods == 1
+        if timer _util__lyceaum__quest__zoo_foods__overhead_spam__timer  >  _util__lyceaum__quest__zoo_foods__overhead_spam__ms
+            overhead  "go deliver food"  _util__lyceaum__quest__zoo_foods__overhead_color
+            @settimer  _util__lyceaum__quest__zoo_foods__overhead_spam__timer  0
+        endif
+
+
+        if timer _util__lyceaum__quest__zoo_foods__item_overhead_spam__timer   >  _util__lyceaum__quest__zoo_foods__item_overhead_spam__ms
+            ## overhead over quest npc
+            if find 0x51BF3C ground -1 -1 -1  as _this
+                if timer _util__lyceaum__quest__zoo_foods__item_overhead_spam__timer   >  _util__lyceaum__quest__zoo_foods__item_overhead_spam__ms
+                    overhead "* quest npc *"  22  _this
+                    @settimer  _util__lyceaum__quest__zoo_foods__item_overhead_spam__timer  0
+                endif
+            endif
+
+            ## overhead delivery basket
+            @clearignore
+            while findtype  63619  ground  1095 -1 -1 as _basket
+                if  not inlist _util__lyceaum__quest__zoo_foods__baskets _basket
+                    overhead "* basket *"  44  _basket
+                endif
+                @ignore _basket
+            endwhile
+            @settimer  _util__lyceaum__quest__zoo_foods__item_overhead_spam__timer  0
+            
+        endif
+        
+
+        ## deliver
+        @clearignore
+        @clearsysmsg
+        while findtype  63619  ground  1095 -1 2 as _basket
+            if not inlist _util__lyceaum__quest__zoo_foods__baskets _basket
+                if findtype 3178|3195|3199|3191|2452|2512|3181|2514|3184|2513|2540|3186|3173  backpack  -1 -1 2  as _this 
+                    lift _this
+                    drop _basket
+                    wait 400
+                    if insysmsg "You place the food into the"
+                        overhead "delivered"
+                        @pushlist  _util__lyceaum__quest__zoo_foods__baskets  _basket
+                        @ignore _basket
+                    elseif insysmsg "You have already placed food in this bin"
+                        overhead "delivered already"
+                        @pushlist  _util__lyceaum__quest__zoo_foods__baskets  _basket
+                        @ignore _basket
+                    elseif  find _this backpack
+                        overhead "go accept the quest"
+                        @setvar _util__lyceaum__quest__zoo__quest_active 0
+                        ### THEN find quest npc
+                        ## menu 
+                        ## activate quest
+                        ## sysmsg "Quest accepted"
+                        ## @setvar _util__lyceaum__quest__zoo__quest_active 1
+                    endif
+
+                else
+                    overhead "out of food - done or missing one"  _util__lyceaum__quest__zoo_foods__overhead_color
+                    #sysmsg   "out of food - done"  _util__lyceaum__quest__zoo_foods__overhead_color
+                    stop
+                endif
+            endif
+            @ignore _basket
+        endwhile
+        
+        if insysmsg "Quest Progress: 15/15" or insysmsg "You have alrady completed this task"
+            @setvar _util__lyceaum__quest__zoo_foods__got_foods 2
+        endif
+        
+        
+    ## _util__lyceaum__quest__zoo_foods__got_foods == 1
+    endif
+
+
+    if  _util__lyceaum__quest__zoo_foods__got_foods == 2
+        if timer _util__lyceaum__quest__zoo_foods__overhead_spam__timer  >  _util__lyceaum__quest__zoo_foods__overhead_spam__ms
+            overhead  "quest done, go turn in"  _util__lyceaum__quest__zoo_foods__overhead_color
+            @settimer  _util__lyceaum__quest__zoo_foods__overhead_spam__timer  0
+        endif
+
+
+        if timer _util__lyceaum__quest__zoo_foods__item_overhead_spam__timer   >  _util__lyceaum__quest__zoo_foods__item_overhead_spam__ms
+            ## overhead over quest npc
+            if find 0x51BF3C ground -1 -1 -1  as _this
+                if timer _util__lyceaum__quest__zoo_foods__item_overhead_spam__timer   >  _util__lyceaum__quest__zoo_foods__item_overhead_spam__ms
+                    overhead "* quest npc *"  22  _this
+                    @settimer  _util__lyceaum__quest__zoo_foods__item_overhead_spam__timer  0
+                endif
+            endif
+        endif
+        
+        if insysmsg "You have completed the quest"
+            overhead "quest done"  _util__lyceaum__quest__zoo_foods__overhead_color
+            stop
+        endif
+
+        
+    endif
+    
+
+endwhile
+
+
+#
+
+
+## open quest
+menu 0x17EB68 0
+waitforgump 1857285131
+## accept quest
+gumpresponse 15
+waitforgump 1857285131
+## complete quest
+gumpresponse 16
+waitforgump 1857285131
+gumpclose

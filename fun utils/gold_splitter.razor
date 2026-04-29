@@ -1,0 +1,44 @@
+#### gold splitter
+
+if not listexists _util__tiny_gold_stacks
+    createlist _util__tiny_gold_stacks
+else
+    clearlist _util__tiny_gold_stacks
+endif
+
+if 1 == 2
+    @clearlist _util__tiny_gold_stacks
+    stop
+endif
+
+@clearignore
+while not dead 
+    
+    while findtype 'gold coin' backpack -1 -1 1 as _this
+        @getlabel! _this _label
+        sysmsg "still going :: {{_label}}"
+        if _label == "gold coin : 2" or _label == "gold coin : 1"
+            @ignore _this
+            pushlist  _util__tiny_gold_stacks  _this
+            wait 80
+        else
+        
+           lift _this 2
+           drop backpack 
+           wait 400
+           if insysmsg "You are carrying too many items"
+               break
+           endif
+       endif
+    endwhile
+    sysmsg "done"
+    break
+    
+    
+## not dead
+endwhile
+
+
+
+
+#
