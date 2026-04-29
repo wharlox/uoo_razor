@@ -5,8 +5,10 @@
 
 @clearignore 
 @clearsysmsg 
-@target! clear
-@hotkey "Cancel Current Target"
+@clearall
+#@target clear
+#@hotkey "Cancel Current Target"
+#@hotkey "Clear Target Queue"
 @getlabel! backpack pingCheck
 while not dead
     if warmode
@@ -41,26 +43,50 @@ while not dead
             break    
         endif      
     endif
-    hotkey 'next murderer monster target' 
-    getlabel backpack pingCheck
-    if not insysmsg 'No one matching that was found on your screen.'  
-        overhead '† Target †' 88 lasttarget 
-        #getlabel backpack pingCheck   
-        say 'all kill'
-        waitfortarget 500
-        hotkey 'last target' 
-        break   
-    endif    
-    hotkey 'target closest grey monster' 
-    getlabel backpack pingCheck
-    if not insysmsg 'No one matching that was found on your screen.'  
-        overhead '† Target †' 88 lasttarget 
-        #getlabel backpack pingCheck   
-        say 'all kill'
-        waitfortarget 500
-        hotkey 'last target' 
-        break   
+    
+    if _target_mode__closest_monster__or__smart == 0
+        #target clear
+        hotkey "Target Closest Non-Friendly Monster"
+        wait 200
+        @setvar! _ltrap_target lasttarget
+        
+        if insysmsg "No one matching that was found"
+            @setvar! _ltrap_target 0
+        endif
+        if _ltrap_target != 0
+            overhead '† Target †' 88 _ltrap_target
+            #say 'all kill'
+            hotkey 'All Kill'
+            waitfortarget 500
+            target _ltrap_target
+            hotkey 'cancel current target'
+            #hotkey 'last target'
+            #hotkey "Attack Last Target"
+        endif
+    else
+    
+        hotkey 'next murderer monster target' 
+        getlabel backpack pingCheck
+        if not insysmsg 'No one matching that was found on your screen.'  
+            overhead '† Target †' 88 lasttarget 
+            #getlabel backpack pingCheck   
+            say 'all kill'
+            waitfortarget 500
+            hotkey 'last target' 
+            break   
+        endif    
+        hotkey 'target closest grey monster' 
+        getlabel backpack pingCheck
+        if not insysmsg 'No one matching that was found on your screen.'  
+            overhead '† Target †' 88 lasttarget 
+            #getlabel backpack pingCheck   
+            say 'all kill'
+            waitfortarget 500
+            hotkey 'last target' 
+            break   
+        endif
     endif
-    break   
+    
+    break
 endwhile
 hotkey 'play script: Subs\Routing'

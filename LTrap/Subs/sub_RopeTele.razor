@@ -16,7 +16,8 @@ if findtype "rope" backpack as rope
     while queued
         //donothing
     endwhile
-    dclick rope
+    #dclick rope
+    whisper "[Rope"
     if cooldown 'Heat of Battle'
         cooldown 'Rope' 120000
     else

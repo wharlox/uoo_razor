@@ -5,7 +5,7 @@
 
 
 if not cooldown 'Reactive' and not hidden and mana > 20 and not findbuff 'reactive armor' 
-    cast 'reactive armor'
+    cast 'Reactive Armor'
     wait 100
     if not insysmsg 'You do not have that spell'
         while casting 
@@ -17,7 +17,7 @@ if not cooldown 'Reactive' and not hidden and mana > 20 and not findbuff 'reacti
 endif 
 
 if not cooldown 'Reflection' and not hidden and mana > 20 and skill 'magery' >= 70 and not findbuff 'magic reflection' 
-    cast 'magic reflection'
+    cast 'Magic Reflection'
     wait 100
     if not insysmsg 'You do not have that spell'
         while casting 
@@ -29,7 +29,7 @@ if not cooldown 'Reflection' and not hidden and mana > 20 and skill 'magery' >= 
 endif 
 
 if not cooldown 'Protection' and not hidden and mana > 20 and skill 'magery' >= 40 and not findbuff 'protection'
-    cast 'protection'
+    cast 'Protection'
     wait 100
     if not insysmsg 'You do not have that spell'
         while casting 
@@ -46,7 +46,7 @@ endif
 
 if not hidden and mana > 20 and skill 'magery' >= 50 and hp < 120
     @getlabel! backpack _bp
-    cast "bless"
+    cast "Bless"
     wait 100
     if not insysmsg 'You do not have that spell'
         while casting 
@@ -60,7 +60,7 @@ if not hidden and mana > 20 and skill 'magery' >= 50 and hp < 120
 endif 
 
 if not hidden and mana > 20 and skill 'magery' >= 50
-    cast 'telekinesis'
+    cast 'Telekinesis'
     wait 100
     if not insysmsg 'You do not have that spell'
         while casting 
