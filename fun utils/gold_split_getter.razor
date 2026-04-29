@@ -1,0 +1,32 @@
+#### gold split getter - retrive from corpse
+
+if not listexists _util__tiny_gold_stacks
+    #@createlist _util__tiny_gold_stacks
+    sysmsg "no list of tiny gold stacks exists, run the gold_splitter script"
+    stop
+endif
+
+if 1 == 2
+    foreach _itr in _util__tiny_gold_stacks
+        sysmsg _itr
+    endfor
+    stop
+endif
+
+@clearignore
+while findtype "corpse|bones" ground -1 -1 2 as _corpse
+    dclick _corpse
+    @getlabel! _corpse _label
+    if name in _label
+        sysmsg "mine"
+        foreach _itr in _util__tiny_gold_stacks
+            sysmsg _itr
+            @drop backpack
+            lift "_itr"  60000
+            @drop backpack
+            wait 500
+        endfor
+    else
+        @ignore _corpse
+    endif
+endif

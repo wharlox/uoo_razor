@@ -1,0 +1,74 @@
+
+
+
+if not listexists  _util__not_envoys
+    @createlist  _util__not_envoys
+endif
+@clearlist _util__not_envoys
+
+@setvar _util_spam__delay 1269
+if not timerexists _util_spam__timer
+    @settimer  _util_spam__timer  _util_spam__delay
+endif
+
+@setvar _util_still_going__delay 10000
+if not timerexists _util_still_going__timer
+    @settimer  _util_still_going__timer  _util_still_going__delay
+endif
+
+
+while not dead
+
+    @clearignore
+    while findtype 400|401 ground -1 -1 -1 as _this
+        @getlabel!  _this  _label
+        if not inlist _util__not_envoys  _this  and  "nvoy" in _label
+            if timer _util_spam__timer  >=  _util_spam__delay
+                overhead "***** {{_label}}"  44 _this  
+                overhead "envoy on screen" 66
+                @settimer  _util_spam__timer  0
+            endif
+        elseif inlist _util__not_envoys  _this  
+        else
+            overhead "ignore {{_label}}" 11 _this
+            @pushlist  _util__not_envoys    _this  
+        endif
+        @ignore _this
+    endwhile
+
+    
+    if timer _util_still_going__timer  >=  _util_still_going__delay
+        overhead "finding envoys still going..."  55
+        @settimer  _util_still_going__timer  0
+    endif
+    
+endwhile
+#
+
+
+
+if not varexist _util_spam__delay 
+    @setvar _util_spam__delay 1269
+endif
+if not timerexists _util_spam__timer
+    @settimer  _util_spam__timer  _util_spam__delay
+endif
+
+
+## find serial src hue qty range
+while findtype 57445 ground 2234 -1 -1 as _this
+    @getlabel!  _this  _label
+    if "an ice node" in _label
+        if timer _util_spam__timer  >=  _util_spam__delay
+            overhead "***** {{_label}}"  44 _this  
+            overhead "ice node on screen" 66
+            @settimer  _util_spam__timer  0
+        endif
+    endif
+endwhile
+    
+    
+
+
+
+
