@@ -1,0 +1,544 @@
+
+if 1 == 2
+    ### DEBUG ONLY
+#### assumes armor is repaired
+#### exceptional armor and weapons always to storage-shelf - even colored
+####   satchels, quivers, weapons to backpack - even colored
+#### WARNING- does not handle instruments yet - requires opening all pouch,bag,backpacks
+####    MAYBE- use explicit serial-list for instruments
+####    if use my deposit-script, instrument will already be deposited in shelf/vault
+#### TODO  move  blessed   to adventures satchel by serial-number
+
+##
+setvar _util__loadout__serial__storage_shelf  0x4B41ED97
+setvar _util__loadout__serial__magic_item_vault  0x5988F431
+setvar _util__loadout__serial__item_recycler  0x4DF8B23E
+
+
+
+
+## at end of script, deposit all to shelf - ensures satchles in nested backpack are deposited
+setvar _util__unequip_gear__end_script_cleanup__deposit_shelf 1
+
+## 1 gear-bag
+## 2 magic-item-vault
+setvar _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault 1
+
+
+removelist _util__equipment_storage__nested_gear_bag_serials
+createlist _util__equipment_storage__nested_gear_bag_serials
+clearlist  _util__equipment_storage__nested_gear_bag_serials
+
+pushlist  _util__equipment_storage__nested_gear_bag_serials  0x484F8780
+pushlist  _util__equipment_storage__nested_gear_bag_serials  0x572D89AD
+pushlist  _util__equipment_storage__nested_gear_bag_serials  0x6E9C682D
+pushlist  _util__equipment_storage__nested_gear_bag_serials  0x446FA448
+
+#unsetvar _util__loadout__serial__storage_shelf
+#unsetvar _util__loadout__serial__magic_item_vault
+#unsetvar _util__loadout__serial__item_recycler
+#
+#unsetvar _util__unequip_gear__end_script_cleanup__deposit_shelf
+#unsetvar _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault
+#
+#removelist _util__equipment_storage__nested_gear_bag_serials
+
+endif
+
+
+
+
+
+
+sysmsg "__start unequipping gear"
+
+
+
+
+
+if not varexist _util__loadout__serial__storage_shelf or not varexist _util__loadout__serial__magic_item_vault or not varexist _util__loadout__serial__item_recycler or not varexist _util__unequip_gear__end_script_cleanup__deposit_shelf or not varexist _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault or not listexists _util__equipment_storage__nested_gear_bag_serials
+    overhead "ERROR- vars not set, restart the run-loadout-equip-special script" 33
+    sysmsg "ERROR- vars not set, restart the run-loadout-equip-special script" 33
+
+    unsetvar _util__loadout__serial__storage_shelf
+    unsetvar _util__loadout__serial__magic_item_vault
+    unsetvar _util__loadout__serial__item_recycler
+
+    unsetvar _util__unequip_gear__end_script_cleanup__deposit_shelf
+    unsetvar _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault
+
+    removelist _util__equipment_storage__nested_gear_bag_serials
+    stop
+endif
+
+
+
+
+
+@setvar _util__equip_gear__final_storage_chest 0
+if _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault == 1
+    foreach _itr in _util__equipment_storage__nested_gear_bag_serials
+        @setvar _util__equip_gear__final_storage_chest  _itr
+        dclick _itr
+        @getlabel! _itr _label
+        wait 420
+    endfor
+endif
+
+
+
+### unequip armor
+@setvar _lift_drop_delay_ms 420
+
+if findlayer self head as _this
+    @getlabel! _this _label
+    if "blessed" in _label
+        lift _this
+        drop backpack -1 -1
+    else
+        if "exceptional" in _label and "aspect" in _label
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+
+            @getlabel! _this _label
+            wait _lift_drop_delay_ms
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+        elseif "exceptional" in _label
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+        else
+            #drop backpack -1 -1
+            if _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault == 1
+                lift _this
+                drop _util__equip_gear__final_storage_chest  -1 -1
+                # drop _util__equip_gear__final_storage_chest 35 38
+            elseif _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault == 2
+                menu _util__loadout__serial__magic_item_vault 0
+                waitfortarget 500
+                target _this
+                #drop backpack -1 -1
+            endif
+        endif
+    endif
+    wait _lift_drop_delay_ms
+    @getlabel! backpack _label
+endif
+
+
+if findlayer self neck as _this
+    @getlabel! _this _label
+    if "blessed" in _label
+        lift _this
+        drop backpack -1 -1
+    else
+        if "exceptional" in _label and "aspect" in _label
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+
+            @getlabel! _this _label
+            wait _lift_drop_delay_ms
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+        elseif "exceptional" in _label
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+        else
+            #drop backpack -1 -1
+            if _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault == 1
+                lift _this
+                drop _util__equip_gear__final_storage_chest  -1 -1
+                # drop _util__equip_gear__final_storage_chest 33 59
+            elseif _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault == 2
+                menu _util__loadout__serial__magic_item_vault 0
+                waitfortarget 500
+                target _this
+                #drop backpack -1 -1
+            endif
+        endif
+    endif
+    wait _lift_drop_delay_ms
+    @getlabel! backpack _label
+endif
+
+if findlayer self arms as _this
+    @getlabel! _this _label
+    if "blessed" in _label
+        lift _this
+        drop backpack -1 -1
+    else
+        if "exceptional" in _label and "aspect" in _label
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+
+            @getlabel! _this _label
+            wait _lift_drop_delay_ms
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+        elseif "exceptional" in _label
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+        else
+            #drop backpack -1 -1
+            if _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault == 1
+                lift _this
+                drop _util__equip_gear__final_storage_chest  -1 -1
+                # drop _util__equip_gear__final_storage_chest 56 38
+            elseif _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault == 2
+                menu _util__loadout__serial__magic_item_vault 0
+                waitfortarget 500
+                target _this
+                #drop backpack -1 -1
+            endif
+        endif
+    endif
+    wait _lift_drop_delay_ms
+    @getlabel! backpack _label
+endif
+
+if findlayer self gloves as _this
+    @getlabel! _this _label
+    if "blessed" in _label
+        lift _this
+        drop backpack -1 -1
+    else
+        if "exceptional" in _label and "aspect" in _label
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+
+            @getlabel! _this _label
+            wait _lift_drop_delay_ms
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+        elseif "exceptional" in _label
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+        else
+            #drop backpack -1 -1
+            if _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault == 1
+                lift _this
+                drop _util__equip_gear__final_storage_chest  -1 -1
+                # drop _util__equip_gear__final_storage_chest 74 41
+            elseif _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault == 2
+                menu _util__loadout__serial__magic_item_vault 0
+                waitfortarget 500
+                target _this
+                #drop backpack -1 -1
+            endif
+        endif
+    endif
+    wait _lift_drop_delay_ms
+    @getlabel! backpack _label
+endif
+
+## chest
+if findlayer self innertorso as _this
+    @getlabel! _this _label
+    if "blessed" in _label
+        lift _this
+        drop backpack -1 -1
+    else
+        if "exceptional" in _label and "aspect" in _label
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+
+            @getlabel! _this _label
+            wait _lift_drop_delay_ms
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+        elseif "exceptional" in _label
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+        else
+            #drop backpack -1 -1
+            if _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault == 1
+                lift _this
+                drop _util__equip_gear__final_storage_chest  -1 -1
+                # drop _util__equip_gear__final_storage_chest 77 54
+            elseif _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault == 2
+                menu _util__loadout__serial__magic_item_vault 0
+                waitfortarget 500
+                target _this
+                #drop backpack -1 -1
+            endif
+        endif
+    endif
+    wait _lift_drop_delay_ms
+    @getlabel! backpack _label
+endif
+
+if findlayer self pants as _this
+    @getlabel! _this _label
+    if "blessed" in _label
+        lift _this
+        drop backpack -1 -1
+    else
+        if "exceptional" in _label and "aspect" in _label
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+
+            @getlabel! _this _label
+            wait _lift_drop_delay_ms
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+        elseif "exceptional" in _label
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+        else
+            #drop backpack -1 -1
+            if _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault == 1
+                lift _this
+                drop _util__equip_gear__final_storage_chest  -1 -1
+                # drop _util__equip_gear__final_storage_chest 56 59
+            elseif _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault == 2
+                menu _util__loadout__serial__magic_item_vault 0
+                waitfortarget 500
+                target _this
+                #drop backpack -1 -1
+            endif
+        endif
+    endif
+    wait _lift_drop_delay_ms
+    @getlabel! backpack _label
+endif
+
+if findlayer self righthand as _this
+    @getlabel! _this _label
+    if "blessed" in _label
+        lift _this
+        drop backpack -1 -1
+    else
+        if "exceptional" in _label and "aspect" in _label
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+
+            @getlabel! _this _label
+            wait _lift_drop_delay_ms
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+        elseif "exceptional" in _label
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+        else
+            #drop backpack -1 -1
+            if _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault == 1
+                lift _this
+                drop _util__equip_gear__final_storage_chest  -1 -1
+                # drop _util__equip_gear__final_storage_chest 98 69
+            elseif _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault == 2
+                menu _util__loadout__serial__magic_item_vault 0
+                waitfortarget 500
+                target _this
+                #drop backpack -1 -1
+            endif
+        endif
+    endif
+    wait _lift_drop_delay_ms
+    @getlabel! backpack _label
+endif
+if findlayer self lefthand as _this
+    @getlabel! _this _label
+    if "blessed" in _label
+        lift _this
+        drop backpack -1 -1
+    else
+        if "exceptional" in _label and "aspect" in _label
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+
+            @getlabel! _this _label
+            wait _lift_drop_delay_ms
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+        elseif "exceptional" in _label
+            lift _this
+            drop _util__loadout__serial__storage_shelf
+        else
+            #drop backpack -1 -1
+            if _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault == 1
+                lift _this
+                drop _util__equip_gear__final_storage_chest  -1 -1
+                # drop _util__equip_gear__final_storage_chest 104 45
+            elseif _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault == 2
+                menu _util__loadout__serial__magic_item_vault 0
+                waitfortarget 500
+                target _this
+                #drop backpack -1 -1
+            endif
+        endif
+    endif
+    wait _lift_drop_delay_ms
+    @getlabel! backpack _label
+endif
+
+
+
+## quiver
+if findlayer self quiver as _this
+    lift _this
+
+    drop backpack -1 -1
+    #if hue _this == 0
+    #    drop backpack -1 -1
+    #else
+    #    drop _util__equip_gear__final_storage_chest -1 -1
+    #endif
+
+    wait _lift_drop_delay_ms
+    @getlabel! backpack _label
+endif
+
+## satchels
+if findlayer self outerbody as _this
+    lift _this
+    
+    drop backpack -1 -1
+    #if hue _this == 0
+    #    drop backpack -1 -1
+    #else
+    #    drop _util__equip_gear__final_storage_chest -1 -1
+    #endif
+
+    wait _lift_drop_delay_ms
+    @getlabel! backpack _label
+endif
+
+
+
+
+
+## instrument - open all bags and find 
+
+if not listexists _loadout__active_instrument
+    createlist _loadout__active_instrument
+endif
+## open magic item recycler just in case
+if _util__loadout__serial__item_recycler != 0
+    dclick _util__loadout__serial__item_recycler
+    waitforgump 4045111101
+    gumpclose 4045111101
+    @getlabel! _itr _label
+    wait 420
+endif
+foreach _itr in _loadout__active_instrument
+    if find _itr self -1 -1 -1
+        lift _itr
+        drop _util__equip_gear__final_storage_chest  -1 -1
+    elseif find _itr _util__loadout__serial__item_recycler -1 -1 -1
+        lift _itr
+        drop _util__equip_gear__final_storage_chest  -1 -1
+    endif
+endfor
+
+
+
+
+
+
+
+## armor, weapons, quiver, satchles
+# +head
+# +neck
+# +arms
+# +gloves
+# +innertorso
+# +pants
+
+# +righthand
+# +lefthand
+
+# +quiver
+# +outerbody
+
+## other layers
+# shoes
+# shirt
+# ring
+# talisman
+# hair
+# waist
+# bracelet
+# face
+# facialhair
+# middletorso
+# earrings
+# cloak
+# outertorso
+# outerlegs
+# innerlegs
+# onehandedsecondary
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### deposit everything to shelf
+if _util__unequip_gear__end_script_cleanup__deposit_shelf == 1
+    @setvar  _max_time_for_deposit_shelf_loop_ms  20000
+
+    ## deposit storage shelf
+
+    @setvar! _this_maybe_done 0
+    @settimer! _restock_timer 0
+    while timer _restock_timer <= _max_time_for_deposit_shelf_loop_ms
+        @clearsysmsg 
+        menu _util__loadout__serial__storage_shelf 0
+        waitfortarget 500
+        target self
+        waitforgump 3232825965
+        gumpclose 3232825965
+        wait 200
+        while 1 == 1
+            if insysmsg "That container does not contain any items that may be added"
+                if  _this_maybe_done  == 0
+                    ## sometimes script needs to deposit one-more-time
+                    ## alternative method is to check items and stones, if no decrease then break
+                    @setvar! _this_maybe_done  1
+                else
+                    @settimer! _restock_timer _max_time_for_deposit_shelf_loop_ms
+                endif
+                break
+            elseif insysmsg " were added"
+                @setvar! _this_maybe_done 0
+                break
+            endif
+        endwhile
+
+    endwhile
+    @removetimer! _restock_timer
+    if gumpexists 3232825965
+        gumpclose 3232825965
+    endif
+    while queued
+    endwhile
+endif
+
+
+
+
+
+unsetvar _util__loadout__serial__storage_shelf
+unsetvar _util__loadout__serial__magic_item_vault
+unsetvar _util__loadout__serial__item_recycler
+
+unsetvar _util__unequip_gear__end_script_cleanup__deposit_shelf
+unsetvar _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault
+
+removelist _util__equipment_storage__nested_gear_bag_serials
+
+
+
+
+stop
+
+##

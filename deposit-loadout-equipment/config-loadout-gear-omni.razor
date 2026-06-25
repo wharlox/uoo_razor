@@ -1,0 +1,105 @@
+sysmsg "__start"
+
+@removelist _util__loadout__profile_name
+@createlist _util__loadout__profile_name
+#### give your profile a good name
+@pushlist _util__loadout__profile_name "omni - invuln armor"
+
+#### in-game macro setup - use Say or Whisper
+## S-Omni GearConf
+##   >script deposit-loadout-equipment\config-loadout-gear-omni
+## S-Gear UnEquip
+##   >script deposit-loadout-equipment\loadout-unequip-gear
+## S-Gear Equip
+##   >script deposit-loadout-equipment\loadout-equip-special-gear
+
+
+#### assumes armor is repaired
+#### exceptional armor and weapons always to storage-shelf - even colored
+####   satchels, quivers, weapons to backpack - even colored
+#### WARNING- does not handle instruments yet - requires opening all pouch,bag,backpacks
+####    MAYBE- use explicit serial-list for instruments
+####    if use my deposit-script, instrument will already be deposited in shelf/vault
+#### TODO  
+####   move  blessed   to adventures satchel by serial-number
+####   location check - check and assume home by location
+
+
+#### skip editing this, edit config after line 60
+    if not listexists _util__loadout__previous_label_checker
+        sysmsg "first run"
+        @createlist _util__loadout__previous_label_checker
+        foreach _itr in _util__loadout__profile_name
+            @pushlist _util__loadout__previous_label_checker _itr
+        endfor
+    else
+        foreach _now in _util__loadout__profile_name
+            foreach _p in _util__loadout__previous_label_checker
+                if _now == _p
+                    #sysmsg "eq  {{_p}}"
+                else
+                    #sysmsg "neq   {{_now}} != {{_p}}"
+                    if not varexist _util__loadout__temp_var__previous_label_checker
+                        @setvar _util__loadout__temp_var__previous_label_checker 1
+                        sysmsg "play script again to confirm loadout change from `{{_p}}` to `{{_now}}`" 43
+                        stop
+                    else
+                        sysmsg "successfully activated `{{_now}}` - was `{{_p}}`" 44
+                        @unsetvar _util__loadout__temp_var__previous_label_checker
+                        @poplist _util__loadout__previous_label_checker front
+                        @pushlist _util__loadout__previous_label_checker _now
+                    endif
+                endif
+            endfor
+        endfor
+    endif
+#### 
+
+
+
+
+#### explicit serials
+@setvar _util__loadout__serial__storage_shelf  0x4B41ED97
+@setvar _util__loadout__serial__magic_item_vault  0x5988F431
+@setvar _util__loadout__serial__item_recycler  0x4DF8B23E
+
+
+
+#### unequip
+## 1 gear-bag
+## 2 magic-item-vault
+@setvar _util__unequip_gear__store_dst__gear_bag__or__magic_item_vault 1
+#### equip
+## 1 gear bag
+## 2 magic item vault - NOT IMPLEMENTED
+@setvar _util__equip_gear__source__gear_bag__or__magic_item_vault  1
+
+
+
+#### chest heirarchy. the top serial is the first chest in your room to double click on
+@removelist _util__equipment_storage__nested_gear_bag_serials
+@createlist _util__equipment_storage__nested_gear_bag_serials
+##
+pushlist  _util__equipment_storage__nested_gear_bag_serials  0x484F8780
+pushlist  _util__equipment_storage__nested_gear_bag_serials  0x572D89AD
+pushlist  _util__equipment_storage__nested_gear_bag_serials  0x6E9C682D
+pushlist  _util__equipment_storage__nested_gear_bag_serials  0x446FA448
+
+
+
+
+## at end of un-equip script, deposit all to shelf - ensures satchles in nested backpack are deposited
+@setvar _util__unequip_gear__end_script_cleanup__deposit_shelf 1
+
+
+
+
+
+
+##
+
+
+
+
+#script "deposit-loadout-equipment\loadout-unequip-gear"
+#
