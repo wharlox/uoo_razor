@@ -5,6 +5,8 @@ sysmsg "__start"
 #### give your profile a good name
 @pushlist _util__loadout__profile_name "omni - invuln armor"
 
+
+
 #### in-game macro setup - use Say or Whisper
 ## S-Omni GearConf
 ##   >script deposit-loadout-equipment\config-loadout-gear-omni
@@ -12,6 +14,8 @@ sysmsg "__start"
 ##   >script deposit-loadout-equipment\loadout-unequip-gear
 ## S-Gear Equip
 ##   >script deposit-loadout-equipment\loadout-equip-special-gear
+
+
 
 
 #### assumes armor is repaired
@@ -25,18 +29,23 @@ sysmsg "__start"
 ####   location check - check and assume home by location
 
 
-#### skip editing this, edit config after line 60
+
+
+
+#### skip editing this, edit config after line 70
     if not listexists _util__loadout__previous_label_checker
-        sysmsg "first run"
         @createlist _util__loadout__previous_label_checker
         foreach _itr in _util__loadout__profile_name
             @pushlist _util__loadout__previous_label_checker _itr
+            #sysmsg "play script again to confirm loadout for {{_itr}}" 43
         endfor
+        #stop
     else
         foreach _now in _util__loadout__profile_name
             foreach _p in _util__loadout__previous_label_checker
                 if _now == _p
-                    #sysmsg "eq  {{_p}}"
+                    # sysmsg "eq  {{_p}}"
+                    sysmsg "active loadout profile `{{_now}}`" 66
                 else
                     #sysmsg "neq   {{_now}} != {{_p}}"
                     if not varexist _util__loadout__temp_var__previous_label_checker
@@ -44,7 +53,7 @@ sysmsg "__start"
                         sysmsg "play script again to confirm loadout change from `{{_p}}` to `{{_now}}`" 43
                         stop
                     else
-                        sysmsg "successfully activated `{{_now}}` - was `{{_p}}`" 44
+                        sysmsg "active new loadout profile `{{_now}}` - was `{{_p}}`" 66
                         @unsetvar _util__loadout__temp_var__previous_label_checker
                         @poplist _util__loadout__previous_label_checker front
                         @pushlist _util__loadout__previous_label_checker _now
@@ -54,6 +63,7 @@ sysmsg "__start"
         endfor
     endif
 #### 
+
 
 
 
