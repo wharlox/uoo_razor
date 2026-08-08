@@ -5,6 +5,7 @@
     
 ####
 @setvar!  _util__stack_lanterns__source_container__serial  backpack
+
 @setvar!  _util__stack_lanterns__source_container__search_depth  100
 
 @setvar!  _util__stack_lanterns__destination_container__serial  0x454A96ED
@@ -136,6 +137,8 @@ while @findtype! 2594|2597  _util__stack_lanterns__source_container__serial  -1 
         lift  _this
         drop  _util__stack_lanterns__destination_container__serial  _util__stack_lanterns__destination__others__x  _util__stack_lanterns__destination__others__y
     endif
+    wait 420
+    @getlabel!  backpack _bp
     
     while queued
         @getlabel! backpack _bp

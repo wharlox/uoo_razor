@@ -1,0 +1,283 @@
+#### deposit to stockpile - keep a tool for item recycling
+
+sysmsg "deposit stockpile keep tools - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\deposit-stockpile-keep-tools"
+
+
+@removelist _util__tools__storage_serials
+@createlist _util__tools__storage_serials
+@pushlist _util__tools__storage_serials  0x484F8780
+@pushlist _util__tools__storage_serials  0x5EA03062
+
+
+@setvar _util__tools__resource_stockpile  _deposit_loadout__stockpile
+## assume_grab_tools_unchecked - default 1
+##  0 - will always try to preserve 1 tool - always stashes 1 tool
+##  1 - stash tool only when multiple are deteced, assumes default setting is to not grab-tools
+@setvar _util__tools__resource_stockpile__assume_grab_tools_unchecked 1
+
+
+
+@setvar  _max_time_for_deposit_stockpile_loop_ms  20000
+
+
+
+
+
+@setvar _util__gumpid__rsrc_stockpile 1859005118
+@setvar _util__gumpid__rsrc_stockpile_settings 1116531395
+
+### for recycling: "sewing kit|saw|pen and ink|tongs|tool kit"
+# mortar and pestle - mortar and pestle - 3739 - 0
+# sewing kit - sewing kit - 3997 - 0
+# tinker_s tools - tool kit - 7864 - 0
+# scribe_s pen - pen and ink - 4032 - 0
+# mapmaker_s pen - pen and ink - 4031 - 2575
+# saw - saw - 4148 - 0
+
+# find    serial src hue qty range
+# counttype name src hue range
+
+@clearignore
+if findtype "sewing kit|tool kit|pen and ink" backpack 0 -1 -1 as _this
+    @setvar _util__tools__save_one_tool _this
+    @getlabel! _this _label
+    sysmsg _label
+    @ignore _this
+elseif findtype "pen and ink" backpack 0 2575 -1 as _this
+    @setvar _util__tools__save_one_tool _this
+    @ignore _this
+elseif findtype "saw" backpack 0 0 -1 as _this
+    @setvar _util__tools__save_one_tool _this
+    @ignore _this
+elseif findtype "tongs" backpack 0 0 -1 as _this
+    @setvar _util__tools__save_one_tool _this
+    @ignore _this
+else
+    @setvar _util__tools__save_one_tool 0
+endif
+
+
+
+#### look for mutiple of select tools
+@setvar _util__tools__found_multiple 0
+if counttype 'mortar and pestle' backpack 0 -1  > 0
+    #sysmsg "mortar" - but cannot be used to break down items
+    @setvar _util__tools__found_multiple 1
+elseif counttype 'sewing kit' backpack 0 -1  > 0
+    #sysmsg "sew"
+    @setvar _util__tools__found_multiple 1
+elseif counttype 'pen and ink' backpack 0 -1  > 0
+    #sysmsg "map"
+    @setvar _util__tools__found_multiple 1
+    
+elseif counttype 'pen and ink' backpack 2575 -1  > 0
+    #sysmsg "scribe"
+    @setvar _util__tools__found_multiple 1
+elseif counttype 'tool kit' backpack 0 -1  > 0
+    #sysmsg "tinker"
+    @setvar _util__tools__found_multiple 1
+
+elseif counttype 'saw' backpack 0 -1  > 0
+    #sysmsg "scribe"
+    @setvar _util__tools__found_multiple 1
+elseif counttype 'tongs' backpack 0 -1  > 0
+    #sysmsg "blacksmith"
+    @setvar _util__tools__found_multiple 1
+    
+else
+    ## special logic to force stashing tool and toggle grab-tools setting as needed
+    if _util__tools__save_one_tool != 0 and _util__tools__resource_stockpile__assume_grab_tools_unchecked == 0
+        @setvar _util__tools__found_multiple 1
+    endif
+endif
+
+
+
+
+@setvar _util__tools__revert_grab_settings 0
+#### if multiple tools are found, move first found tool to chest
+if _util__tools__found_multiple == 1 and _util__tools__save_one_tool != 0
+    ### open save-chest
+    foreach _itr in _util__tools__storage_serials
+        @setvar _util__tools__storage__final_chest _itr
+        dclick _itr
+        wait 420
+        @getlabel! backpack _bp
+    endfor
+    lift _util__tools__save_one_tool 1
+    drop _util__tools__storage__final_chest -1 -1 -1
+    wait 400
+    @getlabel! backpack _bp
+
+    # lift _util__tools__save_one_tool 1
+    # drop _util__tools__storage__final_chest -1 -1 -1
+    # wait 400
+    # @getlabel! backpack _bp
+
+    ## dclick rsrc
+    dclick _util__tools__resource_stockpile
+    waitforgump _util__gumpid__rsrc_stockpile
+    ## click rsrc-settings
+    gumpresponse 12 _util__gumpid__rsrc_stockpile
+    waitforgump _util__gumpid__rsrc_stockpile
+    ## settings gump
+    waitforgump _util__gumpid__rsrc_stockpile_settings
+    ## click tools button
+    @clearsysmsg
+    gumpresponse 3 _util__gumpid__rsrc_stockpile_settings
+    wait 200
+
+    @setvar  _util__tools__current_setting  1
+    while insysmsg "This character will no longer grab tools when restocking a resource stockpile"
+        ## current_setting == 2 means rsrc was already grabbing tools on restock before this script
+        @setvar  _util__tools__current_setting  2
+        @clearsysmsg
+        gumpresponse 3 _util__gumpid__rsrc_stockpile_settings
+        wait 200
+        if insysmsg "This character will now grab tools when restocking a resource stockpile"
+            break
+        endif
+    endwhile
+    @setvar _util__tools__revert_grab_settings 1
+
+    gumpclose _util__gumpid__rsrc_stockpile_settings
+    gumpclose _util__gumpid__rsrc_stockpile
+    
+endif
+
+
+
+
+
+#### deposit logic
+@clearsysmsg
+@settimer! _restock_timer 0
+while timer _restock_timer <= _max_time_for_deposit_stockpile_loop_ms
+    #overhead "rsr stockpile deposit"
+    menu _util__tools__resource_stockpile 0
+    waitfortarget 500
+    target self
+    #@getlabel! _util__tools__resource_stockpile _tmp_label
+    wait 200
+
+    while queued
+    endwhile
+
+    if insysmsg "You do not find any items that could be added to a Resource Stockpile"
+        @settimer! _restock_timer _max_time_for_deposit_stockpile_loop_ms
+        break
+    endif
+
+endwhile
+@removetimer! _restock_timer
+
+
+
+
+
+#### return tool to backpack
+if _util__tools__found_multiple == 1 and _util__tools__save_one_tool != 0
+    lift _util__tools__save_one_tool 1
+    drop backpack -1 -1 -1
+    wait 400
+    @getlabel! backpack _bp
+endif
+
+
+
+
+
+#### revert rsrc-stockpile settings
+if _util__tools__revert_grab_settings == 1
+    if _util__tools__current_setting == 1
+
+        ## dclick rsrc
+        dclick _util__tools__resource_stockpile
+        waitforgump _util__gumpid__rsrc_stockpile
+        ## click rsrc-settings
+        gumpresponse 12 _util__gumpid__rsrc_stockpile
+        waitforgump _util__gumpid__rsrc_stockpile
+        ## settings gump
+        waitforgump _util__gumpid__rsrc_stockpile_settings
+        ## click tools button
+        @clearsysmsg
+        gumpresponse 3 _util__gumpid__rsrc_stockpile_settings
+        wait 200
+
+        while insysmsg "This character will now grab tools when restocking a resource stockpile"
+            @clearsysmsg
+            gumpresponse 3 _util__gumpid__rsrc_stockpile_settings
+            wait 200
+            if insysmsg "This character will no longer grab tools when restocking a resource stockpile"
+                break
+            endif
+        endwhile
+        @setvar _util__tools__revert_grab_settings 0
+
+        gumpclose _util__gumpid__rsrc_stockpile_settings
+        gumpclose _util__gumpid__rsrc_stockpile
+
+    elseif _util__tools__current_setting == 2
+        ## current_setting == 2 means rsrc was already grabbing tools on restock before this script
+        ## do not change anything
+    endif
+endif
+
+
+wait 100
+### cleanup-ish open save-chest
+foreach _itr in _util__tools__storage_serials
+    dclick _itr
+    wait 420
+    @getlabel! backpack _bp
+    break
+endfor
+
+
+
+
+
+while queued
+    wait 50
+endwhile
+sysmsg "deposit stockpile keep tools - complete"
+
+
+
+
+#### continue script chain
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+foreach _itr in _util_continue_script_chain
+    hotkey _itr
+endfor
+#if listexists _script_chain and list _script_chain > 0
+#    poplist _script_chain front
+#    foreach _a_script in _script_chain
+#        hotkey _a_script
+#    endfor
+#endif
+#
+
+
+stop
+
+## rsrc-gump 1859005118
+## rsrc-settings-gump 1116531395
+
+## dclick rsrc
+dclick 0x56E3DC06
+waitforgump 1859005118
+## click rsrc-settings
+gumpresponse 12 1859005118
+waitforgump 1859005118
+## settings gump
+waitforgump 1116531395
+## click tools button
+gumpresponse 3 1116531395
+waitforgump 1116531395
+## sysmsg - "This character will now grab tools when restocking a resource stockpile"
+## sysmsg - "This character will no longer grab tools when restocking a resource stockpile"
+gumpclose 1116531395
+gumpclose 1859005118
+#

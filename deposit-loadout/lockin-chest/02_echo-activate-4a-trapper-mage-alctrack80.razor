@@ -1,0 +1,200 @@
+#### activate echo
+#### only aborts on echo-change cooldown or echo-name not found
+#### in-game macro: whisper: >script deposit-loadout\echo-activators\02_echo-activate-4a-trapper-mage-alctrack80
+
+
+
+#### HOW TO CONFIGURE
+## edit line 48 with an echo-name - can match the in-game echo name, not required
+##    line example: @pushlist   _util__hotkey_echo_activate__name  "4a TrapMage AlcTrack80"
+## edit line 102 - the inner quotes must match your echo - name your echos such that a short-name does not overlap with a long name
+##    line example: if ingump  "Available Echo: 4a TrapMage AlcTrack80"  210712595
+##    poorly named echo example - in this case, "my echo 1" will match both
+##       "my echo 1"
+##       "my echo 11"
+##    suggestion:
+##       "01 my echo"
+##       "11 my echo"
+## the 2x vars below for options, as explained
+
+
+
+## max_pages_of_echos - script will abort after searching this many pages of echos
+##   this is used as a fail-safe mechanism if the echo is already activated or not found
+@setvar _util__echo_gump__max_pages_of_echos 10
+
+## enforce_run_twice
+##   0 disables - clicking the script sets echo immediatly
+##   1 enables  - script will need to be executed twice
+@setvar _util__hotkey_echo_activate__enforce_run_twice 1
+
+
+
+#### script to automatically run after this script
+####   to enable: uncomment the pushlist line, add in the path to the next script after Play Script
+@removelist _util__hotkey_armorer__script_chain
+@createlist _util__hotkey_armorer__script_chain
+#@pushlist _util__hotkey_armorer__script_chain "Play Script: AutoDexxer"
+
+
+
+
+
+if _util__hotkey_echo_activate__enforce_run_twice == 1
+    @removelist _util__hotkey_echo_activate__name
+    @createlist _util__hotkey_echo_activate__name
+    
+    #### edit this value with a friendly name of your echo
+    @pushlist   _util__hotkey_echo_activate__name  "4a TrapMage AlcTrack80"
+
+
+    if not listexists _util__hotkey_echo_activate__name_previous
+        @createlist _util__hotkey_echo_activate__name_previous
+        foreach _itr in _util__hotkey_echo_activate__name
+            @pushlist _util__hotkey_echo_activate__name_previous _itr
+            sysmsg "click again to activate echo: {{_itr}}" 44
+            stop
+        endfor
+    endif
+
+
+    foreach _itr in _util__hotkey_echo_activate__name
+        foreach _itr_prev in _util__hotkey_echo_activate__name_previous
+            @removelist _util__hotkey_echo_activate__name_previous
+            if _itr == _itr_prev
+                sysmsg  "activating echo: {{_itr}}" 70
+                overhead "activating echo: {{_itr}}" 70
+                @removelist _util__hotkey_echo_activate__name
+            else
+                sysmsg   "ERROR: this script `{{_itr}}` does not match the previous triggered script `{{_itr_prev}}` - try again" 33
+                overhead "ERROR: this script `{{_itr}}` does not match the previous triggered script `{{_itr_prev}}` - try again" 33
+                stop
+            endif
+            break
+        endfor
+        break
+    endfor
+else
+    if listexists _util__hotkey_echo_activate__name
+        @removelist _util__hotkey_echo_activate__name
+    endif
+    if listexists _util__hotkey_echo_activate__name_previous
+        @removelist _util__hotkey_echo_activate__name_previous
+    endif
+endif
+
+
+
+
+#### open the echo gump
+@setvar  _util__echo_gump_id  210712595
+@setvar! _util__echo_swap__found_echo_page 0
+whisper '[echo'
+waitforgump _util__echo_gump_id
+
+
+
+#### search the echo gump for the echo named in line 94
+while gumpexists _util__echo_gump_id and _util__echo_swap__found_echo_page == 0
+
+
+    #### edit this value with your in-game echo name
+    if ingump  "Available Echo: 4a TrapMage AlcTrack80"  210712595
+
+
+        sysmsg "found echo" 99
+        overhead "found echo" 99
+        @setvar! _util__echo_swap__found_echo_page 2
+        break
+    elseif ingump "Next Activation Allowed in"  210712595
+        ## "You must wait another (2 minutes )14 second(s) before you may activate another echo."
+        sysmsg "ERROR: aborting, gotta wait echo cooldown to change echos" 33
+        overhead "ERROR: aborting, gotta wait echo cooldown to change echos" 33
+        stop
+    else
+        ## goto next page
+        gumpresponse 8 _util__echo_gump_id
+        waitforgump _util__echo_gump_id
+    endif
+
+    if index == _util__echo_gump__max_pages_of_echos
+        sysmsg "ERROR: aborting, did not find specified echo-name to activate - or its already activated" 33
+        overhead "ERROR: aborting, did not find specified echo-name to activate - or its already activated" 33
+        whisper "[echo"
+        stop
+    endif
+endwhile
+
+
+
+#### if the named echo is found, activate it - unless echo-change cooldown is active
+while _util__echo_swap__found_echo_page == 2
+    ## found echo - current page is active
+    @unsetvar _util__echo_swap__found_echo_page
+    @clearsysmsg
+    gumpresponse 6 _util__echo_gump_id
+    waitforgump _util__echo_gump_id
+    wait 500
+    if insysmsg "Click once more to confirm activation of this echo"
+        gumpresponse 6 _util__echo_gump_id
+        waitforgump _util__echo_gump_id
+    #elseif insysmsg "You must wait another" and insysmsg "before you may active another echo"
+    elseif insysmsg "You cannot activate an echo while you have any summons active."
+        sysmsg "ERROR: aborting, must un-summon all before changing echo" 33
+        overhead "ERROR: aborting, must un-summon all before changing echo" 33
+        stop
+    #elseif insysmsg "" ### TODO - test if can swap echos with tameed pets
+    #    stop
+#    elseif insysmsg "before you may activate another echo" or ingump "Next Activation Allowed in"  210712595
+#        ## "You must wait another (2 minutes )14 second(s) before you may activate another echo."
+#        sysmsg "ERROR: aborting, gotta wait echo cooldown to change echos" 33
+#        overhead "ERROR: aborting, gotta wait echo cooldown to change echos" 33
+#        stop
+    elseif insysmsg "You have recently been in combat and must wait another 1 minute" 
+        for 10
+            sysmsg "change echo - wait for echo-combat cooldown" 54
+            overhead "change echo - wait for echo-combat cooldown" 54
+            wait 6000
+        endfor
+
+    else
+        sysmsg "change echo - wait for echo-combat cooldown" 54
+        overhead "change echo - wait for echo-combat cooldown" 54
+        if insysmsg "You have recently been in combat and must wait another 1 second"
+            wait 1000
+        elseif insysmsg "You have recently been in combat and must wait another 2 second"
+            wait 2000
+        elseif insysmsg "You have recently been in combat and must wait another 3 second"
+            wait 3000
+        elseif insysmsg "You have recently been in combat and must wait another 4 second"
+            wait 4000
+        elseif insysmsg "You have recently been in combat and must wait another 5 second"
+            wait 5000
+        elseif insysmsg "You have recently been in combat and must wait another 6 second"
+            wait 6000
+        elseif insysmsg "You have recently been in combat and must wait another 7 second"
+            wait 7000
+        elseif insysmsg "You have recently been in combat and must wait another 8 second"
+            wait 8000
+        elseif insysmsg "You have recently been in combat and must wait another 9 second"
+            wait 9000
+        elseif insysmsg "You have recently been in combat and must wait another 10 second"
+            wait 10000
+        elseif insysmsg "You have recently been in combat and must wait another 11 second"
+            wait 11000
+        elseif insysmsg "You have recently been in combat and must wait another 12 second"
+            wait 12000
+        else
+            wait 9000
+        endif
+    endif
+    
+    if insysmsg "You activate the echo"
+        sysmsg "activated echo" 99
+        overhead "activated echo" 99
+        whisper '[echo'
+        stop
+    endif
+endwhile
+
+#

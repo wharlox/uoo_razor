@@ -1,0 +1,299 @@
+
+
+
+#### script to automatically run after this script
+####   to enable: uncomment the pushlist line, add in the path to the next script after Play Script
+@removelist _util__hotkey_armorer__script_chain
+@createlist _util__hotkey_armorer__script_chain
+@pushlist _util__hotkey_armorer__script_chain "Play Script: LTrap\Advanced\_Master"
+
+
+
+#### modes
+## [static] equip only if item is found in backpack or corpse
+## [dymaic] behavior when layer is not-empty and saved-item is in backpack or corpse [equip over existing default]
+#`#   [dynamic] slot un-equip, prev-item in backpack or corpse == keep prev-item memorized OR clear memory for slot
+#`#   [static] slot equipped, prev-item in backpack or corpse == USE NEW ITEM
+#`#   [todo] get-all-layers or just aspectable-layers
+
+
+#### equip saved-items over existing layers - default 1
+##   if a layer is not empty, and not the saved-item, equip over it 1 - default, 0 - do not equip over it
+##     0 - do not equip saved-item over existing equipped layer
+##     1 - equip over it
+@setvar!  _util__hotkey_armorer__mode__equip_saved_items_over_geared_layer  1
+
+
+
+
+#### enforce_run_twice - default 0
+##   0 disables - script will run immediatly in full
+##   1 enables  - script will need to be executed twice
+@setvar _util__hotkey_armorer__enforce_run_twice 0
+
+
+
+
+
+### unequip armor
+@setvar _lift_drop_delay_ms 420
+
+
+
+
+if _util__hotkey_armorer__enforce_run_twice == 1
+    @removelist _util__hotkey_armorer__name
+    @createlist _util__hotkey_armorer__name
+    
+    #### a friendly value of this script
+    @pushlist   _util__hotkey_armorer__name  "gearup-armor-n-weaps"
+
+
+    if not listexists _util__hotkey_armorer__name_previous
+        @createlist _util__hotkey_armorer__name_previous
+        foreach _itr in _util__hotkey_armorer__name
+            @pushlist _util__hotkey_armorer__name_previous _itr
+            sysmsg   "click again to equip armor and weapon profile" 44
+            overhead "click again to equip armor and weapon profile" 44
+            @drop backpack
+            stop
+        endfor
+    endif
+
+
+    foreach _itr in _util__hotkey_armorer__name
+        foreach _itr_prev in _util__hotkey_armorer__name_previous
+            @removelist _util__hotkey_armorer__name_previous
+            if _itr == _itr_prev
+                sysmsg  "gearing armor and weapons..." 70
+                overhead "gearing armor and weapons..." 70
+                @removelist _util__hotkey_armorer__name
+            else
+                sysmsg   "ERROR: this script `{{_itr}}` does not match the previous triggered script `{{_itr_prev}}` - try again" 33
+                overhead "ERROR: this script `{{_itr}}` does not match the previous triggered script `{{_itr_prev}}` - try again" 33
+                stop
+            endif
+            break
+        endfor
+        break
+    endfor
+else
+    sysmsg "gearing armor and weapons..." 70
+    overhead "gearing armor and weapons..." 70
+    if listexists _util__hotkey_armorer__name
+        @removelist _util__hotkey_armorer__name
+    endif
+    if listexists _util__hotkey_armorer__name_previous
+        @removelist _util__hotkey_armorer__name_previous
+    endif
+endif
+
+
+
+@removelist _util__armorer__layers
+@createlist _util__armorer__layers
+@pushlist _util__armorer__layers head
+@pushlist _util__armorer__layers neck
+@pushlist _util__armorer__layers arms
+@pushlist _util__armorer__layers gloves
+# chest
+@pushlist _util__armorer__layers innertorso
+@pushlist _util__armorer__layers pants
+@pushlist _util__armorer__layers righthand
+@pushlist _util__armorer__layers lefthand
+@pushlist _util__armorer__layers quiver
+@pushlist _util__armorer__layers outerbody
+
+
+
+foreach _a_layer in _util__armorer__layers 
+    @drop backpack
+
+    @setvar _util__hotkey_armorer__equip_this__dclick_or_liftdrop 1
+
+    if _a_layer == head and varexist _util__hotkey_armorer__equipped__head
+        @setvar  _util__hotkey_armorer__equipped__this  _util__hotkey_armorer__equipped__head
+    elseif _a_layer == neck and varexist _util__hotkey_armorer__equipped__neck
+        @setvar  _util__hotkey_armorer__equipped__this  _util__hotkey_armorer__equipped__neck
+    elseif _a_layer == arms and varexist _util__hotkey_armorer__equipped__arms
+        @setvar  _util__hotkey_armorer__equipped__this  _util__hotkey_armorer__equipped__arms
+    elseif _a_layer == gloves and varexist _util__hotkey_armorer__equipped__gloves
+        @setvar  _util__hotkey_armorer__equipped__this  _util__hotkey_armorer__equipped__gloves
+    elseif _a_layer == innertorso and varexist _util__hotkey_armorer__equipped__chest
+        @setvar  _util__hotkey_armorer__equipped__this  _util__hotkey_armorer__equipped__chest
+    elseif _a_layer == pants and varexist _util__hotkey_armorer__equipped__pants
+        @setvar  _util__hotkey_armorer__equipped__this  _util__hotkey_armorer__equipped__pants
+    elseif _a_layer == righthand and varexist _util__hotkey_armorer__equipped__righthand
+        @setvar  _util__hotkey_armorer__equipped__this  _util__hotkey_armorer__equipped__righthand
+        if varexist _util__hotkey_armorer__equipped__righthand__equip__dclick_or_liftdrop
+            @setvar  _util__hotkey_armorer__equip_this__dclick_or_liftdrop  _util__hotkey_armorer__equipped__righthand__equip__dclick_or_liftdrop
+        endif
+    elseif _a_layer == lefthand and varexist _util__hotkey_armorer__equipped__lefthand
+        @setvar  _util__hotkey_armorer__equipped__this  _util__hotkey_armorer__equipped__lefthand
+        if varexist _util__hotkey_armorer__equipped__lefthand__equip__dclick_or_liftdrop
+            @setvar  _util__hotkey_armorer__equip_this__dclick_or_liftdrop  _util__hotkey_armorer__equipped__lefthand__equip__dclick_or_liftdrop
+        endif
+    elseif _a_layer == quiver and varexist _util__hotkey_armorer__equipped__quiver
+        @setvar  _util__hotkey_armorer__equipped__this  _util__hotkey_armorer__equipped__quiver
+    elseif _a_layer == outerbody and varexist _util__hotkey_armorer__equipped__satchel
+        @setvar  _util__hotkey_armorer__equipped__this  _util__hotkey_armorer__equipped__satchel
+    else
+        @unsetvar _util__hotkey_armorer__equipped__this
+    endif
+
+    # _util__hotkey_armorer__mode__equip_saved_items_over_geared_layer
+    if varexist _util__hotkey_armorer__equipped__this
+        @setvar _found_layer_equipped 0
+        #sysmsg "checking self {{_a_layer}}" 37
+        if findlayer self _a_layer as _this
+            @setvar _found_layer_equipped _this
+        endif
+        #sysmsg "found on self layer {{_found_layer_equipped}}"
+        @setvar!  _util__hotkey_armorer__equipped__found  0
+        if find _util__hotkey_armorer__equipped__this backpack -1 -1 -1
+            @setvar!  _util__hotkey_armorer__equipped__found  1
+        elseif find _util__hotkey_armorer__equipped__this ground -1 -1 2
+            @setvar!  _util__hotkey_armorer__equipped__found  1
+        endif
+        
+        if _util__hotkey_armorer__equipped__found == 1
+            if _util__hotkey_armorer__mode__equip_saved_items_over_geared_layer == 1
+                if _util__hotkey_armorer__equip_this__dclick_or_liftdrop == 1
+                    dclick _util__hotkey_armorer__equipped__this
+                else
+                    lift _util__hotkey_armorer__equipped__this 1
+                    drop self _a_layer
+                endif
+                #sysmsg "DBG: pause"
+                wait _lift_drop_delay_ms
+                @getlabel! backpack _label
+            elseif _found_layer_equipped != 0
+                sysmsg "skip re-gearing saved-item over {{_a_layer}} as layer already geared" 44
+            endif
+        elseif _found_layer_equipped != _util__hotkey_armorer__equipped__this
+            #@getlabel _util__hotkey_armorer__equipped__this _label
+            sysmsg "saved {{_a_layer}} item not found  {{_found_layer_equipped}}  {{_util__hotkey_armorer__equipped__this}}  {{_label}}" 55
+            #overhead "saved {{_a_layer}} item not found" 55
+        endif
+    else
+        # sysmsg "WARNING: layer not saved in memory: {{_a_layer}}" 44
+    endif
+
+
+endfor
+
+
+sysmsg  "gear-up complete" 70
+overhead "gear-up complete" 70
+
+stop
+#
+
+
+
+##### gear equipped layered items
+@drop backpack
+
+# _util__hotkey_armorer__mode__equip_saved_items_over_geared_layer
+if varexist _util__hotkey_armorer__equipped__head
+    @setvar _found 0
+    if findlayer self head as _this
+        @setvar _found _this
+    endif
+    sysmsg "found H {{_found}}"
+    @setvar!  _util__hotkey_armorer__equipped__found  0
+    if find _util__hotkey_armorer__equipped__head backpack -1 -1 -1
+        @setvar!  _util__hotkey_armorer__equipped__found  1
+    elseif find _util__hotkey_armorer__equipped__head ground -1 -1 2
+        @setvar!  _util__hotkey_armorer__equipped__found  1
+    endif
+    
+    if _util__hotkey_armorer__equipped__found == 1
+        if _util__hotkey_armorer__mode__equip_saved_items_over_geared_layer == 1
+            dclick _util__hotkey_armorer__equipped__head
+        elseif _found != 0
+            sysmsg "skip re-gearing saved-item over head as layer already geared" 44
+        endif
+    elseif _found != _util__hotkey_armorer__equipped__head
+        sysmsg "saved head item not found" 55
+        overhead "saved head item not found" 55
+    endif
+endif
+
+stop
+
+
+if varexist _util__hotkey_armorer__equipped__neck
+    @setvar _found 0
+    if findlayer self neck as _this
+        @setvar _found _this
+    endif
+    @setvar!  _util__hotkey_armorer__equipped__found  0
+    if find _util__hotkey_armorer__equipped__neck backpack -1 -1 -1
+        @setvar!  _util__hotkey_armorer__equipped__found  1
+    elseif find _util__hotkey_armorer__equipped__neck ground -1 -1 2
+        @setvar!  _util__hotkey_armorer__equipped__found  1
+    endif
+    
+    if _util__hotkey_armorer__equipped__found == 1
+        if _util__hotkey_armorer__mode__equip_saved_items_over_geared_layer == 1
+            dclick _util__hotkey_armorer__equipped__neck
+        elseif _found != 0
+            sysmsg "skip re-gearing saved-item over neck as layer already geared" 44
+        endif
+    elseif _found != _util__hotkey_armorer__equipped__neck
+        sysmsg "saved neck item not found" 55
+        overhead "saved neck item not found" 55
+    endif
+endif
+
+
+# _util__hotkey_armorer__equipped__head
+# _util__hotkey_armorer__equipped__neck
+# _util__hotkey_armorer__equipped__arms
+# _util__hotkey_armorer__equipped__gloves
+# _util__hotkey_armorer__equipped__chest
+# _util__hotkey_armorer__equipped__pants
+# _util__hotkey_armorer__equipped__righthand
+# _util__hotkey_armorer__equipped__lefthand
+# _util__hotkey_armorer__equipped__quiver
+# _util__hotkey_armorer__equipped__satchel
+##
+# _util__hotkey_armorer__equipped__righthand__equip__dclick_or_liftdrop
+# _util__hotkey_armorer__equipped__lefthand__equip__dclick_or_liftdrop
+
+
+
+
+
+
+stop
+
+
+if findlayer self head as _this
+endif
+if findlayer self neck as _this
+endif
+if findlayer self arms as _this
+endif
+if findlayer self gloves as _this
+endif
+## chest
+if findlayer self innertorso as _this
+endif
+if findlayer self pants as _this
+endif
+if findlayer self righthand as _this
+endif
+if findlayer self lefthand as _this
+endif
+## quiver
+if findlayer self quiver as _this
+endif
+## satchels
+if findlayer self outerbody as _this
+endif
+#
+
+
+#

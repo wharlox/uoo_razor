@@ -1,0 +1,108 @@
+#### activate echo - must trigger script twice in a row
+#### edit lines 6 and 9 - note the name here does not get re-used in the chained script defined at L9
+
+@removelist _util__hotkey_echo_activate__name
+@createlist _util__hotkey_echo_activate__name
+@pushlist   _util__hotkey_echo_activate__name  "2 sword track"
+@removelist _util__hotkey_echo_activate__script
+@createlist _util__hotkey_echo_activate__script
+@pushlist   _util__hotkey_echo_activate__script  "Play Script: deposit-loadout\echo-activators\echo-activate-2-sword-track"
+
+
+
+if not listexists _util__hotkey_echo_activate__name_previous
+    @createlist _util__hotkey_echo_activate__name_previous
+    foreach _itr in _util__hotkey_echo_activate__name
+        @pushlist _util__hotkey_echo_activate__name_previous _itr
+        sysmsg "click again to activate echo: {{_itr}}" 44
+        stop
+    endfor
+endif
+
+
+foreach _itr in _util__hotkey_echo_activate__name
+    foreach _itr_prev in _util__hotkey_echo_activate__name_previous
+        @removelist _util__hotkey_echo_activate__name_previous
+        if _itr == _itr_prev
+            sysmsg  "activating echo: {{_itr}}" 70
+            overhead "activating echo: {{_itr}}" 70
+            foreach _script in _util__hotkey_echo_activate__script
+                @removelist _util__hotkey_echo_activate__script
+                hotkey _script
+            endfor
+        else
+            sysmsg   "ERROR: this script `{{_itr}}` does not match the previous triggered script `{{_itr_prev}}` - try again" 33
+            overhead "ERROR: this script `{{_itr}}` does not match the previous triggered script `{{_itr_prev}}` - try again" 33
+            stop
+        endif
+    endfor
+endfor
+
+
+
+
+@removelist _util__hotkey_echo_activate__name_previous
+
+sysmsg "__end" 44
+
+stop
+if not listexists _util__hotkey_echo_activate__name
+    @createlist _util__hotkey_echo_activate__name
+    @pushlist _util__hotkey_echo_activate__name "2 sword track"
+    @createlist _util__hotkey_echo_activate__script
+    @pushlist _util__hotkey_echo_activate__script  "Play Script: deposit-loadout\echo-activators\echo-activate-2-sword-track"
+
+    foreach _echo_name in _util__hotkey_echo_activate__name    
+        sysmsg "click again to activate echo: {{_echo_name}}" 44
+        overhead "click again to activate echo: {{_echo_name}}" 44
+        stop
+    endif
+endif
+
+
+foreach _echo_name in _util__hotkey_echo_activate__name    
+    sysmsg "activating echo: {{_echo_name}}" 70
+    overhead "activating echo: {{_echo_name}}" 70
+    @removelist _util__hotkey_echo_activate__name
+    foreach _script in _util__hotkey_echo_activate__script
+        @removelist _util__hotkey_echo_activate__script
+        hotkey _script
+    endfor
+endif
+
+
+@removelist _util__hotkey_echo_activate__name
+@removelist _util__hotkey_echo_activate__script
+
+#
+stop
+
+if not varexist _util__hotkey_echo_activate__4a
+    @setvar _util__hotkey_echo_activate__4a 1
+    @createlist _util__hotkey_echo_activate__echo_name
+    @pushlist   _util__hotkey_echo_activate__echo_name  "4a trapper mage AlcTrack80"
+    @createlist _util__hotkey_echo_activate__script
+    @pushlist   _util__hotkey_echo_activate__script "Play Script: deposit-loadout\echo-activators\echo-activate-4a-trapper-mage-alctrack80"
+endif
+
+
+
+foreach _echo_name in _util__hotkey_echo_activate__echo_name
+    if _util__hotkey_echo_activate__4a == 1
+        @setvar _util__hotkey_echo_activate__4a 2
+        sysmsg "click again to activate echo: {{_echo_name}}" 44
+        overhead "click again to activate echo: {{_echo_name}}" 44
+        stop
+    elseif _util__hotkey_echo_activate__4a == 2
+        @unsetvar _util__hotkey_echo_activate__4a
+        @removelist _util__hotkey_echo_activate__echo_name
+        sysmsg "activating echo: {{_echo_name}}" 44
+        overhead "activating echo: {{_echo_name}}" 44
+        foreach _script in _util__hotkey_echo_activate__script
+            @removelist _util__hotkey_echo_activate__script
+            hotkey _script
+        endfor
+    endif
+endfor
+
+#

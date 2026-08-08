@@ -1,0 +1,103 @@
+
+##### echo activator - only aborts on echo-change cooldown or echo-name not found
+#### DO THIS- edit line-6 and line-24
+####  edit line-24 to the name of your echo
+## change line-6 value to match the number of pages of echos - set to large number if you are free of typos
+@setvar _util__echo_gump__max_pages_of_echos 10
+
+
+
+
+#### dont change these vars
+@setvar  _util__echo_gump_id  210712595
+@setvar! _util__echo_swap__found_echo_page 0
+whisper '[echo'
+waitforgump _util__echo_gump_id
+
+
+
+
+#### search the echo gump for the echo named in line 24
+while gumpexists _util__echo_gump_id and _util__echo_swap__found_echo_page == 0
+
+    #### change text below to match your echo-name to activate
+    if ingump  "Available Echo: 2 sword track"  210712595
+
+        # overhead "found echo" 99
+        @setvar! _util__echo_swap__found_echo_page 1
+        break
+    else
+        ## goto next page
+        gumpresponse 8 _util__echo_gump_id
+        waitforgump _util__echo_gump_id
+    endif
+
+    if index == _util__echo_gump__max_pages_of_echos
+        sysmsg "ERROR: aborting, did not find specified echo-name to activate" 33
+        overhead "ERROR: aborting, did not find specified echo-name to activate" 33
+        whisper "[echo"
+        stop
+    endif
+endwhile
+
+
+
+#### if the named echo is found, activate it - unless echo-change cooldown is active
+while _util__echo_swap__found_echo_page == 1
+    ## found echo - current page is active
+    gumpresponse 6 _util__echo_gump_id
+    waitforgump _util__echo_gump_id
+    if insysmsg "Click once more to confirm activation of this echo"
+        gumpresponse 6 _util__echo_gump_id
+        waitforgump _util__echo_gump_id
+    elseif insysmsg "You must wait another" and insysmsg "before you may active another echo"
+        sysmsg "ERROR: aborting, gotta wait echo cooldown to change echos" 33
+        overhead "ERROR: aborting, gotta wait echo cooldown to change echos" 33
+        stop
+    elseif insysmsg "You have recently been in combat and must wait another" 
+        if insysmsg "another 1 minute"
+            for 10
+                sysmsg "change echo - wait for echo-combat cooldown" 54
+                overhead "change echo - wait for echo-combat cooldown" 54
+                wait 6000
+            endfor
+        elseif insysmsg "another 1 second"
+            wait 1000
+        elseif insysmsg "another 2 second"
+            wait 2000
+        elseif insysmsg "another 3 second"
+            wait 3000
+        elseif insysmsg "another 4 second"
+            wait 4000
+        elseif insysmsg "another 5 second"
+            wait 5000
+        elseif insysmsg "another 6 second"
+            wait 6000
+        elseif insysmsg "another 7 second"
+            wait 7000
+        elseif insysmsg "another 8 second"
+            wait 8000
+        elseif insysmsg "another 9 second"
+            wait 9000
+        elseif insysmsg "another 10 second"
+            wait 10000
+        elseif insysmsg "another 11 second"
+            wait 11000
+        elseif insysmsg "another 12 second"
+            wait 12000
+        else
+            wait 9000
+        endif
+        sysmsg "change echo - wait for echo-combat cooldown" 54
+        overhead "change echo - wait for echo-combat cooldown" 54
+            
+    endif
+    if insysmsg "You activate the echo"
+        sysmsg "activated echo" 99
+        overhead "activated echo" 99
+        gumpclose _util__echo_gump_id
+        stop
+    endif
+endwhile
+
+#

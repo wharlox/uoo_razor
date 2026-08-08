@@ -18,12 +18,14 @@ if name == "_toon_name__house_bitch"
 
     ##req wiz qumoire#pushlist _script_chain "Play Script: deposit-loadout\functions\_util__create_magic_mushroom__chain"
     pushlist _script_chain "Play Script: deposit-loadout\functions\_util__house__ban_bot"
+    pushlist _script_chain "Play Script: deposit-loadout\functions\_util__trombone"
 
 
     #pushlist _script_chain "Play Script: deposit-loadout\functions\crafting-salvage-wiz-hat"
-    #pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-stockpile"
+    #pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-stockpile-keep-tools"
     ##pushlist _script_chain "Play Script: deposit-loadout\functions\deposit-shelf-all"
 
+    pushlist _script_chain "Play Script: deposit-loadout\functions\_util__world_save_pause"
     pushlist _script_chain "Play Script: deposit-loadout\functions\loadout-shelf-resupply"
 
     pushlist _script_chain "Play Script: deposit-loadout\functions\cast-gate-to-gh"
@@ -31,6 +33,8 @@ if name == "_toon_name__house_bitch"
 
 
     pushlist _script_chain "Play Script: deposit-loadout\functions\_util__house__ban_bot"
+    pushlist _script_chain "Play Script: deposit-loadout\functions\_util__trombone"
+    
     pushlist _script_chain "Play Script: deposit-loadout\functions\_util_id_lantern_controller"
 
 
@@ -41,6 +45,19 @@ if name == "_toon_name__house_bitch"
     #pushlist _script_chain "Play Script: deposit-loadout\functions\wait-dynamic"
 
     #pushlist _script_chain "Play Script: deposit-loadout\house-util-loop"
+
+elseif  name == "pick dench"
+
+    pushlist _script_chain "Play Script: deposit-loadout\deposit-loadout-config-home"
+
+    ##req wiz qumoire#pushlist _script_chain "Play Script: deposit-loadout\functions\_util__create_magic_mushroom__chain"
+    pushlist _script_chain "Play Script: deposit-loadout\functions\_util__house__ban_bot"
+
+    pushlist _script_chain "Play Script: deposit-loadout\functions\_util__trombone"
+
+    pushlist _script_chain "Play Script: deposit-loadout\functions\cast-gate-to-gh"
+
+    pushlist _script_chain "Play Script: deposit-loadout\functions\hide-if-not-hidden"
 
 else
     hotkey "Play Script: deposit-loadout\functions\_util__house__ban_bot_loop"
@@ -54,10 +71,10 @@ else
     pushlist _script_chain "Play Script: deposit-loadout\functions\_util__house__ban_bot"
 
     pushlist _script_chain "Play Script: deposit-loadout\functions\_util__trombone"
-    
+
     pushlist _script_chain "Play Script: deposit-loadout\functions\hide-if-not-hidden"
 
-    
+
 endif
 
 
