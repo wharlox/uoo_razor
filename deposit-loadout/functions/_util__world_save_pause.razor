@@ -1,0 +1,46 @@
+
+#sysmsg "_util__world_save_pause - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\_util__world_save_pause"
+
+
+
+
+@clearsysmsg
+if insysmsg "The world will save in"
+    #if not timerexists _util__world_save_pause__timer
+    @settimer  _util__world_save_pause__timer  0
+endif
+
+if timerexists _util__world_save_pause__timer 
+    if timer _util__world_save_pause__timer >= 8000
+        while 1 == 1
+            overhead "wait for world save to complete..." 44
+            sysmsg   "wait for world save to complete..." 44
+            if insysmsg "World save complete"
+                break
+            else
+                wait 2000
+            endif
+        endwhile
+        #overhead "wait for world save to complete" 44
+        #sysmsg   "wait for world save to complete" 44
+        #waitforsysmsg "World save complete" 16000
+        removetimer  _util__world_save_pause__timer
+    endif
+endif
+
+
+
+
+
+#sysmsg "_util__world_save_pause - complete"
+
+
+
+#### continue script chain
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+foreach _itr in _util_continue_script_chain 
+    hotkey _itr
+endfor
+
+#

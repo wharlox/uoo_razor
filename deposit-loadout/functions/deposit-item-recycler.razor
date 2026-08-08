@@ -25,7 +25,7 @@ if varexist _id_loop_recycler_lantern
             #@setvar!  _whoami  name
             #if _whoami == _deposit_loadout__user_to_recycle
             if _deposit_loadout__recycle_with_current_user == 1
-                overhead "inner"
+                #overhead "deposit item recycler inner 1"
                 ## recycle items
                 dclick _deposit_loadout__recycler
                 waitforgump 4045111101
@@ -41,6 +41,7 @@ if varexist _id_loop_recycler_lantern
                 target _deposit_loadout__recycler
                 @getlabel! _tmp _tmp_label
             endif
+            #overhead "deposit item recycler inner 2"
             ## stockpile add items from recycle-container
             menu _deposit_loadout__stockpile 0
             waitfortarget 500
@@ -72,7 +73,6 @@ endif
 
 
 
-
 ## if cav lantern-serial is set and lantern is OFF - turn lantern on
 if varexist _id_loop_recycler_lantern
     if @findtype! 2597 ground 2338 any 4 as _tmp
@@ -81,7 +81,9 @@ if varexist _id_loop_recycler_lantern
         ## 2597 is ID of light-off cav-lantern 2338 is hue
         if _tmp == _id_loop_recycler_lantern 
             dclick _id_loop_recycler_lantern
+            wait 420
             @getlabel! _tmp _tmp_label
+            #overhead "deposit item recycler inner 3"
         endif
     endif
 endif

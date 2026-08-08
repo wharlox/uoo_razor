@@ -3,6 +3,7 @@
 #@setvar! _this_script "Play Script: deposit-loadout\functions\loadout-shelf-resupply"
 
 
+
 @removelist! _this_self_serials
 @createlist! _this_self_serials
 
@@ -32,6 +33,7 @@ if _this_shelf__do_resupply == 1
     foreach _a_shelf in _this_self_serials
         ## shelf Resupply
         if find _a_shelf ground  -1 -1 2
+            wait 15
             menu _a_shelf 1
             wait 150
             #@getlabel!  _a_shelf  _tmp_label

@@ -10,6 +10,7 @@ if not varexist _util__trombone
     @setvar  _util__trombone  0
 endif
 
+#sysmsg "TEST TROMBONE VAL {{_util__trombone}}"
 
 
 @setvar __util_ban_bot_sound__delay  6150
@@ -20,6 +21,9 @@ endif
 
 if timer _sound >= __util_ban_bot_sound__delay and _util__trombone == 1
     if findtype 'sackbut' backpack -1 -1 -1
+        sysmsg "_util__trombone - womp womp" 99
+        ## 
+        whisper "womp womp"
         dclicktype 'sackbut'
         @settimer  _sound  0
         @setvar  _util__trombone  0

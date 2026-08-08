@@ -1,0 +1,49 @@
+
+sysmsg "deposit gold to container - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\deposit-gold-to-container"
+
+@setvar! _deposit_gold__container__serial  0x50A2E401
+
+@clearignore
+while findtype "gold coin" backpack as _this
+    lift  _this 60000
+    drop  backpack -1 -1 -1
+    wait 400
+    @getlabel! backpack _bp
+    @ignore _this
+endwhile
+
+
+@clearignore
+if findtype "gold coin" backpack as _this
+    @ignore _this
+    @getlabel _this _label
+    sysmsg "gold to separate: {{_label}}" 99
+    #    while findtype "gold coin" backpack as _that
+    #        @ignore _that
+    #        @getlabel _that _label
+    #        sysmsg "another pile: {{_label}}" 99
+    #    endwhile
+    lift  _this  15000
+    drop  _deposit_gold__container__serial  -1 -1 -1
+    wait 400
+    @getlabel! backpack _bp
+    while queued
+    endwhile
+endif
+@clearignore 
+sysmsg "deposit gold to container - complete"
+
+
+
+#### continue script chain
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+foreach _itr in _util_continue_script_chain 
+    hotkey _itr
+endfor
+#if listexists _script_chain and list _script_chain > 0
+#    poplist _script_chain front
+#    foreach _a_script in _script_chain
+#        hotkey _a_script
+#    endfor
+#endif

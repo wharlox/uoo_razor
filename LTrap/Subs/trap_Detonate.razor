@@ -47,16 +47,26 @@ endif
 if _rhand_in_use == 1
     if rhandempty and not casting  
         if @find! _t_equip_rhand  backpack
-            @getlabel! backpack _bp
-            dclick  _t_equip_rhand
+            @getlabel! _t_equip_rhand _label
+            if "knive" in _label or "knife" in _label
+                lift _t_equip_rhand
+                drop self RightHand
+            else
+                dclick _t_equip_rhand
+            endif
             sysmsg "detonate rhand equip - _rhand_in_use {{_rhand_in_use}}" 79
         endif
     endif
 else
     if lhandempty and  not casting
         if @find! _t_equip_lhand  backpack
-            @getlabel! backpack _bp
-            dclick  _t_equip_lhand
+            @getlabel! _t_equip_lhand _label
+            if "knive" in _label or "knife" in _label
+                lift _t_equip_lhand
+                drop self LeftHand
+            else
+                dclick _t_equip_lhand
+            endif
             sysmsg "detonate lhand equip - _rhand_in_use {{_rhand_in_use}}" 79
         endif
     endif
@@ -79,8 +89,14 @@ endif
 if rhandempty and not casting  
     @getlabel! backpack _bp
     if @find! _t_equip_rhand  backpack
-        @getlabel! backpack _bp
-        dclick  _t_equip_rhand
+        wait 200
+        @getlabel! _t_equip_rhand _label
+        if "knive" in _label or "knife" in _label
+            lift _t_equip_rhand
+            drop self RightHand
+        else
+            dclick _t_equip_rhand
+        endif
         @getlabel! backpack _bp
     endif
 endif
@@ -90,8 +106,14 @@ endwhile
 if lhandempty and  not casting
     @getlabel! backpack _bp
     if @find! _t_equip_lhand  backpack
-        @getlabel! backpack _bp
-        dclick  _t_equip_lhand
+        wait 200
+        @getlabel! _t_equip_lhand _label
+        if "knive" in _label or "knife" in _label
+            lift _t_equip_lhand
+            drop self LeftHand
+        else
+            dclick _t_equip_lhand
+        endif
         @getlabel! backpack _bp
     endif
 endif

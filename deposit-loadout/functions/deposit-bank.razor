@@ -2,7 +2,9 @@
 sysmsg "deposit bank - start"
 #@setvar! _this_script "Play Script: deposit-loadout\functions\deposit-bank"
 
-
+if counttype "gold coin" as _this
+    sysmsg "depositing gold via safe-menu: {{_this}}" 99
+endif
 menu  _deposit_loadout__safe  0
 @getlabel!  _deposit_loadout__safe  _tmp_label
 #wait 200

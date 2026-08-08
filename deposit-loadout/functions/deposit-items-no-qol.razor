@@ -16,7 +16,7 @@ sysmsg "deposit items no qol - start"
     ## popcorn train car :: popcorn train :: 56037
     ## a train engine :: wooden train engine :: 65287
     ## st. patrick-s match game :: book :: 41467
-@setvar! _seasonal_and_events__crate  _deposit_loadout__chest__seasonal_and_events
+# @setvar! _seasonal_and_events__crate  _deposit_loadout__chest__seasonal_and_events
 while @findtype! 54232|39857|52615|41467  backpack as _this
     ## halloween 2025 prev scratch ticket :: scratch ticket :: i65066 h2493
     ## snowballs :: snowball :: 54232
@@ -26,15 +26,15 @@ while @findtype! 54232|39857|52615|41467  backpack as _this
     @getlabel! _this _this_label
     sysmsg _this_label 11
 
-    @getlabel! _seasonal_and_events__crate  _this_chest_label
+    @getlabel! _deposit_loadout__chest__seasonal_and_events  _this_chest_label
     if "125 items" in _this_chest_label
         overhead "seasonal and events stuff crate full {{_this_chest_label}}"
-        dclick  _seasonal_and_events__crate
+        dclick  _deposit_loadout__chest__seasonal_and_events
         break
     endif
 
     lift _this 60000
-    drop _seasonal_and_events__crate  -1 -1 -1
+    drop _deposit_loadout__chest__seasonal_and_events  -1 -1 -1
     #@getlabel! backpack _this_label
     while queued
         #@getlabel! backpack _this_label
@@ -48,22 +48,22 @@ endwhile
 
 ##### arcane runes
 if _deposit_loadout__tomes__arcane_rune_tome == 0
-    @setvar!  _this_chest  _deposit_loadout__chest__arcane_runes
+    # @setvar!  _this_chest  _deposit_loadout__chest__arcane_runes
     while @findtype! "rune"  backpack as _this
         #@ignore! _this
         @getlabel! _this _this_label
         sysmsg _this_label 11
 
-        @getlabel!  _this_chest  _this_chest_label
+        @getlabel!  _deposit_loadout__chest__arcane_runes  _this_chest_label
         if "125 items" in _this_chest_label
             overhead "arcane rune crate full {{_this_chest_label}}"
-            dclick  _this_chest
+            dclick  _deposit_loadout__chest__arcane_runes
             break
         endif
 
         if "double click to place" in _this_label
             lift  _this 60000
-            drop  _this_chest  -1 -1 -1
+            drop  _deposit_loadout__chest__arcane_runes  -1 -1 -1
             #@getlabel! backpack _this_label
             while queued
                 #@getlabel! backpack _this_label
@@ -79,21 +79,21 @@ endif
 
 ##### carpet
 if _deposit_loadout__menuable__carpet_rack == 0
-    @setvar!  _this_chest  _deposit_loadout__chest__carpets
+    # @setvar!  _this_chest  _deposit_loadout__chest__carpets
     while @findtype! "carpet"  backpack as _this
         #@ignore! _this
         @getlabel! _this _this_label
         sysmsg _this_label 11
 
-        @getlabel!  _this_chest  _this_chest_label
+        @getlabel!  _deposit_loadout__chest__carpets  _this_chest_label
         if "125 items" in _this_chest_label
             overhead "carpet crate full {{_this_chest_label}}"
-            dclick  _this_chest
+            dclick  _deposit_loadout__chest__carpets
             break
         endif
 
         lift  _this 60000
-        drop  _this_chest  -1 -1 -1
+        drop  _deposit_loadout__chest__carpets  -1 -1 -1
         #@getlabel! backpack _this_label
         while queued
             #@getlabel! backpack _this_label

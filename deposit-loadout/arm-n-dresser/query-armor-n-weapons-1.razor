@@ -1,0 +1,302 @@
+
+
+
+#### script to automatically run after this script
+####   to enable: uncomment the pushlist line, add in the path to the next script after Play Script
+@removelist _util__hotkey_armorer__script_chain
+@createlist _util__hotkey_armorer__script_chain
+#@pushlist _util__hotkey_armorer__script_chain "Play Script: AutoDexxer"
+
+
+
+#### modes
+##   [dynamic] slot un-equip, prev-item in backpack or corpse == keep prev-item memorized OR clear memory for slot
+##   [static] slot equipped, prev-item in backpack or corpse == USE NEW ITEM
+##   [todo] get-all-layers or just aspectable-layers
+
+
+
+
+#### forget_unequipped_accessible_items - default 0
+##   if a layer is empty but slotted item is in backpack or corpse
+##     0 - do not forget about item
+##     1 - forget about item
+@setvar!  _util__hotkey_armorer__mode__forget_unequipped_accessible_items  0
+
+
+
+
+#### enforce_run_twice - default 1
+##   0 disables - script will run immediatly in full
+##   1 enables  - script will need to be executed twice
+@setvar _util__hotkey_armorer__enforce_run_twice 1
+
+
+
+
+
+
+
+
+
+if _util__hotkey_armorer__enforce_run_twice == 1
+    @removelist _util__hotkey_armorer__name
+    @createlist _util__hotkey_armorer__name
+    
+    #### a friendly value of this script
+    @pushlist   _util__hotkey_armorer__name  "query-armor-n-weaps"
+
+
+    if not listexists _util__hotkey_armorer__name_previous
+        @createlist _util__hotkey_armorer__name_previous
+        foreach _itr in _util__hotkey_armorer__name
+            @pushlist _util__hotkey_armorer__name_previous _itr
+            sysmsg "click again to save armor and weapon profile" 44
+
+            stop
+        endfor
+    endif
+
+
+    foreach _itr in _util__hotkey_armorer__name
+        foreach _itr_prev in _util__hotkey_armorer__name_previous
+            @removelist _util__hotkey_armorer__name_previous
+            if _itr == _itr_prev
+                sysmsg  "saving armor and weapons..." 70
+                overhead "saving armor and weapons..." 70
+                @removelist _util__hotkey_armorer__name
+            else
+                sysmsg   "ERROR: this script `{{_itr}}` does not match the previous triggered script `{{_itr_prev}}` - try again" 33
+                overhead "ERROR: this script `{{_itr}}` does not match the previous triggered script `{{_itr_prev}}` - try again" 33
+                stop
+            endif
+            break
+        endfor
+        break
+    endfor
+else
+    sysmsg "saving armor and weapons..." 70
+    overhead "saving armor and weapons..." 70
+    if listexists _util__hotkey_armorer__name
+        @removelist _util__hotkey_armorer__name
+    endif
+    if listexists _util__hotkey_armorer__name_previous
+        @removelist _util__hotkey_armorer__name_previous
+    endif
+endif
+
+
+
+
+
+
+
+##### get equipped layered items
+
+if findlayer self head as _this
+    if  _this  !=  _util__hotkey_armorer__equipped__head
+        @setvar  _util__hotkey_armorer__equipped__head  _this
+    endif
+else
+    if _util__hotkey_armorer__mode__forget_unequipped_accessible_items == 1
+        if find _util__hotkey_armorer__equipped__head backpack -1 -1 -1 or find _util__hotkey_armorer__equipped__head ground -1 -1 -1
+        else
+            @unsetvar _util__hotkey_armorer__equipped__head
+        endif
+    endif
+endif
+
+if findlayer self neck as _this
+    if  _this  !=  _util__hotkey_armorer__equipped__neck
+        @setvar  _util__hotkey_armorer__equipped__neck  _this
+    endif
+else
+    if _util__hotkey_armorer__mode__forget_unequipped_accessible_items == 1
+        if find _util__hotkey_armorer__equipped__neck backpack -1 -1 -1 or find _util__hotkey_armorer__equipped__neck ground -1 -1 -1
+        else
+            @unsetvar _util__hotkey_armorer__equipped__neck
+        endif
+    endif
+endif
+
+if findlayer self arms as _this
+    if  _this  !=  _util__hotkey_armorer__equipped__arms
+        @setvar  _util__hotkey_armorer__equipped__arms  _this
+    endif
+else
+    if _util__hotkey_armorer__mode__forget_unequipped_accessible_items == 1
+        if find _util__hotkey_armorer__equipped__arms backpack -1 -1 -1 or find _util__hotkey_armorer__equipped__arms ground -1 -1 -1
+        else
+            @unsetvar _util__hotkey_armorer__equipped__arms
+        endif
+    endif
+endif
+
+if findlayer self gloves as _this
+    if  _this  !=  _util__hotkey_armorer__equipped__gloves
+        @setvar  _util__hotkey_armorer__equipped__gloves  _this
+    endif
+else
+    if _util__hotkey_armorer__mode__forget_unequipped_accessible_items == 1
+        if find _util__hotkey_armorer__equipped__gloves backpack -1 -1 -1 or find _util__hotkey_armorer__equipped__gloves ground -1 -1 -1
+        else
+            @unsetvar _util__hotkey_armorer__equipped__gloves
+        endif
+    endif
+endif
+
+## chest
+if findlayer self innertorso as _this
+    if  _this  !=  _util__hotkey_armorer__equipped__chest
+        @setvar  _util__hotkey_armorer__equipped__chest  _this
+    endif
+else
+    if _util__hotkey_armorer__mode__forget_unequipped_accessible_items == 1
+        if find _util__hotkey_armorer__equipped__chest backpack -1 -1 -1 or find _util__hotkey_armorer__equipped__chest ground -1 -1 -1
+        else
+            @unsetvar _util__hotkey_armorer__equipped__chest
+        endif
+    endif
+endif
+
+if findlayer self pants as _this
+    if  _this  !=  _util__hotkey_armorer__equipped__pants
+        @setvar  _util__hotkey_armorer__equipped__pants  _this
+    endif
+else
+    if _util__hotkey_armorer__mode__forget_unequipped_accessible_items == 1
+        if find _util__hotkey_armorer__equipped__pants backpack -1 -1 -1 or find _util__hotkey_armorer__equipped__pants ground -1 -1 -1
+        else
+            @unsetvar _util__hotkey_armorer__equipped__pants
+        endif
+    endif
+endif
+
+
+## spellb - this logic flawed
+if findlayer self righthand as _this
+    ## if found item in layer, and not eq to what is in memory, update memory
+    if  _this  !=  _util__hotkey_armorer__equipped__righthand
+        @setvar  _util__hotkey_armorer__equipped__righthand  _this
+    endif
+else
+    ## not equipped
+    ## if item in-memory found in backpack or ground, clear memory if forget-mode == 1
+    if _util__hotkey_armorer__mode__forget_unequipped_accessible_items == 1
+        if find _util__hotkey_armorer__equipped__righthand backpack -1 -1 -1 or find _util__hotkey_armorer__equipped__righthand ground -1 -1 4
+            #@getlabel _util__hotkey_armorer__equipped__righthand _label
+        else
+            @unsetvar _util__hotkey_armorer__equipped__righthand
+        endif
+    endif
+endif
+
+@getlabel! _util__hotkey_armorer__equipped__righthand _label
+sysmsg "r hand {{_label}}"
+
+
+## sheild
+@setvar _util__hotkey_armorer__mode__forget_unequipped_accessible_items 1
+if findlayer self lefthand as _this
+    if  _this  !=  _util__hotkey_armorer__equipped__lefthand
+        @setvar  _util__hotkey_armorer__equipped__lefthand  _this
+    endif
+elseif _util__hotkey_armorer__mode__forget_unequipped_accessible_items == 0
+    if find _util__hotkey_armorer__equipped__lefthand backpack -1 -1 -1 or find _util__hotkey_armorer__equipped__lefthand ground -1 -1 -1
+    else
+        @unsetvar _util__hotkey_armorer__equipped__lefthand
+    endif
+else
+    @unsetvar _util__hotkey_armorer__equipped__lefthand
+endif
+
+@getlabel! _util__hotkey_armorer__equipped__lefthand _label
+sysmsg "l hand {{_label}}" 99
+stop
+
+## quiver
+if findlayer self quiver as _this
+    if  _this  !=  _util__hotkey_armorer__equipped__quiver
+        @setvar  _util__hotkey_armorer__equipped__quiver  _this
+    endif
+else
+    if _util__hotkey_armorer__mode__forget_unequipped_accessible_items == 1
+        if find _util__hotkey_armorer__equipped__quiver backpack -1 -1 -1 or find _util__hotkey_armorer__equipped__quiver ground -1 -1 -1
+        else
+            @unsetvar _util__hotkey_armorer__equipped__quiver
+        endif
+    endif
+endif
+
+## satchels
+if findlayer self outerbody as _this
+    if  _this  !=  _util__hotkey_armorer__equipped__satchel
+        @setvar  _util__hotkey_armorer__equipped__satchel  _this
+    endif
+else
+    if _util__hotkey_armorer__mode__forget_unequipped_accessible_items == 1
+        if find _util__hotkey_armorer__equipped__satchel backpack -1 -1 -1 or find _util__hotkey_armorer__equipped__satchel ground -1 -1 -1
+        else
+            @unsetvar _util__hotkey_armorer__equipped__satchel
+        endif
+    endif
+endif
+
+
+
+
+
+#sysmsg  "head {{_util__hotkey_armorer__equipped__head}}"
+#sysmsg  "neck {{_util__hotkey_armorer__equipped__neck}}"
+#sysmsg  "arms {{_util__hotkey_armorer__equipped__arms}}"
+#sysmsg  "glov {{_util__hotkey_armorer__equipped__gloves}}"
+#sysmsg  "ches {{_util__hotkey_armorer__equipped__chest}}"
+#sysmsg  "legs {{_util__hotkey_armorer__equipped__pants}}"
+@getlabel! _util__hotkey_armorer__equipped__righthand _label
+if "throwing knife" in _label  or  "dagger" in _label  or  "spellbook" in _label
+    @setvar _util__hotkey_armorer__equipped__righthand__equip__dclick_or_liftdrop 2
+else
+    @setvar _util__hotkey_armorer__equipped__righthand__equip__dclick_or_liftdrop 1
+endif
+#sysmsg  "r_ha {{_label}}"
+@getlabel! _util__hotkey_armorer__equipped__lefthand _label
+if "throwing knife" in _label  or  "dagger" in _label  or  "spellbook" in _label
+    @setvar _util__hotkey_armorer__equipped__lefthand__equip__dclick_or_liftdrop 2
+else
+    @setvar _util__hotkey_armorer__equipped__lefthand__equip__dclick_or_liftdrop 1
+endif
+#sysmsg  "l_ha {{_label}}"
+#sysmsg  "quiv {{_util__hotkey_armorer__equipped__quiver}}"
+#sysmsg  "satc {{_util__hotkey_armorer__equipped__satchel}}"
+
+
+
+
+
+
+# _util__hotkey_armorer__equipped__head
+# _util__hotkey_armorer__equipped__neck
+# _util__hotkey_armorer__equipped__arms
+# _util__hotkey_armorer__equipped__gloves
+# _util__hotkey_armorer__equipped__chest
+# _util__hotkey_armorer__equipped__pants
+# _util__hotkey_armorer__equipped__righthand
+# _util__hotkey_armorer__equipped__lefthand
+# _util__hotkey_armorer__equipped__quiver
+# _util__hotkey_armorer__equipped__satchel
+##
+# _util__hotkey_armorer__equipped__righthand__equip__dclick_or_liftdrop - 1 or 2
+# _util__hotkey_armorer__equipped__lefthand__equip__dclick_or_liftdrop - 1 or 2
+
+
+
+
+
+
+if listexists _util__hotkey_armorer__script_chain
+    foreach _itr in _util__hotkey_armorer__script_chain
+        @removelist _util__hotkey_armorer__script_chain
+        hotkey _itr
+    endfor
+endif
+#
