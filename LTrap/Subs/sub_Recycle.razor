@@ -1,85 +1,274 @@
-### 2026-02-24T01:23:10-08:00
-### 97ea055f2ef232d1bb6c1a8fdd8da33dbfc84ace commit refs/remotes/origin/Subs
 
+#### recycle backback items with individual -not container- id-wands - recylce ID-Wand at 1-use-left
+
+
+#### _util_ltrap_recycler__check_all_items - 0 to constrain to "unidentified" - 1 check all
+#### cases for enableing
+####  - pickup id-d gear and then recycle it
+####  - script interrupted after id-ing item but before recycle
+@setvar  _util_ltrap_recycler__check_all_items  1
+
+
+
+
+
+if listexists _util_ltrap_recycler__keep_list
+    @clearlist _util_ltrap_recycler__keep_list
+else
+    @createlist _util_ltrap_recycler__keep_list
+endif
+
+if name == "_toon_name__main"
+    #@pushlist  _util_ltrap_recycler__keep_list  "hardening"
+endif
+
+@pushlist  _util_ltrap_recycler__keep_list  "exceptional"
+
+@pushlist  _util_ltrap_recycler__keep_list  "aspect"
+@pushlist  _util_ltrap_recycler__keep_list  "training"
+@pushlist  _util_ltrap_recycler__keep_list  "vanquishing"
+@pushlist  _util_ltrap_recycler__keep_list  "supremely"
+@pushlist  _util_ltrap_recycler__keep_list  "slaying"
+@pushlist  _util_ltrap_recycler__keep_list  "enticement"
+@pushlist  _util_ltrap_recycler__keep_list  "invulnerability"
+@pushlist  _util_ltrap_recycler__keep_list  "power"
+@pushlist  _util_ltrap_recycler__keep_list  "exceedingly accurate force"
+@pushlist  _util_ltrap_recycler__keep_list  "exceedingly potent"
+@pushlist  _util_ltrap_recycler__keep_list  "valorite"
+@pushlist  _util_ltrap_recycler__keep_list  "valehide"
+@pushlist  _util_ltrap_recycler__keep_list  "valewood"
+@pushlist  _util_ltrap_recycler__keep_list  "avarite"
+@pushlist  _util_ltrap_recycler__keep_list  "avarhide"
+@pushlist  _util_ltrap_recycler__keep_list  "avarwood"
+@pushlist  _util_ltrap_recycler__keep_list  "verite"
+@pushlist  _util_ltrap_recycler__keep_list  "verehide"
+@pushlist  _util_ltrap_recycler__keep_list  "verewood"
+@pushlist  _util_ltrap_recycler__keep_list  "agapite"
+@pushlist  _util_ltrap_recycler__keep_list  "rosehide"
+@pushlist  _util_ltrap_recycler__keep_list  "rosewood"
+@pushlist  _util_ltrap_recycler__keep_list  "fortification"
+
+
+
+
+
+if listexists _util_ltrap_recycler__recycle_list
+    @clearlist _util_ltrap_recycler__recycle_list
+else
+    @createlist _util_ltrap_recycler__recycle_list
+endif
+
+@pushlist  _util_ltrap_recycler__recycle_list  "durable"
+@pushlist  _util_ltrap_recycler__recycle_list  "substantial"
+@pushlist  _util_ltrap_recycler__recycle_list  "massive"
+@pushlist  _util_ltrap_recycler__recycle_list  "fortified"
+@pushlist  _util_ltrap_recycler__recycle_list  "indestructible"
+@pushlist  _util_ltrap_recycler__recycle_list  "accurate"
+@pushlist  _util_ltrap_recycler__recycle_list  "surpassingly"
+@pushlist  _util_ltrap_recycler__recycle_list  "eminently"
+@pushlist  _util_ltrap_recycler__recycle_list  "exceedingly"
+@pushlist  _util_ltrap_recycler__recycle_list  "ruin"
+@pushlist  _util_ltrap_recycler__recycle_list  "might"
+@pushlist  _util_ltrap_recycler__recycle_list  "force"
+@pushlist  _util_ltrap_recycler__recycle_list  "power"
+@pushlist  _util_ltrap_recycler__recycle_list  "mastercrafted"
+@pushlist  _util_ltrap_recycler__recycle_list  "defense"
+@pushlist  _util_ltrap_recycler__recycle_list  "guarding"
+@pushlist  _util_ltrap_recycler__recycle_list  "hardening"
+@pushlist  _util_ltrap_recycler__recycle_list  "potent"
+@pushlist  _util_ltrap_recycler__recycle_list  "melodious"
+
+
+
+
+
+
+
+
+// all the logic
+
+if findtype 3901 >= 1 backpack 
+    overhead 'Using Essence'
+    dclicktype 3901
+    waitfortarget
+    target 'self'
+endif 
+
+
+if not  listexists _util_ltrap_recycler__keeping_items
+    @createlist _util_ltrap_recycler__keeping_items
+endif
+
+
+if varexist _id_wand
+    @unsetvar _id_wand
+endif
+
+#@clearignore
 // === Recycle Section 
-if findtype "sewing kit|saw|pen and ink|tongs|tool kit" backpack as breakdowntool   
+@setvar _loop_recycle 1
+while _loop_recycle == 1 and findtype "sewing kit|saw|pen and ink|tongs|tool kit" backpack as breakdowntool   
     getlabel backpack pingCheck
-    if findtype 20496 backpack as IDwand
-        clearsysmsg 
-        if findtype 3834 backpack 0 as bbook
-            @ignore bbook
+    while not varexist _id_wand and findtype 20496 backpack as IDwand
+        @getlabel IDwand _label
+        if "(15 " in _label or "(14 " in _label or "(13 " in _label or "(12 " in _label or "(11 " in _label or "(10 " in _label or "(9 " in _label or "(8 " in _label or "(9 " in _label or "(6 " in _label or "(5 " in _label or "(4 " in _label or "(3 " in _label or "(2 " in _label
+            overhead "ID Wand usage getting low :: {{_label}}" 1769
         endif
-        while findtype 5056|5059|5060|5061|5063|5070|5074|5075|5076|5078|5085|5089|5090|5101|5103|5105|5106|5129|5131|5132|5135|5138|5139|5142|5143|5144|5146|5201|5203|5204|5205|5207|7169|7170|7173|7175|7177|7179|7181|7610|7947|31003|31004|31005|31006|31007|31008|31009|31010|31011|31012|31015|31191|31017|31019|31021|31023|31025|31027|31029|31031|31033|31035|31037|31038|31041|31043|31045|31047|31049|31051|31053|31055|3834|3740|3742|3762|3763|10245|20006|20008|20010|20012|20014|20016|7026|7027|7029|7031|7033|7034|7035|7107|7109|31002|31130|3920|5042|5117|30990|30993|30994|30995|31184|31186|3719|3938|5121|5123|5125|30989|30992|30996|30997|30998|31176|31188|3568|3713|3721|3932|5040|5044|5112|5127|5177|5179|5181|30991|30999|31000|31001|31014|31178|31180|31182|3909|3911|3913|3915|3917|3934|3937|5046|5049|5115|5119|5182|5185|5187|30988|31128|31190|22187|31141|31142|31169|31172 backpack as IDitem
-            getlabel IDitem desc
-            if "unidentified" in desc
+        if "(1 uses remaining)" in _label or "(1 use remaining)" in _label
+            overhead "ID Wand is spent - recycling it :: {{_label}}" 1779
+            while not gumpexists 949095101
                 while queued
                     //donothing
                 endwhile
-                dclick IDwand
-                wft 1000
-                target IDitem
-                waitforsysmsg "You identify the item." 1000
-                getlabel IDitem desc
-                if "aspect" in desc or "training" in desc or "vanquishing" in desc or "supremely" in desc or "slaying" in desc or "enticement" in desc or "invulnerability" in desc or "power" in desc or "exceedingly accurate force" in desc or "exceedingly potent" in desc or "valorite" in desc or "valehide" in desc or "valewood" in desc or "avarite" in desc or "avarhide" in desc or "avarwood" in desc or "verite" in desc or "verehide" in desc or "verewood" in desc or "agapite" in desc or "rosehide" in desc or "rosewood" in desc or "fortification" in desc
-                    @ignore IDitem
-                    overhead "This one is worth keeping..." 2091
-                    overhead "*strong magic*" 2091 IDitem
-                    say "[surprise" 2091
-                elseif "durable" in desc or "substantial" in desc or "massive" in desc or "fortified" in desc or "indestructible" in desc or "exceptional" in desc or "accurate" in desc or "surpassingly" in desc or "eminently" in desc or "exceedingly" in desc or "ruin" in desc or "might" in desc or "force" in desc or "power" in desc or "mastercrafted" in desc or "defense" in desc or "guarding" in desc or "hardening" in desc or "potent" in desc or "melodious" in desc
-                overhead "*trash*" 1779 IDitem
-                    while not gumpexists 949095101
-                        while queued
-                            //donothing
-                        endwhile
-                        dclick breakdowntool
-                        waitforgump 949095101 1000
-                    endwhile
-                    while not ingump "Recycle Single Item" 949095101
-                        gumpresponse 2
-                        waitforgump 949095101 1000
-                    endwhile                                
-                    gumpresponse 3
-                    waitforgump 949095101 1000
-                    target IDitem
-                    getlabel backpack ping
-                    pause 300
-                    gumpclose 949095101
-                else
-                    @ignore IDitem
-                endif
-            elseif "aspect" in desc or "training" in desc or "vanquishing" in desc or "supremely" in desc or "slaying" in desc or "enticement" in desc or "invulnerability" in desc or "power" in desc or "exceedingly accurate force" in desc or "exceedingly potent" in desc or "valorite" in desc or "valehide" in desc or "valewood" in desc or "avarite" in desc or "avarhide" in desc or "avarwood" in desc or "verite" in desc or "verehide" in desc or "verewood" in desc or "agapite" in desc or "rosehide" in desc or "rosewood" in desc or "fortification" in desc
-                @ignore IDitem
-            elseif "durable" in desc or "substantial" in desc or "massive" in desc or "fortified" in desc or "indestructible" in desc or "exceptional" in desc or "accurate" in desc or "surpassingly" in desc or "eminently" in desc or "exceedingly" in desc or "ruin" in desc or "might" in desc or "force" in desc or "power" in desc or "mastercrafted" in desc or "defense" in desc or "guarding" in desc or "hardening" in desc or "potent" in desc or "melodious" in desc
-                overhead "*trash*" 1779 IDitem
-                while not gumpexists 949095101
-                    while queued
-                        //donothing
-                    endwhile
-                    dclick breakdowntool
-                    waitforgump 949095101 1000
-                endwhile
-                while not ingump "Recycle Single Item" 949095101
-                    gumpresponse 2
-                    waitforgump 949095101 1000
-                endwhile                                
-                gumpresponse 3
+                dclick breakdowntool
                 waitforgump 949095101 1000
-                target IDitem
-                getlabel backpack ping
-                pause 300
-                gumpclose 949095101
-            else
+            endwhile
+            while not ingump "Recycle Single Item" 949095101
+                gumpresponse 2
+                waitforgump 949095101 1000
+            endwhile                                
+            gumpresponse 3
+            waitforgump 949095101 1000
+            sysmsg "target {{IDwand}}"
+            target IDwand
+            getlabel backpack ping
+            pause 300
+            gumpclose 949095101
+
+            if varexist _id_wand
+                @unsetvar _id_wand
+            endif
+        else
+            @setvar _id_wand  IDwand
+        endif
+    endwhile
+    
+    if varexist _id_wand
+        if not inlist _util_ltrap_recycler__keeping_items  IDitem  and  findtype '5056|5059|5060|5061|5063|5070|5074|5075|5076|5078|5085|5089|5090|5101|5103|5105|5106|5129|5131|5132|5135|5138|5139|5142|5143|5144|5146|5201|5203|5204|5205|5207|7169|7170|7173|7175|7177|7179|7181|7610|7947|31003|31004|31005|31006|31007|31008|31009|31010|31011|31012|31015|31191|31017|31019|31021|31023|31025|31027|31029|31031|31033|31035|31037|31038|31041|31043|31045|31047|31049|31051|31053|31055|3834|3740|3742|3762|3763|10245|20006|20008|20010|20012|20014|20016|7026|7027|7029|7031|7033|7034|7035|7107|7109|31002|31130|3920|5042|5117|30990|30993|30994|30995|31184|31186|3719|3938|5121|5123|5125|30989|30992|30996|30997|30998|31176|31188|3568|3713|3721|3932|5040|5044|5112|5127|5177|5179|5181|30991|30999|31000|31001|31014|31178|31180|31182|3909|3911|3913|3915|3917|3934|3937|5046|5049|5115|5119|5182|5185|5187|30988|31128|31190|22187|31141|31142|31169|31172|throwing star|throwing knife|chakram|hurlbat|francisca|javelin|dual wield tracker knife|dual wield rapier|dual wield sabre|duel wield katana|dual wield scimitar|dual wield norse axe' backpack as IDitem
+            ## throwing star - throwing star - 67764
+            ## throwing dagger - throwing knife - 67754
+            ## chakram - chakram - 67713
+            ## hurlbat - hurlbat - 67734
+            ## francisca axe - francisca - 67723
+            ## javelin - javelin - 67744
+            ## dual hunting knives - dual wield tracker knife - 67778
+            ## dual rapiers - dual wield rapier - 67775
+            ## dual sabres - dual wield sabre - 67776
+            ## dual katanas - duel wield katana - 67773
+            ## dual scimitars - dual wield scimitar - 67777
+            ## dual norse axes - dual wield norse axe - 67774
+            @getlabel IDitem desc
+
+            if "blessed" in desc
                 @ignore IDitem
+            elseif _util_ltrap_recycler__check_all_items == 1  or  "unidentified" in desc
+                sysmsg desc 99
+                while queued
+                    //donothing
+                endwhile
+                
+                if "unidentified" in desc
+                    @getlabel _id_wand _label
+                    if "(1 uses remaining)" in _label or "(1 use remaining)" in _label
+                        overhead "ID Wand is spent - should not get here - fix script - {{_label}}" 1779
+                        overhead "this is spent" 1779 _id_wand
+                        hotkey 'play script: Subs\Routing'
+                    endif
+                    dclick _id_wand
+                    wft 1000
+                    target IDitem
+                    waitforsysmsg "You identify the item." 1000
+                    getlabel IDitem desc
+                endif
+                #if "blessed" in desc
+                #    @ignore IDitem
+                #else
+                    ## _fate_of_item - 0 dunno - 1 keep - 2 recycle
+                    @setvar _fate_of_item 0
+                    foreach _keep_descr in _util_ltrap_recycler__keep_list
+                        if _fate_of_item == 0 and _keep_descr in desc
+                            @setvar _fate_of_item 1
+                            break
+                        endif
+                    endfor
+                    if _fate_of_item == 0
+                        foreach _recycle_descr in _util_ltrap_recycler__recycle_list
+                            if _fate_of_item == 0 and _recycle_descr in desc
+                                @setvar _fate_of_item 2
+                                break
+                            endif
+                        endfor
+                    endif
+                
+                    if _fate_of_item == 1
+                        ## keep it
+                        @ignore IDitem
+                        #overhead "This one is worth keeping..." 2091
+                        overhead "*strong magic*" 2091 IDitem
+                        say "[surprise" 2091
+                        @pushlist _util_ltrap_recycler__keeping_items  IDitem
+                    elseif _fate_of_item == 2
+                        ## recycle it
+                        overhead "*trash*" 1779 IDitem
+                        while not gumpexists 949095101
+                            while queued
+                                //donothing
+                            endwhile
+                            dclick breakdowntool
+                            waitforgump 949095101 1000
+                        endwhile
+                        while not ingump "Recycle Single Item" 949095101
+                            gumpresponse 2
+                            waitforgump 949095101 1000
+                        endwhile                                
+                        gumpresponse 3
+                        waitforgump 949095101 1000
+                        target IDitem
+                        getlabel backpack ping
+                        pause 300
+                        gumpclose 949095101
+                    else
+                        ## unkown
+                        overhead "*unknown*"
+                        @pushlist _util_ltrap_recycler__keeping_items  IDitem
+                        @ignore IDitem
+                    endif
+                ## if not blessed
+                #endif
+
+            else
+                ## already ID-d - but also could get here on script interruption so cannot ignore - should try to recycle or keep
+                ## should never get here if _util_ltrap_recycler__check_all_items == 1
+                #@ignore IDitem
             endif
-            if not findtype 20496 backpack
-                break
+            #if not findtype 20496 backpack
+            #    overhead "no more id wands"
+            #    break
+            #endif
+        else 
+            sysmsg "no more unids"
+            #@setvar _loop_recycle 0
+            if gumpexists 949095101
+                gumpclose 949095101
             endif
-        endwhile
+            break
+        endif
         if gumpexists 949095101
             gumpclose 949095101
         endif
+    ## if find IDwand
+    else
+        sysmsg "no more id-wands"
+        break
+        @setvar _loop_recycle 0
     endif
+endwhile
+
+
+if gumpexists 949095101
+    gumpclose 949095101
 endif
+
 if targetexists 
     hotkey "Cancel Current Target"
 endif
@@ -90,4 +279,9 @@ if findtype 3901 >= 1 backpack
     target 'self'
 endif 
 
-hotkey 'play script: Subs\Routing'    
+hotkey 'play script: Subs\Routing' 
+   
+stop
+# mortar and pestal gump
+#dclick 0x5EF29D28
+#waitforgump 949095101

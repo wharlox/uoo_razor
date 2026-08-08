@@ -24,13 +24,15 @@
 
 
 
+@setvar _util__overhead_crystal_pedestal_without_quest_item 1
+
 
 
 @settimer  _overheads  _tmp_timer
 @settimer _tmp_scan_backpack__timer  _tmp_scan_backpack__frequency
 
 
-
+@removelist _added_super_ignore
 if not listexists _added_super_ignore
     @createlist _added_super_ignore
 endif
@@ -79,13 +81,13 @@ while not dead
         if findtype 61949 backpack as _this
             @getlabel! _this _label
             @setvar  _aether_thing  _this
-            sysmsg "aether node gather :: {{_label}}"
+            sysmsg "aether node gather :: {{_label}}" 99
         endif
         while findtype 3718 backpack as _this
             @getlabel! _this _label
             if "survey pick (quest item)" in _label
                 @setvar _stalagmite_thing  _this
-                sysmsg "stalagmite gem gather :: {{_label}}"
+                sysmsg "stalagmite gem gather :: {{_label}}" 99
             endif
             @ignore _this
         endwhile
@@ -93,16 +95,16 @@ while not dead
             @getlabel! _this _label
             if "lens of aetheric earth" in _label
                 @setvar _earth_thing  _this
-                sysmsg "earth node gather :: {{_label}}"
+                sysmsg "earth node gather :: {{_label}}" 99
             elseif "lens of aetheric fire" in _label or "lens of aetheric ice" in _label
                 @setvar _fire_thing  _this
-                sysmsg "monster gather - inferno - cav :: {{_label}}"
+                sysmsg "monster gather - inferno - cav :: {{_label}}" 99
             elseif "a magic lens" in _label
                 @setvar _crystal_fragment_thing  _this
-                sysmsg "crystal fragments gather - lyceaum :: {{_label}}"
+                sysmsg "crystal fragments gather - lyceaum :: {{_label}}" 99
             else
                 @setvar  _air_thing  _this
-                sysmsg "air node gather :: {{_label}}"
+                sysmsg "air node gather :: {{_label}}" 99
             endif
             @ignore _this
         endwhile
@@ -110,7 +112,7 @@ while not dead
             @getlabel! _this _label
             if "an aetheric tuning fork" in _label
                 @setvar _crystal_pedastal_thing  _this
-                sysmsg "crystal pedastal gather :: {{_label}}"
+                sysmsg "crystal pedastal gather :: {{_label}}" 99
             endif
             @ignore _this
         endwhile
@@ -119,7 +121,7 @@ while not dead
             @getlabel! _this _label
             if "new lycaeum broom" in _label
                 @setvar _sweep_refuse_thing  _this
-                sysmsg "refuse broom gather :: {{_label}}"
+                sysmsg "refuse broom gather :: {{_label}}" 99
             endif
         endif
         ## find serial src hue qty range
@@ -165,14 +167,12 @@ while not dead
                     overhead "******  {{_label}}" 44  _node
                     @settimer  _overheads  0 
                 endif
-            elseif varexist _sweep_refuse_thing
+            elseif "efuse" in _label and varexist _sweep_refuse_thing or "arbage" in _label and varexist _sweep_refuse_thing
                 ## refuse garbage
-                if "efuse" in _label  or "arbage" in _label
-                    @setvar _found 1
-                    if timer _overheads  >= _tmp_timer
-                        overhead "******  {{_label}}" 44  _node
-                        @settimer  _overheads  0 
-                    endif
+                @setvar _found 1
+                if timer _overheads  >= _tmp_timer
+                    overhead "******  {{_label}}" 44  _node
+                    @settimer  _overheads  0 
                 endif
             elseif "an " in _label and " seep" in _label  and varexist _stalagmite_thing
                 @setvar _found 1
@@ -186,9 +186,10 @@ while not dead
                     overhead "******  {{_label}}" 44  _node
                     @settimer  _overheads  0 
                 endif
-            elseif "aetheric beacon" in _label  and varexist _crystal_pedastal_thing
+            elseif "aetheric beacon" in _label  and varexist _crystal_pedastal_thing or  "aetheric beacon" in _label and _util__overhead_crystal_pedestal_without_quest_item == 1
                 ## an aetheric beacon  -   crystal pedastal  -  12244  -  2599
                 @setvar _found 1
+                sysmsg "_found" 99
                 if timer _overheads  >= _tmp_timer
                     overhead "******  {{_label}}" 44  _node
                     @settimer  _overheads  0 

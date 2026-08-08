@@ -10,7 +10,7 @@
 @clearignore 
 overhead 'Master'
 
-@setvar!  _auto_use_detect_hidden  1
+@setvar!  _auto_use_detect_hidden  0
 @setvar!  _auto_use_skinner  0
 @setvar!  _auto_cast_gheal  1
 @setvar!  _nag_no_pouches  1
@@ -461,16 +461,30 @@ while not dead
                 if _rhand_in_use == 1
                     if rhandempty and not casting  and not targetexists and not findbuff "Actively Meditating"
                         if @find! _t_equip_rhand  backpack
-                            @getlabel! backpack _bp
-                            dclick  _t_equip_rhand
+                            @getlabel! _t_equip_rhand _label
+                            if "knive" in _label or "knife" in _label
+                                lift _t_equip_rhand
+                            drop self RightHand
+                            else
+                                dclick _t_equip_rhand
+                            endif
+                            # @getlabel! backpack _bp
+                            # dclick  _t_equip_rhand
                             wait 300
                         endif
                     endif
                 else
                     if lhandempty and  not casting  and not targetexists and not findbuff "Actively Meditating"
                         if @find! _t_equip_lhand  backpack
-                            @getlabel! backpack _bp
-                            dclick  _t_equip_lhand
+                            @getlabel! _t_equip_lhand _label
+                            if "knive" in _label or "knife" in _label
+                                lift _t_equip_lhand
+                            drop self LeftHand
+                            else
+                                dclick _t_equip_lhand
+                            endif
+                            # @getlabel! backpack _bp
+                            # dclick  _t_equip_lhand
                             wait 300
                         endif
                     endif
@@ -697,7 +711,7 @@ while not dead
         if not position 3672 229 and not position 3673 229 and not position 3674 229 and not position 3675 229 and not position 3676 229 and not position 3672 230 and not position 3673 230 and not position 3674 230 and not position 3675 230 and not position 3676 230 and not position 3672 231 and not position 3673 231 and not position 3674 231 and not position 3675 231 and not position 3676 231 and not position 3672 232 and not position 3673 232 and not position 3674 232 and not position 3675 232 and not position 3676 232 and not position 3672 233 and not position 3673 233 and not position 3674 233 and not position 3675 233 and not position 3676 233
         if  skill 'stealing' < 50 and timer 'searchTimer' > 20000 and not hidden and not cooldown 'Meditate' and diffmana < 20 and not findtype 'shovel' backpack and not targetexists 
             overhead 'Searching Area' 44
-            skill 'detectinghidden'
+            skill 'Detecting Hidden'
             settimer 'searchTimer' 0  
             getlabel backpack pingCheck
             target self
@@ -1089,17 +1103,36 @@ while not dead
     endif 
     endif
    
-    // ================================ MAGE HAT
-    if hidden and stam = maxstam and findtype '5912' backpack 
-        dclicktype '5912' 
-        wait 700 
-    endif 
-    if findtype '10136|21786|21940|31156|31212|31214|31243|31244|31280|31289|31320|31335|31354|31371|31383|31394|31399|31403' backpack as headware
-        dclick headware 
-        wait 700
-    endif  
     
+    // ================================ MAGE HAT
+    if skill "stealth" >= 80
+        ### ALSO FINDLAYER head and keep-track of item before swapping
+        if not varexist _current_headgear
+            @setvar _current_headgear 0
+        endif
+        if _current_headgear == 0
+            if findlayer self head as _this
+                @setvar _current_headgear  _this
+            endif
+        endif
+        if hidden and stam = maxstam and findtype '5912' backpack 
+            dclicktype '5912' 
+            wait 500 
+        endif 
+        if _current_headgear != 0
+            if find _current_headgear backpack -1 -1 -1
+                dclick _current_headgear
+                wait 500
+            elseif findtype '10136|21786|21940|31156|31212|31214|31243|31244|31280|31289|31320|31335|31354|31371|31383|31394|31399|31403' backpack as headware
+                dclick headware
+                wait 500
+            endif
+        endif  
+    endif
     // ================================ ENVIRMENTAL EFFECTS BOSS ROOMS
+    
+    
+    
     
 
     
@@ -1113,31 +1146,61 @@ while not dead
     endif
 
 
-    ######## temp ice-node detection
-    if not varexist _util_spam__delay 
-        @setvar _util_spam__delay 2269
-    endif
-    if not timerexists _util_spam__timer
-        @settimer  _util_spam__timer  _util_spam__delay
-    endif
+    ######## temp node detection
+    #    if not varexist _util_spam__delay 
+    #        @setvar _util_spam__delay 2269
+    #    endif
+    #    if not timerexists _util_spam__timer
+    #        @settimer  _util_spam__timer  _util_spam__delay
+    #    endif
+    #
+    #    @clearignore
+    #    @unsetvar _this
+    #    ## find serial src hue qty range
+    #    ## an ice node :: spell effect :: 57445 :: 2234
+    #    ## lightning
+    #    while findtype 57445|61948 ground -1 -1 -1 as _this
+    #        @getlabel!  _this  _label
+    #        if "an ice node" in _label or "exodus node" in _label
+    #            if timer _util_spam__timer  >=  _util_spam__delay
+    #                overhead "***** {{_label}}"  44 _this  
+    #                overhead "node on screen" 66
+    #                @settimer  _util_spam__timer  0
+    #            endif
+    #        endif
+    #        @ignore _this
+    #    endwhile
 
+
+
+
+
+    ###### Contested Boss Active spam - start
+    if not varexist _contested_boss_active_spam__delay
+        @setvar  _contested_boss_active_spam__delay  2269
+    endif
+    if not timerexists _contested_boss_active_spam__timer
+        @settimer  _contested_boss_active_spam__timer  _contested_boss_active_spam__delay
+    endif
+    if varexist _this
+        @unsetvar _this
+    endif
     @clearignore
-    @unsetvar _this
-    ## find serial src hue qty range
-    ## an ice node :: spell effect :: 57445 :: 2234
-    ## lightning
-    while findtype 57445 ground -1 -1 -1 as _this
-        @getlabel!  _this  _label
-        if "an ice node" in _label
-            if timer _util_spam__timer  >=  _util_spam__delay
-                overhead "***** {{_label}}"  44 _this  
-                overhead "ice node on screen" 66
-                @settimer  _util_spam__timer  0
+    while findtype 28016 ground 2940 -1 -1 as _this
+        if timer _contested_boss_active_spam__timer >= _contested_boss_active_spam__delay
+            @getlabel!  _this  _label
+            if "contested boss active" in _label
+                overhead "***** {{_label}}" 44 _this
+                overhead "contested boss" 66
+                overhead "contested boss" 66
+                @settimer _contested_boss_active_spam__timer 0
             endif
         endif
         @ignore _this
     endwhile
-
+    ###### Contested Boss Active spam - end
+    
+    
     
 #    // ================================ SEASONAL
 #    // --- Barbarian Plants, field of souls

@@ -1,0 +1,319 @@
+
+#lift 0x5FB90BEC 60000
+#drop 0x50A2E401  104 65
+#wait 500
+#overhead "g" 33 0x5FB90BEC
+#stop
+
+overhead "select container to fix"
+sysmsg "select container to fix"
+if varexist _gold_container_to_fix
+    @unsetvar _gold_container_to_fix
+endif
+while not varexist _gold_container_to_fix
+    @setvar _gold_container_to_fix
+endwhile
+
+
+overhead "select overflow container"
+sysmsg   "select overflow container"
+if varexist _gold_overflow_container
+    @unsetvar _gold_overflow_container
+endif
+while not varexist _gold_overflow_container
+    @setvar _gold_overflow_container
+    if _gold_overflow_container == _gold_container_to_fix
+        overhead "overflow container cannot be the same as container-to-fix, pick another"
+        sysmsg   "overflow container cannot be the same as container-to-fix, pick another"
+        @unsetvar _gold_overflow_container
+    endif
+endwhile
+
+if 1 == 2
+    @removelist _util__gold_container_60ks
+endif
+
+if not listexists _util__gold_container_60ks
+    @createlist _util__gold_container_60ks
+endif
+
+
+@clearignore
+#@setvar _util_overhead_delay 1000
+@setvar _util_overhead_delay 0
+## find <what> src hue qty range
+while findtype 'gold coin'  _gold_container_to_fix  -1 -1 -1 as _this
+    if inlist _util__gold_container_60ks _this
+        @ignore _this
+    else
+        @getlabel! _this _label
+        @overhead "FIND" _this 49
+        @setvar _this_good 1
+        ## _this_good  1==not-good  2==good
+        if "gold coin : 60000" in _label 
+            sysmsg "ultra good" 22
+            @setvar _this_good 2
+            overhead "g" 44 _this
+            wait _util_overhead_delay
+            @pushlist _util__gold_container_60ks _this
+        elseif "gold coin : 45000"  in _label  or "gold coin : 30000" in _label or "gold coin : 15000"  in _label 
+            sysmsg "pretty good" 22
+            @setvar _this_good 2
+            overhead "g" 44 _this
+            wait _util_overhead_delay
+        else
+            sysmsg "not ultra nor pretty good {{_label}}" 22
+            lift _this 45000
+            drop _gold_container_to_fix 1 1 1
+            @getlabel _this _label2
+            wait 430
+            if "gold coin : 45000" in _label2
+                sysmsg "if 45k {{_label2}}" 22
+                @setvar _this_good 2
+                overhead "g" 44 _this
+                wait _util_overhead_delay
+            else
+                sysmsg "not 45k {{_label2}}" 22
+                lift _this 30000
+                drop _gold_container_to_fix 1 1 1
+                @getlabel _this _label2
+                wait 430
+                if "gold coin : 30000" in _label2
+                    sysmsg "if 30k {{_label2}}" 22
+                    @setvar _this_good 2
+                    overhead "g" 44 _this
+                    wait _util_overhead_delay
+                else
+                    sysmsg "not 30k {{_label2}}" 22
+                    lift _this 15000
+                    drop _gold_container_to_fix 1 1 1
+                    @getlabel _this _label2
+                    wait 430
+                    if "gold coin : 15000" in _label2
+                        sysmsg "if 15k {{_label2}}" 22
+                        @setvar _this_good 2
+                        overhead "g" 44 _this
+                        wait _util_overhead_delay
+                    endif
+                    ## end 15k lift
+                endif
+                ## end 30k lift
+            endif
+            ## end 45k lift
+        endif
+    #    if "0000" in _label or "5000" in _label
+    #        @setvar _this_good 2
+    #    else
+    #        lift _this 30000
+    #        drop _gold_container_to_fix
+    #        @getlabel _this _label2
+    #        wait 430
+    #        if "30000" in _label2
+    #            @setvar _this_good 2
+    #        else
+    #            lift _this 15000
+    #            drop _gold_container_to_fix
+    #            @getlabel _this _label2
+    #            wait 430
+    #            if "15000" in _label2
+    #                @setvar _this_good 2
+    #            endif
+    #        endif
+    #        ## 0x5FB601DB  1605763547  57564
+    #        ## lift 50000
+    #        ## 0x5FB601DB  1605763547  50000
+    #        ## 0x5FB681D0  1605796304   7564
+    #    endif
+        if _this_good == 2
+            @ignore _this
+        else
+            lift _this 60000
+            drop _gold_overflow_container -1 -1 -1
+            @getlabel! backpack _bp
+            wait 430
+        endif
+        
+    ## not inlist _util__gold_container_60ks _this
+    endif
+        
+endwhile
+
+
+stop
+#### want:  13x in X - 10x in Y
+
+
+##### now move gold from temp container back into main cointainer
+
+@removelist _gold_pouch_placements_x
+@createlist _gold_pouch_placements_x
+@removelist _gold_pouch_placements_y
+@createlist _gold_pouch_placements_y
+
+## bottom left
+## 10,1
+@pushlist _gold_pouch_placements_x 44
+@pushlist _gold_pouch_placements_y 151
+##  9,1
+@pushlist _gold_pouch_placements_x 44
+@pushlist _gold_pouch_placements_y 142
+##  8,1
+@pushlist _gold_pouch_placements_x 44
+@pushlist _gold_pouch_placements_y 133
+##  7,1
+@pushlist _gold_pouch_placements_x 44
+@pushlist _gold_pouch_placements_y 124
+##  6,1
+@pushlist _gold_pouch_placements_x 44
+@pushlist _gold_pouch_placements_y 115
+##  5,1
+@pushlist _gold_pouch_placements_x 44
+@pushlist _gold_pouch_placements_y 106
+##  4,1
+@pushlist _gold_pouch_placements_x 44
+@pushlist _gold_pouch_placements_y 97
+##  3,1
+@pushlist _gold_pouch_placements_x 44
+@pushlist _gold_pouch_placements_y 88
+##  2,1
+@pushlist _gold_pouch_placements_x 44
+@pushlist _gold_pouch_placements_y 79
+##  1,1
+@pushlist _gold_pouch_placements_x 44
+@pushlist _gold_pouch_placements_y 70
+
+
+
+## 10,2
+@pushlist _gold_pouch_placements_x 44
+@pushlist _gold_pouch_placements_y 151
+##  9,2
+@pushlist _gold_pouch_placements_x 54
+@pushlist _gold_pouch_placements_y 142
+##  8,2
+@pushlist _gold_pouch_placements_x 64
+@pushlist _gold_pouch_placements_y 133
+##  7,2
+@pushlist _gold_pouch_placements_x 74
+@pushlist _gold_pouch_placements_y 124
+##  6,2
+@pushlist _gold_pouch_placements_x 84
+@pushlist _gold_pouch_placements_y 115
+##  5,2
+@pushlist _gold_pouch_placements_x 94
+@pushlist _gold_pouch_placements_y 106
+##  4,2
+@pushlist _gold_pouch_placements_x 104
+@pushlist _gold_pouch_placements_y 97
+##  3,2
+@pushlist _gold_pouch_placements_x 114
+@pushlist _gold_pouch_placements_y 88
+##  2,2
+@pushlist _gold_pouch_placements_x 124
+@pushlist _gold_pouch_placements_y 79
+##  1,2
+@pushlist _gold_pouch_placements_x 134
+@pushlist _gold_pouch_placements_y 70
+
+
+
+
+
+
+## 10,3
+@pushlist _gold_pouch_placements_x 144
+@pushlist _gold_pouch_placements_y 151
+##  9,3
+@pushlist _gold_pouch_placements_x 154
+@pushlist _gold_pouch_placements_y 142
+##  8,3
+@pushlist _gold_pouch_placements_x 164
+@pushlist _gold_pouch_placements_y 133
+##  7,3
+@pushlist _gold_pouch_placements_x 174
+@pushlist _gold_pouch_placements_y 124
+##  6,3
+@pushlist _gold_pouch_placements_x 184
+@pushlist _gold_pouch_placements_y 115
+##  5,3
+@pushlist _gold_pouch_placements_x 194
+@pushlist _gold_pouch_placements_y 106
+##  4,3
+@pushlist _gold_pouch_placements_x 204
+@pushlist _gold_pouch_placements_y 97
+##  3,3
+@pushlist _gold_pouch_placements_x 214
+@pushlist _gold_pouch_placements_y 88
+##  2,3
+@pushlist _gold_pouch_placements_x 224
+@pushlist _gold_pouch_placements_y 79
+##  1,3
+@pushlist _gold_pouch_placements_x 234
+@pushlist _gold_pouch_placements_y 70
+
+@clearignore
+## find <what> src hue qty range
+foreach _itr in _util__gold_container_60ks
+    if find _itr _gold_container_to_fix  -1 -1 -1 as _this
+        foreach _an_x in _gold_pouch_placements_x
+            @setvar _util__gold_x  _an_x
+            @poplist _gold_pouch_placements_x  front
+            break
+        endfor
+        foreach _an_y in _gold_pouch_placements_y
+            @setvar _util__gold_y  _an_y
+            @poplist _gold_pouch_placements_y  front
+            break
+        endfor
+        lift _this 60000
+        drop _gold_container_to_fix _util__gold_x _util__gold_y
+        wait 420
+        @getlabel! backpack _bp
+    endif
+endfor
+#while findtype 'gold coin'  _gold_container_to_fix  -1 -1 -1 as _this
+#endwhile
+
+
+
+# 163, 102 item scale
+# 200,  50 item scale
+### X-range  44 to 175  130 wide
+### Y-range  65 to 151   86 high
+## top left     -  44  65
+## top right    - 175  65
+## bottom left  -  44 151
+## bottom right - 175 151  164 143
+#
+## gold dimenions no overlap 6w 8h
+## gold X midpoint 104 65
+## gold 1,1  44 65
+## gold 2,1  52 65
+## gold 1,2  44 71
+#
+# 130/12 wide == 10.833 (so go 10x per to width)
+# 86/10  high == 8.6    (so go 9x per hight)
+#
+
+
+
+stop
+#
+drop 0x50A2E401 44 151 0
+drop 0x50A2E401 55 145 0
+drop 0x50A2E401 66 146 0
+drop 0x50A2E401 76 144 0
+drop 0x50A2E401 86 146 0
+drop 0x50A2E401 98 144 0
+drop 0x50A2E401 110 145 0
+drop 0x50A2E401 121 145 0
+drop 0x50A2E401 132 145 0
+drop 0x50A2E401 143 145 0
+drop 0x50A2E401 154 146 0
+drop 0x50A2E401 168 150 0
+
+
+lift 0x5FE725D8 45000
+drop 0x50A2E401 175 151 0
+lift 0x5FE725D8 45000
+drop 0x50A2E401 164 143 0
