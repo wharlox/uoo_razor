@@ -1,0 +1,10 @@
+// Go in Gate
+while findtype '3948|30528' ground -1 -1 2
+    if findtype '3948' ground -1 -1 2
+        say '[moongate'
+        waitforgump 'any' 2000
+        getlabel backpack pingCheck
+        gumpresponse 2
+    endif
+    wait 100
+endwhile

@@ -316,8 +316,36 @@ if @find!  _deposit_loadout_chain_loot_pouch  backpack 0 -1 -1 as _loot_pouch
 
 
 
+    
+    
+       
+    #### instrument
+    while findtype "bamboo flute|drum|lap harp|lute|tambourine|gemshorn|hurdy gurdy|psaltery|sackbut|shawm|vielle" backpack -1 -1 1 as _this
+        if timer _loadout_organizer__still_going_overhead > _loadout_organizer__still_going_overhead__time
+            overhead "... still organizing 3b ..."  _loadout_organizer__still_going_overhead__color
+            @settimer _loadout_organizer__still_going_overhead 0
+        endif
+        wait _tmp
+        #@getlabel! _this _tmp_label
+        lift _this 1
+        drop _loot_pouch 44 114 0
+        wait _loadout_shelf__wait_after_drop
+        while queued
+        endwhile
+        if insysmsg "You must wait another moment before you may pick up an item from here"
+        else
+            @ignore _this
+        endif
+        #@getlabel! backpack _tmp_label
+        #wait 100
+        #dclick _this
+    endwhile
+        
 
 
+
+    
+    #### TODO
     ## split band-aids
     ## split potions
 

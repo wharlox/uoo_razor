@@ -1,0 +1,113 @@
+
+#sysmsg "loadout activate instrument - start"
+#@setvar! _this_script "Play Script: deposit-loadout\functions\loadout-activate-instrument"
+
+
+
+if skill "Peacemaking" > 0 or skill "Provocation" > 0 or skill "Discordance" > 0 or skill "Musicianship" > 0
+
+    @clearignore
+    @unsetvar _util__loadout_activate_instrument__this_basic
+
+    @unsetvar _util__loadout_activate_instrument__this_exceptional
+    @unsetvar _util__loadout_activate_instrument__this_unid
+
+    @unsetvar _util__loadout_activate_instrument__this_melodious
+    @unsetvar _util__loadout_activate_instrument__this_surpassingly
+    @unsetvar _util__loadout_activate_instrument__this_eminently
+    @unsetvar _util__loadout_activate_instrument__this_exceedingly
+    @unsetvar _util__loadout_activate_instrument__this_supremely
+    
+
+    while findtype "bamboo flute|drum|lap harp|lute|tambourine|gemshorn|hurdy gurdy|psaltery|sackbut|shawm|vielle" backpack as _this
+        @ignore _this
+        @getlabel! _this _label
+        
+        if "unidentified" in _label and not varexist _util__loadout_activate_instrument__this_unid
+            @setvar! _util__loadout_activate_instrument__this_unid  _this
+        elseif "upremely" in _label and not varexist _util__loadout_activate_instrument__this_supremely
+            @setvar! _util__loadout_activate_instrument__this_supremely  _this
+            break
+        elseif "xceedingly" in _label and not varexist _util__loadout_activate_instrument__this_exceedingly 
+            @setvar! _util__loadout_activate_instrument__this_exceedingly  _this
+        elseif "minently" in _label and not varexist _util__loadout_activate_instrument__this_eminently
+            @setvar! _util__loadout_activate_instrument__this_eminently  _this
+        elseif "urpasingly" in _label and not varexist _util__loadout_activate_instrument__this_surpassingly
+            @setvar! _util__loadout_activate_instrument__this_surpassingly  _this
+        elseif "elodious" in _label and not varexist _util__loadout_activate_instrument__this_melodious
+            @setvar! _util__loadout_activate_instrument__this_melodious  _this
+
+        elseif "xceptional" in _label and not varexist _util__loadout_activate_instrument__this_exceptional
+            @setvar! _util__loadout_activate_instrument__this_exceptional  _this    
+        elseif not varexist _util__loadout_activate_instrument__this_basic
+            @setvar! _util__loadout_activate_instrument__this_basic  _this
+        endif
+    endwhile
+
+    if varexist _util__loadout_activate_instrument__this_supremely
+        #@setvar _util__loadout_activate_instrument__this  _util__loadout_activate_instrument__this_supremely
+        dclick  _util__loadout_activate_instrument__this_supremely
+    elseif varexist _util__loadout_activate_instrument__this_exceedingly
+        #@setvar _util__loadout_activate_instrument__this  _util__loadout_activate_instrument__this_exceedingly
+        dclick _util__loadout_activate_instrument__this_exceedingly
+    elseif varexist _util__loadout_activate_instrument__this_eminently
+        #@setvar _util__loadout_activate_instrument__this  _util__loadout_activate_instrument__this_eminently
+        dclick _util__loadout_activate_instrument__this_eminently
+    elseif varexist _util__loadout_activate_instrument__this_surpassingly
+        #@setvar _util__loadout_activate_instrument__this  _util__loadout_activate_instrument__this_surpassingly
+        dclick _util__loadout_activate_instrument__this_surpassingly
+    elseif varexist _util__loadout_activate_instrument__this_melodious
+        #@setvar _util__loadout_activate_instrument__this  _util__loadout_activate_instrument__this_melodious
+        dclick _util__loadout_activate_instrument__this_melodious
+    elseif varexist _util__loadout_activate_instrument__this_exceptional
+        #@setvar _util__loadout_activate_instrument__this  _util__loadout_activate_instrument__this_exceptional
+        dclick _util__loadout_activate_instrument__this_exceptional
+    elseif varexist _util__loadout_activate_instrument__this_basic
+        #@setvar _util__loadout_activate_instrument__this  _util__loadout_activate_instrument__this_basic
+        dclick _util__loadout_activate_instrument__this_basic
+    elseif varexist _util__loadout_activate_instrument__this_unid
+        #@setvar _util__loadout_activate_instrument__this  _util__loadout_activate_instrument__this_unid
+        dclick _util__loadout_activate_instrument__this_unid
+    else
+#        if varexist _util__loadout_activate_instrument__this
+#            @unsetvar _util__loadout_activate_instrument__this
+#        endif
+        sysmsg   "Warning: no instrument to activate" 33
+        sysmsg   "Warning: no instrument to activate" 33
+        overhead "Warning: no instrument to activate" 33
+        overhead "Warning: no instrument to activate" 33
+    endif
+    
+#    if varexist _util__loadout_activate_instrument__this
+#        @getlabel _util__loadout_activate_instrument__this _label
+#        dclick  _util__loadout_activate_instrument__this
+#        #sysmsg "instrument: {{_label}}" 69
+#        #wait 200
+#    endif
+
+endif
+
+
+
+
+while queued
+    #@getlabel! backpack _tmp_label
+endwhile
+
+
+
+#sysmsg "loadout activate instrument - complete"
+
+
+#### continue script chain
+hotkey "Play Script: deposit-loadout\functions\_util_continue_script_chain"
+foreach _itr in _util_continue_script_chain 
+    hotkey _itr
+endfor
+#if listexists _script_chain and list _script_chain > 0
+#    poplist _script_chain front
+#    foreach _a_script in _script_chain
+#        hotkey _a_script
+#    endfor
+#endif
+#

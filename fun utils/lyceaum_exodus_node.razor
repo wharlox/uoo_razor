@@ -1,0 +1,67 @@
+
+
+### Lycaeum Orientation Helper
+
+@setvar _tmp_timer 700
+#@removetimer  _tmp_overheads_timer
+@settimer  _overheads  _tmp_timer
+
+
+
+@removelist _added_super_ignore
+if not listexists _added_super_ignore
+    @createlist _added_super_ignore
+endif
+@clearlist  _added_super_ignore
+
+
+while not dead
+    
+## tech bits -  an exodus node -  61948 - 2910
+
+
+    @clearignore
+    @setvar _found 0
+    ## find serial src hue qty range
+    while findtype  61948      ground  2910  -1 -1 as _this 
+        @getlabel! _this _label
+            if "exodus" in _label
+            @setvar _found 1
+            if timer _overheads  >= _tmp_timer
+                overhead _label 44  _this
+                @settimer  _overheads  0 
+            endif
+            endif
+
+            @ignore _this
+    endwhile
+
+
+
+
+    @clearignore
+    ## an exodus node
+    while varexist _sweep_refuse_thing and findtype  61948   ground 2910 -1 2 as _node 
+        @getlabel! _node _label
+        @clearsysmsg
+        if  not inlist _added_super_ignore _node
+            if "refuse" in _label
+                dclick _node
+                #dclick _sweep_refuse_thing
+                #wft 500
+                #target _node 
+                @getlabel! backpack _bp
+                if insysmsg "You utilize the Exodus node and retrieve"
+                    overhead "_ITEM DONE_"
+                    @pushlist _added_super_ignore  _node
+                endif
+            endif
+        endif
+        @ignore _node
+    endwhile
+    
+
+
+wait 150
+endwhile
+#

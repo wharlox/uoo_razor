@@ -1,0 +1,29 @@
+
+### Lycaeum Orientation Helper
+
+@setvar _tmp_timer 700
+#@removetimer  _tmp_overheads_timer
+@settimer  _overheads  _tmp_timer
+
+
+while not dead
+    
+
+@clearignore
+@setvar _found 0
+while findtype  59481      ground -1 -1 -1 as _sign 
+    @getlabel! _sign _label
+        if "mound" in _label
+        @setvar _found 1
+        if timer _overheads  >= _tmp_timer
+            overhead _label 44  _sign
+            @settimer  _overheads  0 
+        endif
+        endif
+
+    @ignore _sign
+endwhile
+
+wait 150
+endwhile
+#
