@@ -70,7 +70,8 @@ if not varexist _auto_cast_summons
     @setvar! _auto_cast_summons 0
 endif
 if not varexist castSummonNagThreshold
-    @setvar! castSummonNagThreshold 2800
+    #@setvar! castSummonNagThreshold 2800
+    @setvar! castSummonNagThreshold 28000000
 endif
 if not timerexists castSummonNagTimer
     @createtimer! castSummonNagTimer
@@ -322,7 +323,7 @@ while not dead
             else
                 @setvar! _castSummonNagColor 22
             endif
-            overhead 'cast summons' _castSummonNagColor
+            #overhead 'cast summons' _castSummonNagColor
             @settimer! castSummonNagTimer 0
         endif
 

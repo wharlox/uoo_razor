@@ -10,7 +10,13 @@
 
 
 
-
+if listexists _util_ltrap_recycler__keep_serials
+    @clearlist _util_ltrap_recycler__keep_serials
+else
+    @createlist _util_ltrap_recycler__keep_serials
+    @pushlist _util_ltrap_recycler__keep_serials 0x4219B5E9
+    @pushlist _util_ltrap_recycler__keep_serials 0x4219C361
+endif
 
 if listexists _util_ltrap_recycler__keep_list
     @clearlist _util_ltrap_recycler__keep_list
@@ -185,12 +191,18 @@ while _loop_recycle == 1 and findtype "sewing kit|saw|pen and ink|tongs|tool kit
                 #else
                     ## _fate_of_item - 0 dunno - 1 keep - 2 recycle
                     @setvar _fate_of_item 0
-                    foreach _keep_descr in _util_ltrap_recycler__keep_list
-                        if _fate_of_item == 0 and _keep_descr in desc
-                            @setvar _fate_of_item 1
-                            break
-                        endif
-                    endfor
+                    if inlist  _util_ltrap_recycler__keep_serials  IDitem
+                        @setvar _fate_of_item 1
+                    endif
+
+                    if _fate_of_item == 0
+                        foreach _keep_descr in _util_ltrap_recycler__keep_list
+                            if _fate_of_item == 0 and _keep_descr in desc
+                                @setvar _fate_of_item 1
+                                break
+                            endif
+                        endfor
+                    endif
                     if _fate_of_item == 0
                         foreach _recycle_descr in _util_ltrap_recycler__recycle_list
                             if _fate_of_item == 0 and _recycle_descr in desc
@@ -199,13 +211,14 @@ while _loop_recycle == 1 and findtype "sewing kit|saw|pen and ink|tongs|tool kit
                             endif
                         endfor
                     endif
-                
+                    
+                    
                     if _fate_of_item == 1
                         ## keep it
                         @ignore IDitem
                         #overhead "This one is worth keeping..." 2091
                         overhead "*strong magic*" 2091 IDitem
-                        say "[surprise" 2091
+                        #say "[surprise" 2091
                         @pushlist _util_ltrap_recycler__keeping_items  IDitem
                     elseif _fate_of_item == 2
                         ## recycle it
