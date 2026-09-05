@@ -59,17 +59,100 @@ if varexist _id_loop_recycler_lantern
 endif
 
 
+
+
+
+######## BARD LOGIC 1-of-2 - detect magic instrument
+if not listexists _util__detect_instrument__idd_instruments
+    @createlist _util__detect_instrument__idd_instruments
+else
+    @clearlist _util__detect_instrument__idd_instruments
+endif
+
+if skill "Peacemaking" > 0 or skill "Provocation" > 0 or skill "Discordance" > 0 or skill "Musicianship" > 0
+
+    ## deposit UNIDENTIFIED magic items - speeds up find in backpack
+    menu _deposit_loadout__recycler 1
+    #wait 200
+    @getlabel! _deposit_loadout__recycler _this
+    if "125 items" in _this
+        overhead "item recycler is full" 38
+        sysmsg "item recycler is full" 38
+    endif
+    ## deposit unid magic items
+    #menu _deposit_loadout__recycler 1
+    @getlabel! _deposit_loadout__recycler _this
+    #wait 150
+
+    @clearignore
+    while findtype "bamboo flute|drum|lap harp|lute|tambourine|gemshorn|hurdy gurdy|psaltery|sackbut|shawm|vielle" backpack -1 -1 -1 as _this
+        @ignore _this
+        @getlabel! _this _label
+        sysmsg "deposit recycler unid, found instrument {{_label}}" 33
+        sysmsg "deposit recycler unid, found instrument {{_label}}" 44
+        sysmsg "deposit recycler unid, found instrument {{_label}}" 55
+        if "unidentified" in _label or "wood" in _label
+            ## skip for now
+        else
+            @pushlist  _util__detect_instrument__idd_instruments  _this
+            sysmsg _label 99
+        endif
+    endwhile
+endif
+
+
+
+
+
 ## deposit ALL magic items
 menu _deposit_loadout__recycler 0
 #wait 200
 @getlabel! _deposit_loadout__recycler _this
 if "125 items" in _this
     overhead "item recycler is full" 38
+    sysmsg "item recycler is full" 38
 endif
 ## deposit unid magic items
 #menu _deposit_loadout__recycler 1
 @getlabel! _deposit_loadout__recycler _this
 #wait 600
+
+
+
+
+
+######## BARD LOGIC 2-of-2 - drop magic instrument to backpack
+#### get bard-items out of magic-item-recycler
+if skill "Peacemaking" > 0 or skill "Provocation" > 0 or skill "Discordance" > 0 or skill "Musicianship" > 0
+    wait 250
+    foreach _itr in _util__detect_instrument__idd_instruments 
+        # find serial src hue qty range
+        if not gumpexists 4045111101
+            dclick _deposit_loadout__recycler
+            waitforgump 4045111101
+            #gumpclose 4045111101
+            @getlabel! backpack _bp
+        endif
+        @clearignore
+        if find _itr _deposit_loadout__recycler -1 -1 1
+            lift _itr 1
+            drop backpack -1 -1 -1
+            wait 150
+            while insysmsg "You must wait to perform another action"
+                lift _itr 1
+                drop backpack -1 -1 -1
+                wait 150
+            endwhile
+            wait 510
+        endif
+        #@getlabel! backpack _bp
+    endfor
+    if gumpexists 4045111101
+        gumpclose 4045111101
+    endif
+endif
+
+
 
 
 

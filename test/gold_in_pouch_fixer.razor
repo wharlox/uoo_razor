@@ -42,6 +42,10 @@ endif
 #@setvar _util_overhead_delay 1000
 @setvar _util_overhead_delay 0
 ## find <what> src hue qty range
+#### while - goal is to remove excess 15k multiples from each pile
+####  remainder of gold will be 60k, 45k, 30k, 15k - or sub-15k which is placed into helper-bag
+####  TODO - if multiple sub-60k stacks, move to helper and lift 15k at a time to combine
+####   or - move all sub-60k to helper-pouch - then have a pre-move helper into good-bag and then move out
 while findtype 'gold coin'  _gold_container_to_fix  -1 -1 -1 as _this
     if inlist _util__gold_container_60ks _this
         @ignore _this

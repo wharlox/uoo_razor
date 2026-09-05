@@ -1,0 +1,24 @@
+#### boss loot helper - drop 10k gold at feet - then call your main script
+
+@removelist _script_chain
+@createlist _script_chain
+
+@pushlist _script_chain "Play Script: AutoDexxer"
+
+
+@clearignore
+while findtype 'gold coin' backpack -1 -1 -1 as _this
+    @getlabel _this _label
+    if "gold coin : 10000" in _label
+        lift _this 10000
+        drop ground
+        break
+    endif
+    @ignore _this
+endwhile
+
+
+foreach _itr in _script_chain 
+    hotkey _itr
+endfor
+#

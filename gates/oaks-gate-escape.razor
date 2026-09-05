@@ -1,0 +1,146 @@
+### HOTKEY: M
+if not timerexists "reminderTimer"
+    createtimer "reminderTimer"
+    settimer "reminderTimer" 10001
+endif
+while not dead
+
+
+    if paralyzed
+        say  "[pouch"
+    endif
+
+    
+    if timer "reminderTimer" > 10000
+        if findbuff "Heat of Battle"
+            overhead "Cannot Gate - Heat of Battle" 33
+        else
+            overhead "Get Closer to Moongate" 44
+        endif
+        settimer "reminderTimer" 0
+    endif
+
+    
+    if findtype 3948 'ground' 0 1 2 as 'bluegate'
+        overhead "111"
+        if not gumpexists 3899019871
+            dclick 'bluegate'
+        endif
+        waitforgump 3899019871
+        gumpresponse 2 3899019871
+        stop
+    endif
+
+
+    if findtype 3948 'ground' 2820 1 2 as 'redmoongate'
+        # Goto Outpost
+        overhead "222"
+        if not gumpexists 3773199800
+            dclick 'redmoongate'
+        endif
+        waitforgump 3773199800
+        gumpresponse 2 3773199800
+        stop
+    endif
+
+    if findtype 3948 'ground' 2821 1 2 as 'bluemoongate'
+        # Goto Shelter Island
+        overhead "333"
+        if not gumpexists 3773199800
+            dclick 'bluemoongate'
+        endif
+        waitforgump 3773199800
+        gumpresponse 2 3773199800
+        stop
+    endif
+    if findtype 3948 'ground' 2822 1 2 as 'yellowmoongate'
+        # Goto Outpost
+        overhead "444"
+        if not gumpexists 3773199800
+          dclick 'yellowmoongate'
+        endif
+        waitforgump 3773199800
+        gumpresponse 2 3773199800
+        stop
+    endif
+
+
+    if findtype 8148 'ground' -1 1 2 as 'graymoongate'
+        # Confirm
+        overhead "555"
+        if not gumpexists 3899019871
+            dclick 'graymoongate'
+        endif
+        waitforgump 3899019871
+        gumpresponse 2 3899019871
+        stop
+    endif
+
+    if findtype 30528 'ground' -1 1 2 as 'graymoongate'
+        # chiv gate
+        overhead "666"
+        if not gumpexists 3899019871
+            dclick 'graymoongate'
+        endif
+        waitforgump 3899019871
+        gumpresponse 2 3899019871
+        stop
+    endif
+
+    if findtype 27754 'ground' -1 1 2 as 'graymoongate'
+        overhead "777"
+        # omni
+        if not gumpexists 3773199800
+            say "[moongate"
+        endif
+        waitforgump 3773199800
+        gumpresponse 2 3773199800
+        stop
+    endif    
+
+    
+
+    if poisoned
+        #dclicktype 'Orange Potion'
+        potion "cure"
+    endif
+
+    // === Cure - Chivalry
+    if poisoned and not findbuff 'Cleanse by Fire' and skill 'Chivalry' >= 60 
+        cast 'Cleanse by Fire'
+    endif      
+    
+    // === Heal - Potion 
+    if diffhits >= 20 or not bandaging and diffhits >= 10
+        potion "heal"
+        #dclicktype 'Yellow Potion'
+    endif
+    
+    // === Heal - Bandage 
+    if skill 'healing' > 0 and hp < maxhits 
+        hotkey 'Bandage Self'
+    endif      
+
+    // === Heal - Veterinary
+    if not bandaging and skill 'veterinary' > 0 and hp < maxhits 
+        say "[vetsupplies"
+        wait 200            
+    endif        
+
+    // === Heal - Chivalry Holylight
+    if diffhits >= 50 and skill "Chivalry" > 95 
+        say '[Holylight'
+    endif  
+    // === Cripple and Disease
+    if not findbuff 'Remove Curse' and findbuff 'Cripple' and skill 'Chivalry' >= 50 
+        cast 'Remove Curse'
+    endif   
+
+    if not findbuff 'Close Wounds' and findbuff 'Diseased' and skill 'Chivalry' >= 70 
+        cast 'Close Wounds'
+    endif     
+    
+    
+
+endwhile
+#

@@ -1,0 +1,80 @@
+
+
+
+if not dead 
+
+    if listexists _util_kf_2026_npc_done
+        @clearlist _util_kf_2026_npc_done
+    else
+        @createlist _util_kf_2026_npc_done
+    endif
+
+    @clearignore
+    if varexist _util_kf_2026_tool
+        @unsetvar _util_kf_2026_tool
+    endif
+
+
+    while not dead
+        @clearignore
+        while findtype 'quest indicator' ground -1 -1 -1 as _this
+            overhead "quest here" 63 _this
+            @ignore _this
+        endwhile
+
+    
+    
+        if not varexist _util_kf_2026_tool
+            while findtype book backpack 1186 -1 -1 as _this
+                @ignore _this
+                @getlabel! _this _label
+                if "celestial ledger" in _label
+                    @setvar _util_kf_2026_tool _this
+                endif
+            endwhile
+        endif
+    
+        
+        @clearignore
+        ## find npc's
+        while findtype 400|401 ground -1 -1 -1 as _this
+            if varexist _util_kf_2026_tool
+                if not inlist _util_kf_2026_npc_done _this
+                    @getlabel! _this _label
+                    if "ticket taker" in _label
+                        overhead "**************" 55 _this
+                    endif
+                endif
+            endif
+            @ignore _this
+        endwhile
+        
+        
+        ## click npc
+        if varexist _util_kf_2026_tool
+            @clearignore
+            while findtype 400|401 ground -1 -1 3 as _this
+                if not inlist _util_kf_2026_npc_done _this
+                    @getlabel! _this _label
+                    if "ticket taker" in _label
+                        overhead "clicking"
+                        overhead "clicking ***"  55 _this
+                        dclick _util_kf_2026_tool
+                        wft 500
+                        target _this
+                        wait 200
+                        if insysmsg "You have already noted this game" or insysmsg "You wave at the ticket taker and take note of the game"
+                            pushlist _util_kf_2026_npc_done _this
+                            overhead "_DONE_" 63 _this
+                        endif
+                    endif
+                endif
+                @ignore _this
+                
+            endwhile
+        endif
+        
+        
+    endwhile
+            
+endif

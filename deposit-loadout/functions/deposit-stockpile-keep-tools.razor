@@ -39,32 +39,44 @@ sysmsg "deposit stockpile keep tools - start"
 # counttype name src hue range
 
 @clearignore
-if findtype "sewing kit|tool kit|pen and ink" backpack 0 -1 -1 as _this
+#### look for a single item to keep - this is the priority of tool to keep to use to break down items
+if findtype "sewing kit" backpack 0 -1 -1 as _this
     @setvar _util__tools__save_one_tool _this
-    @getlabel! _this _label
-    sysmsg _label
     @ignore _this
 elseif findtype "pen and ink" backpack 0 2575 -1 as _this
+    ## scribe tool
+    @setvar _util__tools__save_one_tool _this
+    @ignore _this
+elseif findtype "pen and ink" backpack 0 -1 -1 as _this
+    ## map tool
+    @setvar _util__tools__save_one_tool _this
+    @ignore _this
+elseif findtype "tool kit" backpack 0 -1 -1 as _this
     @setvar _util__tools__save_one_tool _this
     @ignore _this
 elseif findtype "saw" backpack 0 0 -1 as _this
     @setvar _util__tools__save_one_tool _this
     @ignore _this
-elseif findtype "tongs" backpack 0 0 -1 as _this
+elseif findtype "scorp|draw knife|froe|moulding planes|dovetail saw|hammer|inshave|smoothing plane|jointing plane" backpack 0 0 -1 as _this
     @setvar _util__tools__save_one_tool _this
     @ignore _this
+### tongs and hammer require a forge to use
+#elseif findtype "tongs" backpack 0 0 -1 as _this ## OR HAMMER - both require forge to use
+#    @setvar _util__tools__save_one_tool _this
+#    @ignore _this
 else
     @setvar _util__tools__save_one_tool 0
+endif
+if _util__tools__save_one_tool != 0
+    @getlabel! _util__tools__save_one_tool _label
+    sysmsg _label 54
 endif
 
 
 
-#### look for mutiple of select tools
+#### look for mutiple of all types of tools - if any other tool is found the found multiple
 @setvar _util__tools__found_multiple 0
-if counttype 'mortar and pestle' backpack 0 -1  > 0
-    #sysmsg "mortar" - but cannot be used to break down items
-    @setvar _util__tools__found_multiple 1
-elseif counttype 'sewing kit' backpack 0 -1  > 0
+if counttype 'sewing kit' backpack 0 -1  > 0
     #sysmsg "sew"
     @setvar _util__tools__found_multiple 1
 elseif counttype 'pen and ink' backpack 0 -1  > 0
@@ -79,12 +91,18 @@ elseif counttype 'tool kit' backpack 0 -1  > 0
     @setvar _util__tools__found_multiple 1
 
 elseif counttype 'saw' backpack 0 -1  > 0
-    #sysmsg "scribe"
     @setvar _util__tools__found_multiple 1
 elseif counttype 'tongs' backpack 0 -1  > 0
-    #sysmsg "blacksmith"
     @setvar _util__tools__found_multiple 1
-    
+
+## other random tools
+elseif counttype "scorp" backpack 0 -1  > 0  or  counttype "draw knife" backpack 0 -1  > 0  or  counttype "froe" backpack 0 -1  > 0  or  counttype "moulding planes" backpack 0 -1  > 0  or  counttype "dovetail saw" backpack 0 -1  > 0  or  counttype "hammer" backpack 0 -1  > 0  or  counttype "inshave" backpack 0 -1  > 0  or  counttype "smoothing plane" backpack 0 -1  > 0  or  counttype "jointing plane" backpack 0 -1  > 0
+    @setvar _util__tools__found_multiple 1
+
+## tools which cannot be used to break things down
+elseif counttype 'mortar and pestle' backpack 0 -1  > 0  or  counttype 'frypan' backpack 0 -1  > 0  or  counttype "rolling pin" backpack 0 -1 > 0  or  counttype "smith's hammer" backpack 0 -1 > 0  or  counttype "tongs" backpack 0 -1 > 0
+    @setvar _util__tools__found_multiple 1
+
 else
     ## special logic to force stashing tool and toggle grab-tools setting as needed
     if _util__tools__save_one_tool != 0 and _util__tools__resource_stockpile__assume_grab_tools_unchecked == 0
