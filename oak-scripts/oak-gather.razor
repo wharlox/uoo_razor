@@ -1,0 +1,531 @@
+## Oaks [KoU] Simple Harvest Summoner ##
+## Discord: Oakman8490 for any issues ##
+    
+
+# "MUST HAVES" - You will need to add these for the script to function properly.    
+## CUO Cooldowns: You will need to create these cooldowns in game for this to work.
+    # "Harvest" - Does not need any Triggers
+    # "STATIONARY" - Triggers upon the Adding & Removal of the Buff: Stationary Penalty   
+## Razor Script: If using the AutoEscape feature, you will need an Escape Script named: "QuickEscape"   
+## Organizer Agent 10: Add Logs, Ore, and Copper Key to the Agent, will store them in a trapped pouch.    
+
+    
+# "Recommended Build"
+    # 120 - Mining OR Lumberjacking (If you have both on one echo, you will need to manually select HarvestType)
+    # 120 - Camping
+    # 100 - Magery
+    # 100 - Tracking
+    # 80 - Spirit Speak
+    # 80 - Meditation
+    # 80 - Magic Resist (for PvP survivability)
+    # 40 - Detect Hidden (additional tracking for hidden targets)
+
+## SETTINGS ##    
+// Harvest Type: "0 = Auto", 1 = Mining, 2 = Lumberjack    
+    @setvar! HarvestType 2
+// Force Harvest Aspect: 0 = Off, "1 = On"
+    @setvar! ForceHarvestAspect 1
+// Materials Storage (Ingots & Boards): 0 = None, 1 = Trapped Pouch, "2 = Lockable Box", 3 = selected Container
+    @setvar! MaterialsStorage 2
+// ForgeRadar will scan for nearby forges if you have ore, Smelt the ore if you are within 2 tiles, and convert logs into boards on a timer.
+    @setvar! EnableForgeRadar 1
+// Speed of Harvesting Action - May need to adjust due to differences in ping.
+    @setvar! PickaxeSwingCD 1250
+    @setvar! HatchetSwingCD 4800
+
+// MoveAlertSound: The Item ID of whatever you want to use to doubleclick to make a sound. 0 = No Sound, 3834 = Spellbook, "20012 = sackbut", or any other itemID that makes a sound upon dclick.
+    @setvar! MoveAlertSound 20012
+    @setvar! MoveAlertCooldown 7500  
+
+// Escape upon Stationary Penalty - Do you want to automatically Escape after 20 seconds of being Stationary? (Recommended) 1: On, 0: Off
+    @setvar! AutoEscapeStationary 1
+    // Tracking Escape: 0 = off, 1 < 20 tiles, 2 < 30 tiles, 3 < 40 tiles, 4 < 50 tiles, 5 < 60 tiles, "6 < 70 tiles", 7 < 80 tiles, 8 < 90 tiles, 9 = any tracking 
+    @setvar! AutoEscapeTracking 6
+    
+// The Coordinates you stand at to unload goods into your Stockpile.    
+    @setvar! myUnloadX 1805
+    @setvar! myUnloadY 1570
+
+// Reset Lists occasionally so they dont get too long. 0: Off, 1: On
+    @setvar! ListsReset 0    
+
+// MISC Parameters    
+@setvar! minWait 350
+@setvar! medWait 600
+
+
+
+##### SCRIPT BELOW #####
+
+clearsysmsg
+clearignore
+@setvar! autoEscape 0 
+
+if ListsReset = 1
+    removelist 'StoredMaterials'
+endif
+if not listexists 'StoredMaterials'
+    createlist 'StoredMaterials'
+endif
+if not timerexists 'MoveAlertTimer'
+    createtimer 'MoveAlertTimer'
+    settimer 'MoveAlertTimer' 0
+endif
+if not timerexists 'EscapeTimer'
+    createtimer 'EscapeTimer'
+    settimer 'EscapeTimer' 0
+endif
+if not timerexists 'SummonTimer'
+    createtimer 'SummonTimer'
+    settimer 'SummonTimer' 0
+endif
+if not timerexists "SummonGuardTimer"
+    createtimer "SummonGuardTimer"
+    settimer "SummonGuardTimer" 0
+endif
+
+if MaterialsStorage = 3
+    if find myMaterialsContainer backpack
+        overhead "Ingot Bag Located"
+    else
+        overhead "Select your Ingot Container"
+        setvar myMaterialsContainer
+        wait minWait
+        while targetexists 
+            wait minWait
+        endwhile
+    endif
+elseif MaterialsStorage = 2
+    if find myMaterialsBox backpack and find myMaterialsKey backpack
+        // good to go
+        overhead "Box & Key located"
+    else 
+        if counttype 'wooden box' backpack = 0
+            overhead "No Wooden Box Found" 33
+            setvar MaterialsStorage 0
+        elseif counttype 'wooden box' backpack > 1
+            overhead "Too many Wooden Boxes" 33
+            setvar MaterialsStorage 0
+        elseif findtype 'wooden box' as foundBox
+            if counttype 'copper key' backpack = 0
+                overhead "No Key Found" 33
+                setvar MaterialsStorage 0
+            elseif counttype 'copper key' backpack > 1
+                overhead "Too Many Keys" 33
+                setvar MaterialsStorage 0
+            elseif findtype 'copper key' as foundKey
+                dclick foundKey
+                waitfortarget 2000
+                target foundBox
+                wait minWait
+                if insysmsg "This key doesn"
+                    overhead "Key Mismatch" 33
+                    setvar MaterialsStorage 0
+                else 
+                    overhead "Ingot Box & Key"
+                    setvar myMaterialsBox foundBox
+                    setvar myMaterialsKey foundKey
+                endif
+            endif
+        endif
+    endif
+elseif MaterialsStorage = 1
+    if find myMaterialsPouch backpack
+        overhead "Ingot Pouch located"
+    elseif findtype 3705 backpack 38 as foundPouch
+        overhead "Setting Ingot Pouch"
+        setvar myMaterialsPouch foundPouch
+    else 
+        overhead "No Trapped Pouches found" 33
+        setvar MaterialsStorage 0
+    endif
+endif
+
+// Harvest Typing - Sets tool type and resets myTool if changing to different Harvest Type
+if not varexist prevHarvestType
+    @setvar! prevHarvestType 0
+endif 
+if not varexist myHarvestType
+    @setvar! myHarvestType 0
+endif    
+@setvar! prevHarvestType myHarvestType
+if HarvestType = 0
+    if skill "Mining" >= 50
+        @setvar! myHarvestType 1
+    elseif skill "Lumberjacking" >= 50
+        @setvar! myHarvestType 2
+    endif
+else 
+    @setvar! myHarvestType HarvestType
+endif
+if myHarvestType = 1
+    @setvar! ToolType 3718
+    @setvar! HarvestCD PickaxeSwingCD
+elseif myHarvestType = 2
+    @setvar! ToolType 3908
+    @setvar! HarvestCD HatchetSwingCD
+endif
+if prevHarvestType = myHarvestType
+    // nothing
+else 
+    @setvar! myTool 0
+endif
+
+if ForceHarvestAspect = 1
+    wait minWait
+    say "[AspectArmor Harvest"
+    wait minWait
+    if insysmsg "You do not have a full suit of armor equipped."
+        overhead "Missing Armor" 33
+        stop
+    endif
+endif
+
+if findtype 3705 backpack 38 as foundPouch
+    hotkey "Set Organizer HotBag-10"
+    waitfortarget 2000
+    target foundPouch
+    wait minWait
+    organizer 10
+    wait minWait
+    while queued
+        wait minWait
+    endwhile
+endif
+
+           
+while not dead    
+
+// == Unload to Stockpile ==
+    if position myUnloadX myUnloadY
+        if findtype 23034 ground -1 -1 2 as myStockpile
+            if MaterialsStorage = 2 and find myMaterialsBox backpack and find myMaterialsKey backpack
+                getlabel myMaterialsBox myMaterialsBoxLabel
+                if "stones" in myMaterialsBoxLabel
+                    // already unlocked
+                else 
+                    dclick myMaterialsKey
+                    waitfortarget 2000
+                    target myMaterialsBox
+                endif
+            endif
+            overhead "Restocking Stockpile"            
+            wait minWait
+            menu myStockpile 0
+            waitfortarget 2000
+            target backpack
+            stop
+        endif
+    endif    
+
+// == Tool Selection ==
+    if not find myTool self
+        if findtype ToolType self as foundTool
+            @setvar! myTool foundTool
+            getlabel myTool myToolLabel
+            sysmsg "Tool Set: {{myToolLabel}}"
+        else 
+            overhead "[[TOOL NOT FOUND]]" 33
+            if findtype MoveAlertSound backpack as foundSound
+                wait medWait
+                dclick foundSound
+                wait minWait
+            endif
+            settimer 'EscapeTimer' 0
+            while timer 'EscapeTimer' < 20000
+                wait minWait
+                if insysmsg "Now tracking"
+                    @setvar! autoEscape 1
+                    break
+                endif
+            endwhile
+            @setvar! autoEscape 1
+        endif
+    endif
+
+// == Auto Escape / Tracking ==
+    if findbuff "Stationary Penalty" and AutoEscapeStationary = 1
+        if timer "EscapeTimer" > 6000
+            overhead "[[STATIONARY PENALTY - MOVE OR ESCAPE]]" 33
+            if findtype MoveAlertSound backpack as foundSound
+                wait medWait
+                dclick foundSound
+                wait minWait
+            endif
+            settimer "EscapeTimer" 0
+        endif
+        if findbuff "Stationary Penalty" and not cooldown "STATIONARY"
+            @setvar! autoEscape 1
+        endif
+    endif
+    
+    if skill "Tracking" >= 80 and not findbuff "Tracking"
+        skill 'tracking'
+        waitforgump 4267467659
+        gumpresponse 6 4267467659
+        waitforgump 4267467659 
+        while not insysmsg "You will now hunt murderer players."
+            gumpresponse 8 4267467659
+            waitforgump 4267467659
+        endwhile
+        gumpclose
+    endif
+    
+    if AutoEscapeTracking = 0
+        // do nothing
+    else
+        if insysmsg ": 20 step" or insysmsg "20 space" or insysmsg ": 19 step" or insysmsg "19 space" or insysmsg ": 18 step" or insysmsg "18 space" or insysmsg ": 17 step" or insysmsg "17 space" or insysmsg ": 16 step" or insysmsg "16 space" or insysmsg ": 15 step" or insysmsg "15 space" or insysmsg ": 14 step" or insysmsg "14 space" or insysmsg ": 13 step" or insysmsg "13 space" or insysmsg ": 12 step" or insysmsg "12 space" or insysmsg ": 11 step" or insysmsg "11 space" or insysmsg ": 10 step" or insysmsg "10 space" or insysmsg ": 9 step" or insysmsg "(9 space" or insysmsg ": 8 step" or insysmsg "(8 space" or insysmsg ": 7 step" or insysmsg "(7 space" or insysmsg ": 6 step" or insysmsg "(6 space" or insysmsg ": 5 step" or insysmsg "(5 space" or insysmsg ": 4 step" or insysmsg "(4 space" or insysmsg ": 3 step" or insysmsg "(3 space" or insysmsg ": 2 step" or insysmsg "(2 space" or insysmsg ": 1 step" or insysmsg "(1 space" or insysmsg ": 0 step" or insysmsg "(0 space"
+            @setvar! CurrentTracking 1
+        elseif insysmsg ": 30 step" or insysmsg "30 space" or insysmsg ": 29 step" or insysmsg "29 space" or insysmsg ": 28 step" or insysmsg "28 space" or insysmsg ": 27 step" or insysmsg "27 space" or insysmsg ": 26 step" or insysmsg "26 space" or insysmsg ": 25 step" or insysmsg "25 space" or insysmsg ": 24 step" or insysmsg "24 space" or insysmsg ": 23 step" or insysmsg "23 space" or insysmsg ": 22 step" or insysmsg "22 space" or insysmsg ": 21 step" or insysmsg "21 space" 
+            @setvar! CurrentTracking 2
+        elseif insysmsg ": 40 step" or insysmsg "40 space" or insysmsg ": 39 step" or insysmsg "39 space" or insysmsg ": 38 step" or insysmsg "38 space" or insysmsg ": 37 step" or insysmsg "37 space" or insysmsg ": 36 step" or insysmsg "36 space" or insysmsg ": 35 step" or insysmsg "35 space" or insysmsg ": 34 step" or insysmsg "34 space" or insysmsg ": 33 step" or insysmsg "33 space" or insysmsg ": 32 step" or insysmsg "32 space" or insysmsg ": 31 step" or insysmsg "31 space"
+            @setvar! CurrentTracking 3
+        elseif insysmsg ": 50 step" or insysmsg "50 space" or insysmsg ":49 step" or insysmsg "49 space" or insysmsg ": 48 step" or insysmsg "48 space" or insysmsg ": 47 step" or insysmsg "47 space" or insysmsg ": 46 step" or insysmsg "46 space" or insysmsg ": 45 step" or insysmsg "45 space" or insysmsg ": 44 step" or insysmsg "44 space" or insysmsg ": 43 step" or insysmsg "43 space" or insysmsg ": 42 step" or insysmsg "42 space" or insysmsg ": 41 step" or insysmsg "41 space"
+            @setvar! CurrentTracking 4 
+        elseif insysmsg ": 60 step" or insysmsg "60 space" or insysmsg ": 59 step" or insysmsg "59 space" or insysmsg ": 58 step" or insysmsg "58 space" or insysmsg ": 57 step" or insysmsg "57 space" or insysmsg ": 56 step" or insysmsg "56 space" or insysmsg ": 55 step" or insysmsg "55 space" or insysmsg ": 54 step" or insysmsg "54 space" or insysmsg ": 53 step" or insysmsg "53 space" or insysmsg ": 52 step" or insysmsg "52 space" or insysmsg ": 51 step" or insysmsg "51 space" 
+            @setvar! CurrentTracking 5                
+        elseif insysmsg ": 70 step" or insysmsg "70 space" or insysmsg ": 69 step" or insysmsg "69 space" or insysmsg ": 68 step" or insysmsg "68 space" or insysmsg ": 67 step" or insysmsg "67 space" or insysmsg ": 66 step" or insysmsg "66 space" or insysmsg ": 65 step" or insysmsg "65 space" or insysmsg ": 64 step" or insysmsg "64 space" or insysmsg ": 63 step" or insysmsg "63 space" or insysmsg ": 62 step" or insysmsg "62 space" or insysmsg ": 61 step" or insysmsg "61 space" 
+            @setvar! CurrentTracking 6  
+        elseif insysmsg ": 80 step" or insysmsg "80 space" or insysmsg ": 79 step" or insysmsg "79 space" or insysmsg ": 78 step" or insysmsg "78 space" or insysmsg ": 77 step" or insysmsg "77 space" or insysmsg ": 76 step" or insysmsg "76 space" or insysmsg ": 75 step" or insysmsg "75 space" or insysmsg ": 74 step" or insysmsg "74 space" or insysmsg ": 73 step" or insysmsg "73 space" or insysmsg ": 72 step" or insysmsg "72 space" or insysmsg ": 71 step" or insysmsg "71 space" 
+            @setvar! CurrentTracking 7
+        elseif insysmsg ": 90 step" or insysmsg "90 space" or insysmsg ": 89 step" or insysmsg "89 space" or insysmsg ": 88 step" or insysmsg "88 space" or insysmsg ": 87 step" or insysmsg "87 space" or insysmsg ": 86 step" or insysmsg "86 space" or insysmsg ": 85 step" or insysmsg "85 space" or insysmsg ": 84 step" or insysmsg "84 space" or insysmsg ": 83 step" or insysmsg "83 space" or insysmsg ": 82 step" or insysmsg "82 space" or insysmsg ": 81 step" or insysmsg "81 space" 
+            @setvar! CurrentTracking 8 
+        elseif insysmsg "Now tracking"
+            @setvar! CurrentTracking 9
+        else
+            @setvar! CurrentTracking 0
+        endif
+        if CurrentTracking = 0
+            // nothing
+        elseif CurrentTracking <= AutoEscapeTracking
+            @setvar! autoEscape 1
+        endif
+    endif
+    
+    if autoEscape = 1
+        script "QuickEscape"
+    endif
+    
+// == Healing ==
+    if diffhits > 0 and skill "Healing" >= 40 and not bandaging and findtype 3617 backpack
+        @hotkey "Bandage Self"
+    endif
+    if hp < 50
+        hotkey "Drink Heal"
+        wait minWait
+    endif
+    while hp < 40
+        if casting or targetexists
+            hotkey "> Interrupt"
+        endif
+        hotkey "> Smart Heal/Cure Self"
+        wait minWait
+        while casting 
+            wait minWait
+        endwhile
+    endwhile
+    if diffhits > 10 and not casting and not targetexists and not warmode
+        wait minWait
+        if not casting and not targetexists 
+            hotkey "> Smart Heal/Cure Self"
+            wait minWait
+            while casting
+                wait minWait
+            endwhile
+        endif
+    endif
+    if poisoned and not casting and not targetexists and not warmode
+        wait minWait
+        if not casting and not targetexists 
+            hotkey ">Smart Heal/Cure Self"
+            wait minWait
+            while casting
+                wait minWait
+            endwhile
+        endif
+    endif
+    if paralyzed 
+        say "[pouch"
+    endif
+    if mana < 50 and not findbuff "Magic Mushroom" and findtype "mushroom" backpack as myShroom
+        wait minWait
+        dclick myShroom
+    endif
+    if counttype "mushroom" backpack < 5
+        for 10
+            cast 'Create Food'
+            wait minWait
+            while casting 
+                wait minWait
+            endwhile
+            wait minWait
+            if hp < 50
+                break
+            endif
+            if mana < 20
+                skill "Meditation"
+                while mana < 75
+                    wait minWait
+                endwhile
+            endif
+        endfor
+    endif
+    
+// == Summons ==
+
+    if followers < 2
+        settimer "SummonTimer" 60000
+    endif
+    if skill "Spirit Speak" >= 80 and followers < 4 and timer "SummonTimer" > 60000 and not warmode
+        if mana < 50 and not cooldown "Skill"
+            skill "Meditation"
+            wait minWait
+        endif
+        while findbuff "Actively Meditating"
+            wait minWait
+            if mana > 75
+                break
+            endif
+            if hp < 50
+                replay
+            endif
+        endwhile
+        cast "Earth Elemental"
+        wait medWait
+        if casting
+            while casting
+                wait 200
+            endwhile
+            wait medWait
+        endif
+        say "All Guard Me"
+        settimer "SummonTimer" 0
+        settimer "SummonGuardTimer" 0
+    endif
+    if timer "SummonGuardTimer" > 30000
+        wait minWait
+        say "All Guard Me"
+        settimer "SummonGuardTimer" 0
+    endif
+    
+// == Move Alert ==    
+    if insysmsg "You do not see any harvestable resources nearby."
+        if timer 'MoveAlertTimer' > MoveAlertCooldown
+            overhead "[[TIME TO MOVE]]" 44
+            settimer 'MoveAlertTimer' 0
+            say "All Follow Me"
+            if MoveAlertSound = 0
+                // no sound alert
+            elseif findtype MoveAlertSound backpack as foundSound
+                wait medWait
+                dclick foundSound
+                wait minWait
+            else 
+                overhead "Cannot find Move Alert Sound Item" 33
+            endif 
+            organizer 10
+            while queued
+                wait minWait
+            endwhile
+        endif
+    endif
+    
+// == Forges/Smelt/Chop ==
+    if EnableForgeRadar = 1
+        if not timerexists "ForgeRadarTimer"
+            createtimer "ForgeRadarTimer"
+            settimer "ForgeRadarTimer" 0
+        endif
+        if findtype "4017|6526|6538|6550|6562" ground -1 -1 15 as forge or findtype 0x0FB1 ground -1 -1 15 as forge and findtype "iron ore" backpack and timer "ForgeRadarTimer" > 3500
+            overhead "[ FORGE ]" 44 forge
+            overhead "▼" 44 forge
+            settimer "ForgeRadarTimer" 0
+        endif
+        endif
+        while findtype "4017|6526|6538|6550|6562" ground -1 -1 2 as forge or findtype 0x0FB1 ground -1 -1 2 as forge and findtype "iron ore" backpack as myOre
+            dclick myOre
+            wait minWait
+        endwhile
+        if findtype "logs" backpack and timer "ForgeRadarTimer" > 20000
+            while findtype "logs" backpack as myLogs
+                dclick myLogs
+                wait minWait
+            endwhile
+            settimer "ForgeRadarTimer" 0
+        endif
+        
+    endif    
+              
+// == Moving Ingots/Boards ==
+    if MaterialsStorage = 0
+        // nothing
+    else 
+        @ignore! StoredMaterials
+        if findtype 7154|7127 backpack
+            drop backpack
+            while findtype 7154|7127 backpack as found
+                @setvar! LooseMaterials found
+                if MaterialsStorage = 3 and find myMaterialsContainer backpack
+                    lift LooseMaterials 60000
+                    drop myMaterialsContainer -1 -1 -1
+                    pushlist StoredMaterials LooseMaterials
+                    wait minWait
+                elseif MaterialsStorage = 2 and find myMaterialsBox backpack and find myMaterialsKey backpack
+                    getlabel myMaterialsBox myMaterialsBoxLabel
+                    if "stones" in myMaterialsBoxLabel
+                        // already unlocked
+                    else 
+                        dclick myMaterialsKey
+
+                        waitfortarget 20000
+                        target myMaterialsBox
+                    endif
+                    lift LooseMaterials 60000
+                    drop myMaterialsBox -1 -1 -1
+                    pushlist StoredMaterials LooseMaterials 
+                    wait minWait
+                elseif MaterialsStorage = 1 and find myMaterialsPouch backpack
+                    lift LooseMaterials 60000
+                    drop myMaterialsPouch -1 -1 -1
+                    pushlist StoredMaterials LooseMaterials
+                    wait minWait
+                endif
+                @ignore! StoredMaterials
+                wait minWait
+            endwhile 
+            wait minWait
+        endif
+        if MaterialsStorage = 2 and find myMaterialsBox backpack and find myMaterialsKey backpack
+            getlabel myMaterialsBox myMaterialsBoxLabel
+            if "stones" in myMaterialsBoxLabel
+                dclick myMaterialsKey
+                waitfortarget 2000
+                target myMaterialsBox
+                wait minWait
+            else 
+                // already locked
+            endif 
+        endif
+    endif
+    
+    if not casting and not targetexists
+        if not findlayer self righthand and not findlayer self lefthand
+            wait minWait
+            @dclick myTool
+            wait minWait
+        endif
+    endif
+    if insysmsg "What do you want to use this item on"
+        waitfortarget 1000
+        target "self"
+    endif
+    
+    if not cooldown "Harvest" and not warmode 
+        hotkey "Use Item in Hand"
+        cooldown "Harvest" HarvestCD
+    endif
+
+endwhile   
+
+
+#
