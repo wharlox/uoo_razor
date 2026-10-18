@@ -34,8 +34,8 @@
 
 #############################################################################"SETTINGS"################################################################################################
 
-clearignore
-clearall 
+@clearignore
+@clearall 
 @setvar! stealthStatus 0
 
 // Overhead Timer = How many milliseconds between overhead alerts
@@ -58,7 +58,7 @@ clearall
 /////////////////////////
   
 // autoSkinning = 0 to deactivate, 1 for only grey corpses, 2 for all corpses
-    @setvar! autoSkinning 1
+    @setvar! autoSkinning 0
 // auto open corpses
     @setvar! autoOpenCorpses 0
     
@@ -121,9 +121,10 @@ clearall
    
 // Items to Throw on Ground if looted (add as many items as you want) #    
     if not listexists "TrashItems"
-        createlist "TrashItems"
+        @createlist "TrashItems"
+    else
+        @clearlist "TrashItems"
     endif
-    clearlist "TrashItems"
     # Trash Items #
     #pushlist "TrashItems" "cut%s% of raw ribs"
     #pushlist "TrashItems" "raw fish steak%s%"
@@ -161,10 +162,18 @@ elseif findlayer self head as item
 else 
     overhead "Headpiece not equipped" 33
 endif
+@clearignore
 if WizHatMode = 1 
-    if findtype 5912 self as item
-        setvar my_wizhat item
-    else 
+    setvar my_wizhat 0
+    while my_wizhat == 0 and findtype 5912 self as item
+        @getlabel! item _label
+        if "magical" in _label
+            setvar my_wizhat item
+        endif
+        @ignore item
+    endwhile
+    @clearignore
+    if my_wizhat == 0
         overhead "No WizHat Found" 33
         setvar my_wizhat 0
         @setvar! WizHatMode 0
@@ -257,7 +266,7 @@ else
     endif
     warmode "off"
     useskill "hiding"
-    wait 400
+    wait 100
     ## Smoke Bomb if Hide didn't work ##    
     if not hidden 
         if findtype 52149 backpack 2876
@@ -271,11 +280,16 @@ else
     if not hidden
         @setvar! stealthStatus 0
         overhead "Run for it!!! - Break Line of Sight and try again." 33
+        overhead "Run for it!!! - Break Line of Sight and try again." 33
         stop
     else 
         @setvar! stealthStatus 1
     endif
 endif
+
+
+
+
 
 while not dead
     
@@ -284,21 +298,25 @@ while not dead
             @setvar! stealthStatus 0
         endif
     ## Applying Bandages if damaged or poisoned ##    
-        if diffhits > 0 or poisoned 
+        if diffhits > 0 or poisoned and not hidden
             if not bandaging and skill "Healing" > 10
                 if findtype "clean bandage%s%" self
-                    hotkey "Bandage Self"
-                    wait 200
+                    if not hidden
+                        hotkey "Bandage Self"
+                        wait 200
+                    endif
                 else 
                     overhead "No Bandages"
                 endif
             endif
         endif
     ## Taking Heal Potion if low health ##    
-        if diffhits > 40 and autoTreat = 1
+        if diffhits > 40 and autoTreat = 1 and not hidden
             if findtype "Yellow Potion" self
-                hotkey "Drink Heal"
-                wait 1000
+                if not hidden
+                    hotkey "Drink Heal"
+                    wait 1000
+                endif
             else 
                 overhead "No Heal Pots"
             endif
@@ -306,10 +324,12 @@ while not dead
         if autoTreat = 1    
     ## Poisoned ##
             for 10
-                if poisoned
+                if poisoned and not hidden
                     if findtype "Orange Potion" self
-                        hotkey "Drink Cure"
-                        wait 200
+                        if not hidden
+                            hotkey "Drink Cure"
+                            wait 200
+                        endif
                     else
                         overhead "No Cure Pots"
                         break
@@ -322,15 +342,19 @@ while not dead
             if findbuff "Disease" or findbuff "Bleed"
                 if codexPanacea = 0
                     if findtype 50675 self 2935 as cBrew
-                        dclick cBrew
-                        wait 200
+                        if not hidden
+                            dclick cBrew
+                            wait 200
+                        endif
                     else
                         overhead "No Brew"
                     endif
                 else
                     if findtype "Orange Potion" self
-                        hotkey "Drink Cure"
-                        wait 200
+                        if not hidden
+                            hotkey "Drink Cure"
+                            wait 200
+                        endif
                     else
                         overhead "No Cure Pots"
                     endif
@@ -339,20 +363,22 @@ while not dead
         endif
 ## Auto-Skinning any corpses around ##        
         if autoSkinning = 2
-            if findtype "Elven Spellblade" backpack and findtype 8198 ground -1 -1 2 as aCorpse
-            getlabel aCorpse desc
+            if findtype "Elven Spellblade" backpack and findtype 8198 ground -1 -1 2 as aCorpse and not hidden
+                @getlabel aCorpse desc
                 if "the remains" in desc
                     overhead "Skipping: {{desc}}" 11 aCorpse
                     // do nothing
                     @ignore aCorpse
                 else
                     overhead "Skinning: {{desc}}" 88 aCorpse
-                    while not targetexists 
+                    while not targetexists and not hidden
                         useskill "forensicevaluation"
                     endwhile
-                    if targetexists 
+                    if targetexists and not hidden
                         target aCorpse
                         @ignore aCorpse
+                    else
+                        hotkey "cancel current target"
                     endif
                 endif
             endif
@@ -360,13 +386,15 @@ while not dead
         if autoSkinning = 1
             if findtype 8198 ground -1 -1 2 as aCorpse
                 if findtype "Elven Spellblade" backpack
-                    dclicktype "Elven Spellblade" backpack
-                    waitfortarget 1500
-                    target "self"
-                    if insysmsg "You carve materials from the corpse"
-                        ignore aCorpse
-                    elseif insysmsg "That corpse has already been carved"
-                        ignore aCorpse
+                        if not hidden
+                        dclicktype "Elven Spellblade" backpack
+                        waitfortarget 1500
+                        target "self"
+                        if insysmsg "You carve materials from the corpse"
+                            ignore aCorpse
+                        elseif insysmsg "That corpse has already been carved"
+                            ignore aCorpse
+                        endif
                     endif
                 else
                     overhead "No Skinning Knife!"
@@ -375,13 +403,21 @@ while not dead
         endif
         if autoOpenCorpses = 1
             if findtype "corpse|bones" ground -1 -1 2 as jorpse
-                getlabel jorpse desc
-                dclick jorpse
-                @ignore jorpse
-                wait 650
+                if not hidden
+                    getlabel jorpse desc
+                    dclick jorpse
+                    @ignore jorpse
+                    wait 500
+                endif
             endif     
          endif   
     endif
+    
+    
+    
+
+    
+    
     if hidden
         if mounted
             hotkey "Dismount"
@@ -444,10 +480,27 @@ while not dead
     if hidden and WizHatMode = 1
         if timer "WizHatTimer" > 3000
             if maxstam = stam 
-                dclick my_wizhat
-                wait 200
-                dclick my_head
-                settimer "WizHatTimer" 0
+                @setvar head_set_good 0
+                while head_set_good == 0
+                    while queued
+                    endwhile
+                    dclick my_wizhat
+                    wait 500
+                    #@getlabel! backpack _bp
+                    while queued
+                    endwhile
+                    dclick my_head
+                    settimer "WizHatTimer" 0
+                    wait 500
+                    #@getlabel! backpack _bp
+                    while queued
+                    endwhile
+                    if findlayer self head as item
+                        if item == my_head
+                            @setvar head_set_good 1
+                        endif
+                    endif
+                endwhile
             endif
         endif
     endif
@@ -560,7 +613,11 @@ while not dead
                     if findtype item self as found
                         @drop self
                         lift found 60000
-                        droprelloc 0 0 0
+                        drop ground
+                        wait 420
+                        @getlabel! backpack _bp
+                        while queued
+                        endwhile
                         @ignore found
                     endif
                     while queued
@@ -588,7 +645,7 @@ while not dead
         if findtype "gold coin" backpack as myMoney
             @drop self
             lift myMoney OverWeightGold
-            droprelloc 0 0 0
+            drop ground
             @ignore myMoney
             wait 500
         endif
