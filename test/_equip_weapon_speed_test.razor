@@ -1,0 +1,68 @@
+
+
+dclick  _t_equip_rhand
+#wait 504
+## 500 OR 415 + getlabel  - chests then action
+## 504 OR 419 + getlabel
+wait 419
+@getlabel! backpack _bp
+dclick  _t_equip_lhand
+
+wait 1000
+lift _t_equip_rhand
+drop backpack
+wait 600
+lift _t_equip_lhand
+drop backpack
+
+stop
+                    
+
+
+    if varexist _rhand_in_use and varexist _t_equip_rhand and varexist _t_equip_lhand
+        if _rhand_in_use == 1
+            if rhandempty and not casting  
+                if @find! _t_equip_rhand  backpack
+                    @getlabel! backpack _bp
+                    dclick  _t_equip_rhand
+                    wait 504
+                endif
+            endif
+        else
+            if lhandempty and  not casting
+                if @find! _t_equip_lhand  backpack
+                    @getlabel! backpack _bp
+                    dclick  _t_equip_lhand
+                    wait 504
+                endif
+            endif
+        endif
+        while queued
+        endwhile
+
+
+
+        if rhandempty and not casting  
+            @getlabel! backpack _bp
+            if @find! _t_equip_rhand  backpack
+                @getlabel! backpack _bp
+                dclick  _t_equip_rhand
+                wait 504
+            endif
+        endif
+        while queued
+        endwhile
+
+        if lhandempty and  not casting
+            @getlabel! backpack _bp
+            if @find! _t_equip_lhand  backpack
+                @getlabel! backpack _bp
+                dclick  _t_equip_lhand
+                wait 504
+            endif
+        endif
+        while queued
+        endwhile
+    endif
+
+#

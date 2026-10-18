@@ -1,0 +1,221 @@
+## guild gump
+# 1011700083
+
+## MODE - 0 alliance - 1 guild
+@setvar! _spammer__alliance__or__guild 0
+
+
+
+@unsetvar _spammer__boss
+@unsetvar _spammer__boss_type
+@unsetvar _itr
+@removelist _itr
+@removetimer _itr
+@removelist _spammer__boss
+@removelist _spammer__boss_type
+@unsetvar _spammer__bosses_summon_button_type
+@removelist _spammer__bosses_summon_button_type
+@removetimer _spammer__bosses_summon_button_type
+if not listexists _spammer__boss
+    @createlist _spammer__boss
+else
+    @clearlist _spammer__boss
+endif
+if not listexists _spammer__boss_type
+    @createlist _spammer__boss_type
+else
+    @clearlist _spammer__boss_type
+endif
+
+## ak
+## cav
+## dm
+## inf
+## kh
+## mp
+## nus
+## oss
+## pul
+## ssc
+## maus
+## tt
+## ocean
+## wild
+
+@pushlist _spammer__boss "tt"
+@pushlist _spammer__boss_type "main"
+#@pushlist _spammer__boss_type "mini"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+sysmsg "___start" 44
+
+
+whisper "[guild"
+waitforgump 1011700083
+@getlabel backpack _bp
+
+## set right-panel page
+if     ingump "Overview" 1011700083 and ingump "Members" 1011700083 and ingump "Dungeons" 1011700083
+    @setvar _spammer__left_panel_page 1
+elseif ingump "Trade Caravans" 1011700083 and ingump "Candidates" 1011700083 and ingump "Diplomacy" 1011700083
+    @setvar _spammer__left_panel_page 2
+    gumpresponse 15 1011700083
+    waitforgump 1011700083
+elseif ingump "Prestige Unlocks" 1011700083
+    @setvar _spammer__left_panel_page 3
+    gumpresponse 15 1011700083
+    waitforgump 1011700083
+    gumpresponse 15 1011700083
+    waitforgump 1011700083
+endif
+
+
+
+
+
+## click Dungeons- this also defaults ALL Main vs Mini
+gumpresponse 14 1011700083
+waitforgump 1011700083
+
+
+
+
+## 0-main 1-mini
+@setvar! _spammer__bosses_summon_button_type 0
+if  inlist _spammer__boss_type "mini"
+    @setvar! _spammer__bosses_summon_button_type 1
+endif
+
+## assume right-pane 1/3 and all Summon Boss
+@setvar! _spammer__bosses_page 1
+@setvar! _spammer__bosses_type_button 0
+if     inlist _spammer__boss  "ak"
+    @setvar! _spammer__bosses_summon_button 50
+    @setvar! _spammer__bosses_boss_type_button 70
+elseif inlist _spammer__boss  "cav"
+    @setvar! _spammer__bosses_summon_button 51
+    @setvar! _spammer__bosses_boss_type_button 71
+elseif inlist _spammer__boss  "dm"
+    @setvar! _spammer__bosses_summon_button 52
+    @setvar! _spammer__bosses_boss_type_button 72
+elseif inlist _spammer__boss  "inf"
+    @setvar! _spammer__bosses_summon_button 53
+    @setvar! _spammer__bosses_boss_type_button 73
+elseif inlist _spammer__boss  "kh"
+    @setvar! _spammer__bosses_summon_button 54
+    @setvar! _spammer__bosses_boss_type_button 74
+elseif inlist _spammer__boss  "mp"
+    @setvar! _spammer__bosses_summon_button 55
+    @setvar! _spammer__bosses_boss_type_button 75
+## right-pane Page 2/3
+elseif inlist _spammer__boss  "nus"
+    @setvar! _spammer__bosses_page 2
+    @setvar! _spammer__bosses_summon_button 50
+    @setvar! _spammer__bosses_boss_type_button 70
+elseif inlist _spammer__boss  "oss"
+    @setvar! _spammer__bosses_page 2
+    @setvar! _spammer__bosses_summon_button 51
+    @setvar! _spammer__bosses_boss_type_button 71
+elseif inlist _spammer__boss  "pul"
+    @setvar! _spammer__bosses_page 2
+    @setvar! _spammer__bosses_summon_button 52
+    @setvar! _spammer__bosses_boss_type_button 72
+elseif inlist _spammer__boss  "ssc"
+    @setvar! _spammer__bosses_page 2
+    @setvar! _spammer__bosses_summon_button 53
+    @setvar! _spammer__bosses_boss_type_button 73
+elseif inlist _spammer__boss  "maus"
+    @setvar! _spammer__bosses_page 2
+    @setvar! _spammer__bosses_summon_button 54
+    @setvar! _spammer__bosses_boss_type_button 74
+elseif inlist _spammer__boss  "tt"
+    @setvar! _spammer__bosses_page 2
+    @setvar! _spammer__bosses_summon_button 55
+    @setvar! _spammer__bosses_boss_type_button 75
+## right-pane Page 3/3
+elseif inlist _spammer__boss  "ocean"
+    @setvar! _spammer__bosses_page 3
+    @setvar! _spammer__bosses_summon_button 50
+    @setvar! _spammer__bosses_boss_type_button 70
+elseif inlist _spammer__boss  "wild"
+    @setvar! _spammer__bosses_page 3
+    @setvar! _spammer__bosses_summon_button 51
+    @setvar! _spammer__bosses_boss_type_button 71
+else
+    sysmsg "typo in summon boss script - unknown boss" 33
+    overhead "typo in summon boss script - unknown boss" 33
+    stop
+    
+endif
+
+
+sysmsg "page {{_spammer__bosses_page}}    0-main 1-mini {{_spammer__bosses_summon_button_type}}   button {{_spammer__bosses_summon_button}}" 44
+
+## goto next page
+if _spammer__bosses_page == 2
+    gumpresponse 31 1011700083
+    waitforgump 1011700083
+elseif _spammer__bosses_page == 3
+    gumpresponse 31 1011700083
+    waitforgump 1011700083
+    gumpresponse 31 1011700083
+    waitforgump 1011700083
+endif
+
+## if mini
+if _spammer__bosses_summon_button_type == 1
+    sysmsg "mini" 44
+    gumpresponse _spammer__bosses_boss_type_button 1011700083
+    waitforgump 1011700083
+endif
+
+
+## spam summon
+while 1 == 1
+    sysmsg "spam summon" 99
+    gumpresponse _spammer__bosses_summon_button 
+    waitforgump 1011700083
+endwhile
+
+#
+//if ingump "1/3" 1011700083
+//    overhead "_____"
+//    sysmsg   "_____"
+//endif
+
+## right-pane next-page
+#gumpresponse 31
+#waitforgump 1011700083
+
+## summon-it - 1st
+#gumpresponse 50
+#waitforgump 1011700083
+## left-right on a boss - 1st
+#gumpresponse 60
+#waitforgump 1011700083
+#gumpresponse 70
+#waitforgump 1011700083
+
+## summon-it - 2nd 
+#gumpresponse 51
+#waitforgump 1011700083
+## left-right on boss - 2nd
+#gumpresponse 61
+#waitforgump 1011700083
+#gumpresponse 71
+#waitforgump 1011700083
+#

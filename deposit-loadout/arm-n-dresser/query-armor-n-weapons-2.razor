@@ -290,16 +290,16 @@ if "throwing knife" in _label  or  "dagger" in _label  or  "spellbook" in _label
 else
     @setvar _util__hotkey_armorer__equipped__righthand__equip__dclick_or_liftdrop 1
 endif
-sysmsg  "r_ha {{_label}}"
+sysmsg  "r_ha {{_label}}" 55
 @getlabel! _util__hotkey_armorer__equipped__lefthand _label
 if "throwing knife" in _label  or  "dagger" in _label  or  "spellbook" in _label
     @setvar _util__hotkey_armorer__equipped__lefthand__equip__dclick_or_liftdrop 2
 else
     @setvar _util__hotkey_armorer__equipped__lefthand__equip__dclick_or_liftdrop 1
 endif
-sysmsg  "l_ha {{_label}}"
-#sysmsg  "quiv {{_util__hotkey_armorer__equipped__quiver}}"
-#sysmsg  "satc {{_util__hotkey_armorer__equipped__satchel}}"
+sysmsg  "l_ha {{_label}}" 55
+#sysmsg  "quiv {{_util__hotkey_armorer__equipped__quiver}}" 55
+#sysmsg  "satc {{_util__hotkey_armorer__equipped__satchel}}" 55
 
 
 sysmsg  "save complete" 70

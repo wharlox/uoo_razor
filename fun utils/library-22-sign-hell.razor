@@ -6,8 +6,11 @@
 @settimer  _overheads  _tmp_timer
 
 @unsetvar _sign_thing
-if findtype 20306 backpack as _this
+if findtype 61433 backpack as _this
+    ## book - 61433 0
     @setvar  _sign_thing  _this
+else
+    @unsetvar _sign_thing
 endif
 #61433
 
@@ -29,7 +32,7 @@ while findtype 2000|2001|2002|2003|2004|2005|2006|2007|2008|2009|2010|2011|2012|
         if "the office" in _label or "the underlibrary" in _label
         @setvar _found 1
         if timer _overheads  >= _tmp_timer
-            overhead "******  {{_label}}" 44  _sign
+            overhead "***                 {{_label}}" 44  _sign
             @settimer  _overheads  0 
         endif
         endif
@@ -45,9 +48,11 @@ while findtype  2000|2001|2002|2003|2004|2005|2006|2007|2008|2009|2010|2011|2012
     @clearsysmsg
     if  not inlist _added_super_ignore _sign
         if "the office" in _label   or  "the underlibrary" in _label
-        dclick _sign_thing
-        wft 500
-        target _sign 
+            if varexist _sign_thing
+                dclick _sign_thing
+                wft 500
+                target _sign 
+            endif
         @getlabel! backpack _bp
         if insysmsg "you have already noted this sign" or insysmsg "you take note of the office" 
             overhead "_MARKED SIGN_"
@@ -62,5 +67,5 @@ while findtype  2000|2001|2002|2003|2004|2005|2006|2007|2008|2009|2010|2011|2012
     @ignore _sign
 endwhile
 
-wait 150
+wait 100
 endwhile

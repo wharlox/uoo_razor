@@ -1,0 +1,146 @@
+
+
+@setvar _is_casting 0
+@setvar _cast_interrupted 0
+
+if not listexists _done_stoled_from
+    @createlist _done_stoled_from
+endif
+foreach monster in _done_stoled_from
+    if dead monster
+        @poplist _done_stoled_from monster
+    endif
+endfor
+
+@clearsysmsg
+if not dead 
+
+    while queued
+    endwhile
+
+
+    hotkey "Target Closest Non-Friendly Monster"
+    wait 200
+    @setvar! _target lasttarget
+
+    if insysmsg "No one matching that was found"
+        @setvar! _target 0
+    endif
+    if _target != 0
+    
+        if find _target ground -1 -1 2
+            overhead "* target {{_target}}*" 44 _target
+        else
+            #### target too far away
+            overhead "steal target too far away" 1774
+            @setvar! _target 0
+        endif
+    ## _target != 0
+    endif
+
+
+
+
+    if not hidden and _target != 0
+        while not casting
+            cast 'Invisibility'
+        endwhile
+        if casting
+            @setvar _is_casting 1
+        endif
+        while casting and not targetexists
+            if insysmsg "Your concentration is disturbed"
+                overhead "steal invis interrupted!" 24
+                hotkey 'play script: Advanced\_Master'
+                @setvar _cast_interrupted 1
+            endif
+            foreach monster in _done_stoled_from
+                if dead monster
+                    @poplist _done_stoled_from monster
+                endif
+            endfor
+        endwhile
+        #@getlabel backpack _bp
+        #@getlabel backpack _bp
+        #@getlabel backpack _bp
+        wait 200
+        if _cast_interrupted == 0 and targetexists 'beneficial'
+            target self
+            #@getlabel backpack _bp
+            wait 150
+        endif
+
+    endif
+    
+    
+    if hidden 
+        if dead _target or inlist _done_stoled_from  _target
+            overhead "already stole from this sob" 108
+            hotkey 'Next Non-Friendly Monster Target'
+            wait 200
+            @setvar! _target lasttarget
+
+            if insysmsg "No one matching that was found"
+                @setvar! _target 0
+            endif
+            if _target != 0
+            
+                if find _target ground -1 -1 2
+                    overhead "* next target *" 44 _target
+                else
+                    #### target too far away
+                    overhead "next steal target too far away" 1774
+                    overhead "* too far *" 1774 _target
+                    @setvar! _target 0
+                endif
+            ## _target != 0
+            endif
+        endif    
+
+        if  _target != 0
+            if find _target ground -1 -1 2
+                skill "Stealing"
+                wft 500
+                target _target
+                wait 100
+                if insysmsg "You steal "
+                    if not inlist _done_stoled_from  _target
+                        @pushlist _done_stoled_from  _target
+                    endif
+                    overhead "stole good" 99
+                elseif insysmsg "You have already stolen"
+                    if not inlist _done_stoled_from  _target
+                        @pushlist _done_stoled_from  _target
+                    endif
+                elseif insysmsg "You fail to steal"
+                    overhead "steal fail" 123
+                endif
+                ## insysmsg "You steal "
+                ## "You have already stolen"
+                ## "You fail to steal"   "and it retaliates against you"
+                ## "That creature cannot be stolen from"
+                if insysmsg "and it retaliates against you"
+                    potion "heal"
+                endif
+                if insysmsg " black goods."
+                    if findtype 'black market goods' backpack -1 -1 1 as _this
+                        
+                    endif
+                endif
+                warmode on
+                warmode off
+                
+            else
+                overhead "steal target moved, too far away" 32
+            endif
+        ## target != 0       
+        endif
+
+    ## if hidden
+    endif
+endif
+
+
+
+hotkey 'play script: Advanced\_Master'
+#

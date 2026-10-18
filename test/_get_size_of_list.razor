@@ -1,0 +1,32 @@
+
+sysmsg "__start"
+@settimer _get_size_of_list 0
+
+
+@removelist _test_one
+
+@createlist _test_one
+
+@pushlist _test_one 1
+@pushlist _test_one 12
+@pushlist _test_one 113
+@pushlist _test_one 1114
+@pushlist _test_one 11115
+@pushlist _test_one 111116
+
+### setvar here adds another 10ms or so
+#@setvar _size 0
+if list _test_one > 0
+    @pushlist _test_one 'x' back
+    foreach _itr in _test_one
+        @setvar _size index 
+    endfor
+    @poplist _test_one back
+endif
+sysmsg _size
+
+
+@removelist _test_one
+@unsetvar _size
+sysmsg "__end {{_get_size_of_list}}"
+@removetimer _get_size_of_list

@@ -14,8 +14,11 @@
 
 #### check if a Wilderness lantern is on or off - if on disable resupply
 #### TODO- variablize ID and HUE
-@setvar!  _this_shelf__do_resupply  1
-if varexist _deposit_loadout__lantern__shelf_resupply
+@setvar!  _this_shelf__do_resupply  9
+if not varexist _deposit_loadout__shelf__force_resupply
+    @setvar _deposit_loadout__shelf__force_resupply 0
+endif
+if varexist _deposit_loadout__lantern__shelf_resupply and _this_shelf__do_resupply == 9 and _deposit_loadout__shelf__force_resupply == 0
     if @findtype! 2594 ground 1182 any 4 as _tmp
         ## findtype  ID  ground  HUE  any  4
         if _tmp == _deposit_loadout__lantern__shelf_resupply 
@@ -28,15 +31,19 @@ endif
 
 
 
+while queued
+    #@getlabel! backpack _tmp_label
+endwhile
+
 #### call menu resupply on each shelf if in range
-if _this_shelf__do_resupply == 1
+if _this_shelf__do_resupply != 0 or _deposit_loadout__shelf__force_resupply == 1
     foreach _a_shelf in _this_self_serials
         ## shelf Resupply
         if find _a_shelf ground  -1 -1 2
-            wait 15
+            #wait 25
             menu _a_shelf 1
-            wait 150
-            #@getlabel!  _a_shelf  _tmp_label
+            #wait 150
+            @getlabel!  _a_shelf  _tmp_label
         endif
     endfor
     #@getlabel! backpack _tmp_label

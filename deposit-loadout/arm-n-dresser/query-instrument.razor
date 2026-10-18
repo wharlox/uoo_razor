@@ -1,0 +1,142 @@
+# >script deposit-loadout\arm-n-dresser\query-instrument
+
+
+#### script to automatically run after this script
+####   to enable- uncomment the pushlist line, add in the path to the next script after Play Script
+@removelist _util__hotkey_get_instruments__script_chain
+@createlist _util__hotkey_get_instruments__script_chain
+#@pushlist _util__hotkey_get_instruments__script_chain "Play Script: AutoDexxer"
+
+
+
+#### enforce_run_twice - default 1
+##   0 disables - script will run immediatly in full
+##   1 enables  - script will need to be executed twice
+@setvar _util__hotkey_get_instruments__enforce_run_twice 1
+#### ensure no more than the givin ms has passed to allow the script to continue - set to 0 to disable
+@setvar _util__hotkey_get_instruments__enforce_run_twice_time_threshold 1000
+
+
+
+
+#### clear-vars
+if 1 == 2
+    sysmsg   "script vars cleared"
+    overhead "script vars cleared"
+    stop
+    sysmsg "fin"
+endif
+
+
+
+
+if _util__hotkey_get_instruments__enforce_run_twice == 1
+    @removelist _util__hotkey_get_instruments__name
+    @createlist _util__hotkey_get_instruments__name
+    
+    #### a friendly value of this script
+    @pushlist   _util__hotkey_get_instruments__name  "query-instruments"
+
+
+    if not timerexists _util__hotkey_get_instruments__enforce_run_twice__timer
+        @settimer _util__hotkey_get_instruments__enforce_run_twice__timer 0
+    endif
+
+
+    if not listexists _util__hotkey_get_instruments__name_previous
+        @createlist _util__hotkey_get_instruments__name_previous
+        foreach _itr in _util__hotkey_get_instruments__name
+            @pushlist _util__hotkey_get_instruments__name_previous _itr
+            sysmsg   "click again within {{_util__hotkey_get_instruments__enforce_run_twice_time_threshold}} ms to save instruments" 44
+            overhead "click again within {{_util__hotkey_get_instruments__enforce_run_twice_time_threshold}} ms to save instruments" 44
+            stop
+        endfor
+    endif
+
+
+    if _util__hotkey_get_instruments__enforce_run_twice_time_threshold != 0
+        if timer _util__hotkey_get_instruments__enforce_run_twice__timer > _util__hotkey_get_instruments__enforce_run_twice_time_threshold and listexists _util__hotkey_get_instruments__name_previous
+            @removelist _util__hotkey_get_instruments__name_previous
+            @removetimer _util__hotkey_get_instruments__enforce_run_twice__timer 
+            sysmsg   "aborting: took too long to click a second time. try again" 33
+            overhead "aborting: took too long to click a second time. try again" 33
+            stop
+        endif
+    endif
+
+
+    foreach _itr in _util__hotkey_get_instruments__name
+        foreach _itr_prev in _util__hotkey_get_instruments__name_previous
+            @removelist _util__hotkey_get_instruments__name_previous
+            if _itr == _itr_prev
+                sysmsg  "saving instruments..." 70
+                overhead "saving instruments..." 70
+                @removelist _util__hotkey_get_instruments__name
+                @removetimer _util__hotkey_get_instruments__enforce_run_twice__timer 
+            else
+                sysmsg   "ERROR: this script `{{_itr}}` does not match the previous triggered script `{{_itr_prev}}` - try again" 33
+                overhead "ERROR: this script `{{_itr}}` does not match the previous triggered script `{{_itr_prev}}` - try again" 33
+                stop
+            endif
+            break
+        endfor
+        break
+    endfor
+else
+    sysmsg "saving instruments..." 70
+    overhead "saving instruments..." 70
+    if listexists _util__hotkey_get_instruments__name
+        @removelist _util__hotkey_get_instruments__name
+    endif
+    if listexists _util__hotkey_get_instruments__name_previous
+        @removelist _util__hotkey_get_instruments__name_previous
+    endif
+    if timerexists _util__hotkey_get_instruments__enforce_run_twice__timer 
+        @removetimer _util__hotkey_get_instruments__enforce_run_twice__timer 
+    endif
+endif
+
+
+
+
+
+
+
+##### get instrument items
+if not listexists _util__hotkey_get_instruments__list
+    @createlist _util__hotkey_get_instruments__list
+else
+    @clearlist _util__hotkey_get_instruments__list
+endif
+
+
+@clearignore
+while findtype "bamboo flute|drum|lap harp|lute|tambourine|gemshorn|hurdy gurdy|psaltery|sackbut|shawm|vielle" backpack -1 -1 -1 as _this
+    @ignore _this
+    @getlabel! _this _label
+    #sysmsg "deposit recycler unid, found instrument {{_label}}" 33
+    #sysmsg "deposit recycler unid, found instrument {{_label}}" 44
+    #sysmsg "deposit recycler unid, found instrument {{_label}}" 55
+    if "unidentified" in _label or "wood" in _label
+        ## skip for now
+    else
+        @pushlist  _util__hotkey_get_instruments__list  _this
+        sysmsg _label 99
+        # overhead _label 99
+    endif
+endwhile
+
+
+
+
+sysmsg  "save complete" 70
+overhead "save complete" 70
+
+
+if listexists _util__hotkey_get_instruments__script_chain
+    foreach _itr in _util__hotkey_get_instruments__script_chain
+        @removelist _util__hotkey_get_instruments__script_chain
+        hotkey _itr
+    endfor
+endif
+#
