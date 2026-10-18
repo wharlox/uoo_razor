@@ -1,7 +1,9 @@
 
 sysmsg "deposit item recycler - start"
 #@setvar! _this_script "Play Script: deposit-loadout\functions\deposit-item-recycler"
-
+if listexists _util_ltrap_recycler__keeping_items
+    @removelist _util_ltrap_recycler__keeping_items
+endif
 if not varexist _id_loop_recycler_lantern
     ## same var as-used in the SUPER ID-Recycler-looper
     setvar _id_loop_recycler_lantern  _deposit_loadout__lantern__trigger_recycle
@@ -62,7 +64,10 @@ endif
 
 
 
-######## BARD LOGIC 1-of-2 - detect magic instrument
+#### item recycler - deposite all - but first find magic identified instruments to put back in backpack
+## SET ME @setvar! _deposit_loadout__recycler 0x12345679
+
+######## BARD LOGIC 1-of-2 - detect magic instrument - ONLY IF _util__hotkey_get_instruments__list does not exist
 if not listexists _util__detect_instrument__idd_instruments
     @createlist _util__detect_instrument__idd_instruments
 else
@@ -71,35 +76,37 @@ endif
 
 if skill "Peacemaking" > 0 or skill "Provocation" > 0 or skill "Discordance" > 0 or skill "Musicianship" > 0
 
-    ## deposit UNIDENTIFIED magic items - speeds up find in backpack
-    menu _deposit_loadout__recycler 1
-    #wait 200
-    @getlabel! _deposit_loadout__recycler _this
-    if "125 items" in _this
-        overhead "item recycler is full" 38
-        sysmsg "item recycler is full" 38
-    endif
-    ## deposit unid magic items
-    #menu _deposit_loadout__recycler 1
-    @getlabel! _deposit_loadout__recycler _this
-    #wait 150
-
-    @clearignore
-    while findtype "bamboo flute|drum|lap harp|lute|tambourine|gemshorn|hurdy gurdy|psaltery|sackbut|shawm|vielle" backpack -1 -1 -1 as _this
-        @ignore _this
-        @getlabel! _this _label
-        sysmsg "deposit recycler unid, found instrument {{_label}}" 33
-        sysmsg "deposit recycler unid, found instrument {{_label}}" 44
-        sysmsg "deposit recycler unid, found instrument {{_label}}" 55
-        if "unidentified" in _label or "wood" in _label
-            ## skip for now
-        else
-            @pushlist  _util__detect_instrument__idd_instruments  _this
-            sysmsg _label 99
+    if not listexists _util__hotkey_get_instruments__list
+        ## deposit UNIDENTIFIED magic items - speeds up find in backpack
+        menu _deposit_loadout__recycler 1
+        #wait 200
+        @getlabel! _deposit_loadout__recycler _this
+        if "125 items" in _this
+            overhead "item recycler is full" 38
+            sysmsg "item recycler is full" 38
         endif
-    endwhile
-endif
+        ## deposit unid magic items
+        #menu _deposit_loadout__recycler 1
+        @getlabel! _deposit_loadout__recycler _this
+        #wait 150
 
+        @clearignore
+        while findtype "bamboo flute|drum|lap harp|lute|tambourine|gemshorn|hurdy gurdy|psaltery|sackbut|shawm|vielle" backpack -1 -1 -1 as _this
+            @ignore _this
+            @getlabel! _this _label
+            sysmsg "deposit recycler unid, found instrument {{_label}}" 33
+            sysmsg "deposit recycler unid, found instrument {{_label}}" 44
+            sysmsg "deposit recycler unid, found instrument {{_label}}" 55
+            if "unidentified" in _label or "wood" in _label
+                ## skip for now
+            else
+                @pushlist  _util__detect_instrument__idd_instruments  _this
+                sysmsg _label 99
+            endif
+        endwhile
+    endif
+endif
+#endif
 
 
 
@@ -123,30 +130,57 @@ endif
 
 ######## BARD LOGIC 2-of-2 - drop magic instrument to backpack
 #### get bard-items out of magic-item-recycler
+#if not listexists _util__hotkey_get_instruments__list
 if skill "Peacemaking" > 0 or skill "Provocation" > 0 or skill "Discordance" > 0 or skill "Musicianship" > 0
     wait 250
-    foreach _itr in _util__detect_instrument__idd_instruments 
-        # find serial src hue qty range
-        if not gumpexists 4045111101
-            dclick _deposit_loadout__recycler
-            waitforgump 4045111101
-            #gumpclose 4045111101
-            @getlabel! backpack _bp
-        endif
-        @clearignore
-        if find _itr _deposit_loadout__recycler -1 -1 1
-            lift _itr 1
-            drop backpack -1 -1 -1
-            wait 150
-            while insysmsg "You must wait to perform another action"
+    
+    if not listexists _util__hotkey_get_instruments__list
+        foreach _itr in _util__detect_instrument__idd_instruments 
+            # find serial src hue qty range
+            if not gumpexists 4045111101
+                dclick _deposit_loadout__recycler
+                waitforgump 4045111101
+                #gumpclose 4045111101
+                @getlabel! backpack _bp
+            endif
+            @clearignore
+            if find _itr _deposit_loadout__recycler -1 -1 1
                 lift _itr 1
                 drop backpack -1 -1 -1
                 wait 150
-            endwhile
-            wait 510
-        endif
-        #@getlabel! backpack _bp
-    endfor
+                while insysmsg "You must wait to perform another action"
+                    lift _itr 1
+                    drop backpack -1 -1 -1
+                    wait 150
+                endwhile
+                wait 510
+            endif
+            #@getlabel! backpack _bp
+        endfor
+    else
+        foreach _itr in _util__hotkey_get_instruments__list 
+            # find serial src hue qty range
+            if not gumpexists 4045111101
+                dclick _deposit_loadout__recycler
+                waitforgump 4045111101
+                #gumpclose 4045111101
+                @getlabel! backpack _bp
+            endif
+            @clearignore
+            if find _itr _deposit_loadout__recycler -1 -1 1
+                lift _itr 1
+                drop backpack -1 -1 -1
+                wait 150
+                while insysmsg "You must wait to perform another action"
+                    lift _itr 1
+                    drop backpack -1 -1 -1
+                    wait 150
+                endwhile
+                wait 510
+            endif
+            #@getlabel! backpack _bp
+        endfor
+    endif
     if gumpexists 4045111101
         gumpclose 4045111101
     endif
