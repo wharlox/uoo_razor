@@ -1,0 +1,106 @@
+@setvar _item_id_to_move 5356
+@setvar _item_hue_to_move 2669
+
+## hinge
+#@setvar _item_id_to_move 4181
+#@setvar _item_hue_to_move 0
+
+@setvar! _drop_shit 0
+@setvar! _distro_chest 0x42FD253A
+# distro gump 2865667423
+
+@setvar _shelf 0x4B41ED97
+# shelf gump 3232825965
+
+@dclick _distro_chest
+waitforgump 2865667423
+gumpclose 2865667423
+wait 500
+
+if _drop_shit == 0 
+    if findtype 3705 _distro_chest -1 -1 -1 as _this
+        @setvar! _drop_shit _this
+    else
+        ## get a pouch from shelf, move it to distro chest
+        @settimer _tmptimer 0
+        @dclick _shelf
+        waitforgump 3232825965
+        gumpresponse 23 3232825965
+        waitforgump 3232825965
+        gumpresponse 230 3232825965
+        waitforgump 3232825965
+        gumpclose 3232825965
+        
+        while timer _tmptimer < 500
+            wait 10
+        endwhile
+        @getlabel! backpack _bp
+        @removetimer _tmptimer
+        @clearignore
+        while findtype 'pouch' backpack -1 -1 as _this
+            @getlabel! _this _label
+            if "(0 items, 0 stones)" in _label
+                @setvar!  _drop_shit  _this
+                lift _drop_shit 60000
+                drop _distro_chest -1 -1 0
+                wait 500
+                break
+            endif
+            @ignore _this
+        endwhile
+    endif
+endif
+
+
+
+if _drop_shit != 0
+    while  findtype _item_id_to_move backpack _item_hue_to_move -1 -1 as _this
+    #while findtype 'scissors' backpack 0 -1 1 as _this
+        ## find serial src hue qty range
+        if find _drop_shit _distro_chest -1 -1 -1
+        else
+            loop
+        endif
+        lift _this 1
+        drop _drop_shit -1 -1 -1
+        wait 500
+    endwhile
+endif
+
+
+
+stop
+@clearignore
+while _drop_shit == 0 or findtype 'pouch' 0x42FD253A -1 -1 as _this
+    @getlabel! _this _label
+    if "(0 items, 0 stones)" in _label
+        @setvar!  _drop_shit _this
+    endif
+    @ignore _this
+endwhile
+
+sysmsg _drop_shit
+
+stop
+
+while findtype _item_id_to_move backpack _item_hue_to_move -1 -1 as _this
+    ## find serial src hue qty range
+    lift _this 1
+    drop 0x4CBB7B63 -1 -1 -1
+    wait 480
+endwhile
+#
+
+dclick 0x4B41ED97
+waitforgump 3232825965
+gumpresponse 23
+waitforgump 3232825965
+gumpresponse 230
+waitforgump 3232825965
+gumpclose
+lift 0x4CC1DF55 1
+drop 0x42FD253A 17 131 0
+
+dclick 0x4B41ED97
+waitforgump 3232825965
+gumpclose

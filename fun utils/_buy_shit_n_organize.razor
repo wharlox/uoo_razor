@@ -1,0 +1,472 @@
+#### buy shit n organize
+### goal
+###   setup an Agents => Buy for items to buy - reagents
+###   auto recall back to house
+###      deposit to stockpile
+###      resupply from shelf
+###   auto recall back to buy-area
+#### how-to
+###    setup all variables
+###      home coordinates - serials for stockpile and shelf
+###      recall to town - needs a rune-tome with a default location set
+###         rune-var is- _util__buy_shit_n_organize__mages_rune_tome_chest_path is
+###      recall to house - search this script for - whisper "[recall vHome"
+###          change vHome to the name of your rune to your house
+###     var _util__buy_shit_n_organize__org_agent_num - use to set which Agent organizer to use to move regs to ox
+
+
+
+@setvar  _util__buy_shit_n_organize__home_coordinate_x 3674 
+@setvar  _util__buy_shit_n_organize__home_coordinate_y 230
+@setvar  _util__buy_shit_n_organize__stockpile_serial 0x56E3DC06
+@setvar  _util__buy_shit_n_organize__resupply_shelf_serial 0x4B41ED97
+
+
+@removelist _util__buy_shit_n_organize__mages_rune_tome_chest_path
+@createlist _util__buy_shit_n_organize__mages_rune_tome_chest_path
+@pushlist _util__buy_shit_n_organize__mages_rune_tome_chest_path  0x56CE0C8A
+
+@setvar  _util__buy_shit_n_organize__mages_rune_tome_serial 0x51BE756E
+
+
+
+
+@setvar  _util__buy_shit_n_organize__org_agent_num  1
+
+@setvar  _util__buy_shit_n_organize__set_pack_animal 0x5E2D5
+
+
+#### configured NPCs to open buy menu
+if not listexists _util__buy_shit_n_organize__buy_vendors
+    @createlist _util__buy_shit_n_organize__buy_vendors
+else
+    @clearlist _util__buy_shit_n_organize__buy_vendors
+endif
+
+#### must convert serial hex to int - printf '%i\n'  '0x'
+## terran Asta
+@pushlist _util__buy_shit_n_organize__buy_vendors 408
+## terran Adena
+@pushlist _util__buy_shit_n_organize__buy_vendors 409
+## terran Lunt
+@pushlist _util__buy_shit_n_organize__buy_vendors 410
+
+#### prevelia
+## Duncan - 0xCC06D
+@pushlist _util__buy_shit_n_organize__buy_vendors 835693
+## Garrett - 0x3CE
+@pushlist _util__buy_shit_n_organize__buy_vendors 974
+## Raynor - 0x37A
+@pushlist _util__buy_shit_n_organize__buy_vendors 890
+## Brandy - 0x3BB
+@pushlist _util__buy_shit_n_organize__buy_vendors 955
+## Ginger - 0x64BA2
+@pushlist _util__buy_shit_n_organize__buy_vendors 412578
+## Edwin - 0x414
+@pushlist _util__buy_shit_n_organize__buy_vendors 412578
+## Azina - 0x43F
+@pushlist _util__buy_shit_n_organize__buy_vendors 1087
+## Marden - 0x44C
+@pushlist _util__buy_shit_n_organize__buy_vendors 1100
+
+
+#### hor bay
+### mages
+## Nantale - 0xB4C
+@pushlist _util__buy_shit_n_organize__buy_vendors 2892
+## Deedee - 0xB4F
+@pushlist _util__buy_shit_n_organize__buy_vendors 2895
+## Keenan - 0xB62
+@pushlist _util__buy_shit_n_organize__buy_vendors 2914
+### theif
+## Bevin - 0xBB3
+@pushlist _util__buy_shit_n_organize__buy_vendors 2995
+
+#### SOUTH prevelia - NOT considered merchant discount
+## Gideon - 0x44
+#@pushlist _util__buy_shit_n_organize__buy_vendors 
+## Arlene - 0x44
+#@pushlist _util__buy_shit_n_organize__buy_vendors 
+## Christable - 0x45
+#@pushlist _util__buy_shit_n_organize__buy_vendors 
+## Jonathan - 0x47
+#@pushlist _util__buy_shit_n_organize__buy_vendors 
+## Cato - 0x47
+#@pushlist _util__buy_shit_n_organize__buy_vendors 
+## Iona - 0x43
+#@pushlist _util__buy_shit_n_organize__buy_vendors 
+
+
+
+
+
+
+##### code logic below
+
+
+
+
+while _util__buy_shit_n_organize__set_pack_animal == 0
+    overhead "select pack animal" 157
+    setlasttarget 
+    wait 100
+    @setvar _util__buy_shit_n_organize__set_pack_animal lasttarget 
+    @getlabel _util__buy_shit_n_organize__set_pack_animal  _label
+    overhead "selected - {{_label}}" 193
+    overhead "packer" 193 _util__buy_shit_n_organize__set_pack_animal  
+    ## pack ox- 227
+    ## pack llama- 292
+    ## pack horse- 291
+        
+endwhile
+
+
+
+
+
+## set organizer-agent-hotbag to pack animal
+## Set Organizer HotBag-01
+if _util__buy_shit_n_organize__org_agent_num == 1
+    hotkey 'Set Organizer HotBag-01'
+    wft 500
+    target  _util__buy_shit_n_organize__set_pack_animal
+elseif _util__buy_shit_n_organize__org_agent_num == 2
+    hotkey 'Set Organizer HotBag-02'
+    wft 500
+    target  _util__buy_shit_n_organize__set_pack_animal
+elseif _util__buy_shit_n_organize__org_agent_num == 3
+    hotkey 'Set Organizer HotBag-03'
+    wft 500
+    target  _util__buy_shit_n_organize__set_pack_animal
+elseif _util__buy_shit_n_organize__org_agent_num == 4
+    hotkey 'Set Organizer HotBag-04'
+    wft 500
+    target  _util__buy_shit_n_organize__set_pack_animal
+elseif _util__buy_shit_n_organize__org_agent_num == 5
+    hotkey 'Set Organizer HotBag-05'
+    wft 500
+    target  _util__buy_shit_n_organize__set_pack_animal
+elseif _util__buy_shit_n_organize__org_agent_num == 6
+    hotkey 'Set Organizer HotBag-06'
+    wft 500
+    target  _util__buy_shit_n_organize__set_pack_animal
+elseif _util__buy_shit_n_organize__org_agent_num == 7
+    hotkey 'Set Organizer HotBag-07'
+    wft 500
+    target  _util__buy_shit_n_organize__set_pack_animal
+elseif _util__buy_shit_n_organize__org_agent_num == 8
+    hotkey 'Set Organizer HotBag-08'
+    wft 500
+    target  _util__buy_shit_n_organize__set_pack_animal
+elseif _util__buy_shit_n_organize__org_agent_num == 9
+    hotkey 'Set Organizer HotBag-09'
+    wft 500
+    target  _util__buy_shit_n_organize__set_pack_animal
+elseif _util__buy_shit_n_organize__org_agent_num == 10
+    hotkey 'Set Organizer HotBag-10'
+    wft 500
+    target  _util__buy_shit_n_organize__set_pack_animal
+elseif _util__buy_shit_n_organize__org_agent_num == 11
+    hotkey 'Set Organizer HotBag-11'
+    wft 500
+    target  _util__buy_shit_n_organize__set_pack_animal
+elseif _util__buy_shit_n_organize__org_agent_num == 12
+    hotkey 'Set Organizer HotBag-12'
+    wft 500
+    target  _util__buy_shit_n_organize__set_pack_animal
+elseif _util__buy_shit_n_organize__org_agent_num == 13
+    hotkey 'Set Organizer HotBag-13'
+    wft 500
+    target  _util__buy_shit_n_organize__set_pack_animal
+elseif _util__buy_shit_n_organize__org_agent_num == 14
+    hotkey 'Set Organizer HotBag-14'
+    wft 500
+    target  _util__buy_shit_n_organize__set_pack_animal
+elseif _util__buy_shit_n_organize__org_agent_num == 15
+    hotkey 'Set Organizer HotBag-15'
+    wft 500
+    target  _util__buy_shit_n_organize__set_pack_animal
+elseif _util__buy_shit_n_organize__org_agent_num == 16
+    hotkey 'Set Organizer HotBag-16'
+    wft 500
+    target  _util__buy_shit_n_organize__set_pack_animal
+elseif _util__buy_shit_n_organize__org_agent_num == 17
+    hotkey 'Set Organizer HotBag-17'
+    wft 500
+    target  _util__buy_shit_n_organize__set_pack_animal
+elseif _util__buy_shit_n_organize__org_agent_num == 18
+    hotkey 'Set Organizer HotBag-18'
+    wft 500
+    target  _util__buy_shit_n_organize__set_pack_animal
+elseif _util__buy_shit_n_organize__org_agent_num == 19
+    hotkey 'Set Organizer HotBag-19'
+    wft 500
+    target  _util__buy_shit_n_organize__set_pack_animal
+elseif _util__buy_shit_n_organize__org_agent_num == 20
+    hotkey 'Set Organizer HotBag-20'
+    wft 500
+    target  _util__buy_shit_n_organize__set_pack_animal
+endif
+
+
+
+
+## satchels
+@clearignore
+@setvar! _util__buy_shit_n_organize__has_wiz_satchel_on_body 0
+if findlayer self outerbody as _this
+    @getlabel! _this _label
+    if "wizard" in _label
+        @setvar! _util__buy_shit_n_organize__has_wiz_satchel_on_body 1
+    elseif "potion" in _label
+        lift _this
+        drop backpack -1 -1 -1
+        wait 510
+     endif
+endif
+if _util__buy_shit_n_organize__has_wiz_satchel_on_body == 0
+    ## try to equip one if in backpack
+    @clearignore
+    while _util__buy_shit_n_organize__has_wiz_satchel_on_body == 0 and findtype "reagent satchel" backpack -1 -1 -1 as _this
+        @ignore _this
+        @getlabel! _this _label
+        if "(0 items, 0 stones)" in _label
+        else
+            lift _this
+            drop self outerbody
+            wait 510
+            @setvar! _util__buy_shit_n_organize__has_wiz_satchel_on_body 11
+        endif
+    endwhile
+endif
+
+
+@removelist _itr
+@removetimer _itr
+@unsetvar _itr
+
+
+while not dead
+    @clearignore
+    
+
+
+    #### if AT HOME then deposit shit
+    if position  _util__buy_shit_n_organize__home_coordinate_x  _util__buy_shit_n_organize__home_coordinate_y
+        dclick _util__buy_shit_n_organize__set_pack_animal
+        while  position  _util__buy_shit_n_organize__home_coordinate_x  _util__buy_shit_n_organize__home_coordinate_y
+            overhead "deposit shit time"
+            if not hidden
+                skill Hiding
+            endif
+
+
+            menu _util__buy_shit_n_organize__stockpile_serial 0
+            wft 500
+            target self
+            
+            if find _util__buy_shit_n_organize__set_pack_animal ground -1 -1 4
+                wait 100
+                menu _util__buy_shit_n_organize__stockpile_serial 0
+                wft 500
+                target _util__buy_shit_n_organize__set_pack_animal
+            endif
+            wait 100
+
+
+            menu _util__buy_shit_n_organize__resupply_shelf_serial 1
+            wait 200
+
+            if find _util__buy_shit_n_organize__set_pack_animal ground -1 -1 4
+                wait 100
+                menu _util__buy_shit_n_organize__resupply_shelf_serial 0
+                wft 500
+                target _util__buy_shit_n_organize__set_pack_animal
+            endif
+
+
+
+            
+            foreach _itr in _util__buy_shit_n_organize__mages_rune_tome_chest_path
+                dclick _itr
+                wait 400
+            endfor
+            say "All Follow Me"
+
+            overhead "recall to NPCs"
+            #whisper "[recall"
+            cast "Recall"
+            overhead "***" 44 _util__buy_shit_n_organize__mages_rune_tome_serial
+            overhead "***" 44 _util__buy_shit_n_organize__mages_rune_tome_serial
+            waitforsysmsg "Select Marked item" 2500
+            target _util__buy_shit_n_organize__mages_rune_tome_serial
+
+            sysmsg "222  {{_util__buy_shit_n_organize__mages_rune_tome_serial}}"
+            wait 500
+
+        endwhile
+        sysmsg "333"
+    endif
+
+    @setvar _color_alternate 0
+    while findbuff "Stationary Penalty"
+        if _color_alternate == 0
+            overhead "*** move your ass !!!"  33
+            @setvar _color_alternate 1
+        elseif _color_alternate == 1
+            overhead "*** move your ass !!!"  65
+            @setvar _color_alternate 2
+        elseif _color_alternate == 2
+            overhead "*** move your ass !!!"  100
+            @setvar _color_alternate 0
+        endif
+        wait 500
+    endwhile
+
+    
+    @getlabel _util__buy_shit_n_organize__set_pack_animal _label
+    if "[3700/4000" in _label or "[3701/4000" in _label or "[3702/4000" in _label or "[3703/4000" in _label or "[3704/4000" in _label or "[3705/4000" in _label or "[3706/4000" in _label or "[3707/4000" in _label or "[3708/4000" in _label or "[3709/4000" in _label or "[3710/4000" in _label or "[3711/4000" in _label or "[3712/4000" in _label or "[3713/4000" in _label or "[3714/4000" in _label or "[3715/4000" in _label or "[3716/4000" in _label or "[3717/4000" in _label or "[3718/4000" in _label or "[3719/4000" in _label or "[3720/4000" in _label or "[3721/4000" in _label or "[3722/4000" in _label or "[3723/4000" in _label or "[3724/4000" in _label or "[3725/4000" in _label or "[3726/4000" in _label or "[3727/4000" in _label or "[3728/4000" in _label or "[3729/4000" in _label or "[3730/4000" in _label or "[3731/4000" in _label or "[3732/4000" in _label or "[3733/4000" in _label or "[3734/4000" in _label or "[3735/4000" in _label or "[3736/4000" in _label or "[3737/4000" in _label or "[3738/4000" in _label or "[3739/4000" in _label or "[3740/4000" in _label or "[3741/4000" in _label or "[3742/4000" in _label or "[3743/4000" in _label or "[3744/4000" in _label or "[3745/4000" in _label or "[3746/4000" in _label or "[3747/4000" in _label or "[3748/4000" in _label or "[3749/4000" in _label or "[3750/4000" in _label or "[3751/4000" in _label or "[3752/4000" in _label or "[3753/4000" in _label or "[3754/4000" in _label or "[3755/4000" in _label or "[3756/4000" in _label or "[3757/4000" in _label or "[3758/4000" in _label or "[3759/4000" in _label or "[3760/4000" in _label or "[3761/4000" in _label or "[3762/4000" in _label or "[3763/4000" in _label or "[3764/4000" in _label or "[3765/4000" in _label or "[3766/4000" in _label or "[3767/4000" in _label or "[3768/4000" in _label or "[3769/4000" in _label or "[3770/4000" in _label or "[3771/4000" in _label or "[3772/4000" in _label or "[3773/4000" in _label or "[3774/4000" in _label or "[3775/4000" in _label or "[3776/4000" in _label or "[3777/4000" in _label or "[3778/4000" in _label or "[3779/4000" in _label or "[3780/4000" in _label or "[3781/4000" in _label or "[3782/4000" in _label or "[3783/4000" in _label or "[3784/4000" in _label or "[3785/4000" in _label or "[3786/4000" in _label or "[3787/4000" in _label or "[3788/4000" in _label or "[3789/4000" in _label or "[3790/4000" in _label or "[3791/4000" in _label or "[3792/4000" in _label or "[3793/4000" in _label or "[3794/4000" in _label or "[3795/4000" in _label or "[3796/4000" in _label or "[3797/4000" in _label or "[3798/4000" in _label or "[3799/4000" in _label or "[3800/4000" in _label or "[3801/4000" in _label or "[3802/4000" in _label or "[3803/4000" in _label or "[3804/4000" in _label or "[3805/4000" in _label or "[3806/4000" in _label or "[3807/4000" in _label or "[3808/4000" in _label or "[3809/4000" in _label or "[3810/4000" in _label or "[3811/4000" in _label or "[3812/4000" in _label or "[3813/4000" in _label or "[3814/4000" in _label or "[3815/4000" in _label or "[3816/4000" in _label or "[3817/4000" in _label or "[3818/4000" in _label or "[3819/4000" in _label or "[3820/4000" in _label or "[3821/4000" in _label or "[3822/4000" in _label or "[3823/4000" in _label or "[3824/4000" in _label or "[3825/4000" in _label or "[3826/4000" in _label or "[3827/4000" in _label or "[3828/4000" in _label or "[3829/4000" in _label or "[3830/4000" in _label or "[3831/4000" in _label or "[3832/4000" in _label or "[3833/4000" in _label or "[3834/4000" in _label or "[3835/4000" in _label or "[3836/4000" in _label or "[3837/4000" in _label or "[3838/4000" in _label or "[3839/4000" in _label or "[3840/4000" in _label or "[3841/4000" in _label or "[3842/4000" in _label or "[3843/4000" in _label or "[3844/4000" in _label or "[3845/4000" in _label or "[3846/4000" in _label or "[3847/4000" in _label or "[3848/4000" in _label or "[3849/4000" in _label or "[3850/4000" in _label or "[3851/4000" in _label or "[3852/4000" in _label or "[3853/4000" in _label or "[3854/4000" in _label or "[3855/4000" in _label or "[3856/4000" in _label or "[3857/4000" in _label or "[3858/4000" in _label or "[3859/4000" in _label or "[3860/4000" in _label or "[3861/4000" in _label or "[3862/4000" in _label or "[3863/4000" in _label or "[3864/4000" in _label or "[3865/4000" in _label or "[3866/4000" in _label or "[3867/4000" in _label or "[3868/4000" in _label or "[3869/4000" in _label or "[3870/4000" in _label or "[3871/4000" in _label or "[3872/4000" in _label or "[3873/4000" in _label or "[3874/4000" in _label or "[3875/4000" in _label or "[3876/4000" in _label or "[3877/4000" in _label or "[3878/4000" in _label or "[3879/4000" in _label or "[3880/4000" in _label or "[3881/4000" in _label or "[3882/4000" in _label or "[3883/4000" in _label or "[3884/4000" in _label or "[3885/4000" in _label or "[3886/4000" in _label or "[3887/4000" in _label or "[3888/4000" in _label or "[3889/4000" in _label or "[3890/4000" in _label or "[3891/4000" in _label or "[3892/4000" in _label or "[3893/4000" in _label or "[3894/4000" in _label or "[3895/4000" in _label or "[3896/4000" in _label or "[3897/4000" in _label or "[3898/4000" in _label or "[3899/4000" in _label or "[3900/4000" in _label or "[3901/4000" in _label or "[3902/4000" in _label or "[3903/4000" in _label or "[3904/4000" in _label or "[3905/4000" in _label or "[3906/4000" in _label or "[3907/4000" in _label or "[3908/4000" in _label or "[3909/4000" in _label or "[3910/4000" in _label or "[3911/4000" in _label or "[3912/4000" in _label or "[3913/4000" in _label or "[3914/4000" in _label or "[3915/4000" in _label or "[3916/4000" in _label or "[3917/4000" in _label or "[3918/4000" in _label or "[3919/4000" in _label or "[3920/4000" in _label or "[3921/4000" in _label or "[3922/4000" in _label or "[3923/4000" in _label or "[3924/4000" in _label or "[3925/4000" in _label or "[3926/4000" in _label or "[3927/4000" in _label or "[3928/4000" in _label or "[3929/4000" in _label or "[3930/4000" in _label or "[3931/4000" in _label or "[3932/4000" in _label or "[3933/4000" in _label or "[3934/4000" in _label or "[3935/4000" in _label or "[3936/4000" in _label or "[3937/4000" in _label or "[3938/4000" in _label or "[3939/4000" in _label or "[3940/4000" in _label or "[3941/4000" in _label or "[3942/4000" in _label or "[3943/4000" in _label or "[3944/4000" in _label or "[3945/4000" in _label or "[3946/4000" in _label or "[3947/4000" in _label or "[3948/4000" in _label or "[3949/4000" in _label or "[3950/4000" in _label or "[3951/4000" in _label or "[3952/4000" in _label or "[3953/4000" in _label or "[3954/4000" in _label or "[3955/4000" in _label or "[3956/4000" in _label or "[3957/4000" in _label or "[3958/4000" in _label or "[3959/4000" in _label or "[3960/4000" in _label or "[3961/4000" in _label or "[3962/4000" in _label or "[3963/4000" in _label or "[3964/4000" in _label or "[3965/4000" in _label or "[3966/4000" in _label or "[3967/4000" in _label or "[3968/4000" in _label or "[3969/4000" in _label or "[3970/4000" in _label or "[3971/4000" in _label or "[3972/4000" in _label or "[3973/4000" in _label or "[3974/4000" in _label or "[3975/4000" in _label or "[3976/4000" in _label or "[3977/4000" in _label or "[3978/4000" in _label or "[3979/4000" in _label or "[3980/4000" in _label or "[3981/4000" in _label or "[3982/4000" in _label or "[3983/4000" in _label or "[3984/4000" in _label or "[3985/4000" in _label or "[3986/4000" in _label or "[3987/4000" in _label or "[3988/4000" in _label or "[3989/4000" in _label or "[3990/4000" in _label or "[3991/4000" in _label or "[3992/4000" in _label or "[3993/4000" in _label or "[3994/4000" in _label or "[3995/4000" in _label or "[3996/4000" in _label or "[3997/4000" in _label or "[3998/4000" in _label or "[3999/4000" in _label or "[4000/4000" in _label
+        sysmsg "pack is mostly full - recalling home"
+    elseif  "[3000/4000" in _label or "[3001/4000" in _label or "[3002/4000" in _label or "[3003/4000" in _label or "[3004/4000" in _label or "[3005/4000" in _label or "[3006/4000" in _label or "[3007/4000" in _label or "[3008/4000" in _label or "[3009/4000" in _label or "[3010/4000" in _label or "[3011/4000" in _label or "[3012/4000" in _label or "[3013/4000" in _label or "[3014/4000" in _label or "[3015/4000" in _label or "[3016/4000" in _label or "[3017/4000" in _label or "[3018/4000" in _label or "[3019/4000" in _label or "[3020/4000" in _label or "[3021/4000" in _label or "[3022/4000" in _label or "[3023/4000" in _label or "[3024/4000" in _label or "[3025/4000" in _label or "[3026/4000" in _label or "[3027/4000" in _label or "[3028/4000" in _label or "[3029/4000" in _label or "[3030/4000" in _label or "[3031/4000" in _label or "[3032/4000" in _label or "[3033/4000" in _label or "[3034/4000" in _label or "[3035/4000" in _label or "[3036/4000" in _label or "[3037/4000" in _label or "[3038/4000" in _label or "[3039/4000" in _label or "[3040/4000" in _label or "[3041/4000" in _label or "[3042/4000" in _label or "[3043/4000" in _label or "[3044/4000" in _label or "[3045/4000" in _label or "[3046/4000" in _label or "[3047/4000" in _label or "[3048/4000" in _label or "[3049/4000" in _label or "[3050/4000" in _label or "[3051/4000" in _label or "[3052/4000" in _label or "[3053/4000" in _label or "[3054/4000" in _label or "[3055/4000" in _label or "[3056/4000" in _label or "[3057/4000" in _label or "[3058/4000" in _label or "[3059/4000" in _label or "[3060/4000" in _label or "[3061/4000" in _label or "[3062/4000" in _label or "[3063/4000" in _label or "[3064/4000" in _label or "[3065/4000" in _label or "[3066/4000" in _label or "[3067/4000" in _label or "[3068/4000" in _label or "[3069/4000" in _label or "[3070/4000" in _label or "[3071/4000" in _label or "[3072/4000" in _label or "[3073/4000" in _label or "[3074/4000" in _label or "[3075/4000" in _label or "[3076/4000" in _label or "[3077/4000" in _label or "[3078/4000" in _label or "[3079/4000" in _label or "[3080/4000" in _label or "[3081/4000" in _label or "[3082/4000" in _label or "[3083/4000" in _label or "[3084/4000" in _label or "[3085/4000" in _label or "[3086/4000" in _label or "[3087/4000" in _label or "[3088/4000" in _label or "[3089/4000" in _label or "[3090/4000" in _label or "[3091/4000" in _label or "[3092/4000" in _label or "[3093/4000" in _label or "[3094/4000" in _label or "[3095/4000" in _label or "[3096/4000" in _label or "[3097/4000" in _label or "[3098/4000" in _label or "[3099/4000" in _label or "[3100/4000" in _label or "[3101/4000" in _label or "[3102/4000" in _label or "[3103/4000" in _label or "[3104/4000" in _label or "[3105/4000" in _label or "[3106/4000" in _label or "[3107/4000" in _label or "[3108/4000" in _label or "[3109/4000" in _label or "[3110/4000" in _label or "[3111/4000" in _label or "[3112/4000" in _label or "[3113/4000" in _label or "[3114/4000" in _label or "[3115/4000" in _label or "[3116/4000" in _label or "[3117/4000" in _label or "[3118/4000" in _label or "[3119/4000" in _label or "[3120/4000" in _label or "[3121/4000" in _label or "[3122/4000" in _label or "[3123/4000" in _label or "[3124/4000" in _label or "[3125/4000" in _label or "[3126/4000" in _label or "[3127/4000" in _label or "[3128/4000" in _label or "[3129/4000" in _label or "[3130/4000" in _label or "[3131/4000" in _label or "[3132/4000" in _label or "[3133/4000" in _label or "[3134/4000" in _label or "[3135/4000" in _label or "[3136/4000" in _label or "[3137/4000" in _label or "[3138/4000" in _label or "[3139/4000" in _label or "[3140/4000" in _label or "[3141/4000" in _label or "[3142/4000" in _label or "[3143/4000" in _label or "[3144/4000" in _label or "[3145/4000" in _label or "[3146/4000" in _label or "[3147/4000" in _label or "[3148/4000" in _label or "[3149/4000" in _label or "[3150/4000" in _label or "[3151/4000" in _label or "[3152/4000" in _label or "[3153/4000" in _label or "[3154/4000" in _label or "[3155/4000" in _label or "[3156/4000" in _label or "[3157/4000" in _label or "[3158/4000" in _label or "[3159/4000" in _label or "[3160/4000" in _label or "[3161/4000" in _label or "[3162/4000" in _label or "[3163/4000" in _label or "[3164/4000" in _label or "[3165/4000" in _label or "[3166/4000" in _label or "[3167/4000" in _label or "[3168/4000" in _label or "[3169/4000" in _label or "[3170/4000" in _label or "[3171/4000" in _label or "[3172/4000" in _label or "[3173/4000" in _label or "[3174/4000" in _label or "[3175/4000" in _label or "[3176/4000" in _label or "[3177/4000" in _label or "[3178/4000" in _label or "[3179/4000" in _label or "[3180/4000" in _label or "[3181/4000" in _label or "[3182/4000" in _label or "[3183/4000" in _label or "[3184/4000" in _label or "[3185/4000" in _label or "[3186/4000" in _label or "[3187/4000" in _label or "[3188/4000" in _label or "[3189/4000" in _label or "[3190/4000" in _label or "[3191/4000" in _label or "[3192/4000" in _label or "[3193/4000" in _label or "[3194/4000" in _label or "[3195/4000" in _label or "[3196/4000" in _label or "[3197/4000" in _label or "[3198/4000" in _label or "[3199/4000" in _label or "[3200/4000" in _label or "[3201/4000" in _label or "[3202/4000" in _label or "[3203/4000" in _label or "[3204/4000" in _label or "[3205/4000" in _label or "[3206/4000" in _label or "[3207/4000" in _label or "[3208/4000" in _label or "[3209/4000" in _label or "[3210/4000" in _label or "[3211/4000" in _label or "[3212/4000" in _label or "[3213/4000" in _label or "[3214/4000" in _label or "[3215/4000" in _label or "[3216/4000" in _label or "[3217/4000" in _label or "[3218/4000" in _label or "[3219/4000" in _label or "[3220/4000" in _label or "[3221/4000" in _label or "[3222/4000" in _label or "[3223/4000" in _label or "[3224/4000" in _label or "[3225/4000" in _label or "[3226/4000" in _label or "[3227/4000" in _label or "[3228/4000" in _label or "[3229/4000" in _label or "[3230/4000" in _label or "[3231/4000" in _label or "[3232/4000" in _label or "[3233/4000" in _label or "[3234/4000" in _label or "[3235/4000" in _label or "[3236/4000" in _label or "[3237/4000" in _label or "[3238/4000" in _label or "[3239/4000" in _label or "[3240/4000" in _label or "[3241/4000" in _label or "[3242/4000" in _label or "[3243/4000" in _label or "[3244/4000" in _label or "[3245/4000" in _label or "[3246/4000" in _label or "[3247/4000" in _label or "[3248/4000" in _label or "[3249/4000" in _label or "[3250/4000" in _label or "[3251/4000" in _label or "[3252/4000" in _label or "[3253/4000" in _label or "[3254/4000" in _label or "[3255/4000" in _label or "[3256/4000" in _label or "[3257/4000" in _label or "[3258/4000" in _label or "[3259/4000" in _label or "[3260/4000" in _label or "[3261/4000" in _label or "[3262/4000" in _label or "[3263/4000" in _label or "[3264/4000" in _label or "[3265/4000" in _label or "[3266/4000" in _label or "[3267/4000" in _label or "[3268/4000" in _label or "[3269/4000" in _label or "[3270/4000" in _label or "[3271/4000" in _label or "[3272/4000" in _label or "[3273/4000" in _label or "[3274/4000" in _label or "[3275/4000" in _label or "[3276/4000" in _label or "[3277/4000" in _label or "[3278/4000" in _label or "[3279/4000" in _label or "[3280/4000" in _label or "[3281/4000" in _label or "[3282/4000" in _label or "[3283/4000" in _label or "[3284/4000" in _label or "[3285/4000" in _label or "[3286/4000" in _label or "[3287/4000" in _label or "[3288/4000" in _label or "[3289/4000" in _label or "[3290/4000" in _label or "[3291/4000" in _label or "[3292/4000" in _label or "[3293/4000" in _label or "[3294/4000" in _label or "[3295/4000" in _label or "[3296/4000" in _label or "[3297/4000" in _label or "[3298/4000" in _label or "[3299/4000" in _label or "[3300/4000" in _label or "[3301/4000" in _label or "[3302/4000" in _label or "[3303/4000" in _label or "[3304/4000" in _label or "[3305/4000" in _label or "[3306/4000" in _label or "[3307/4000" in _label or "[3308/4000" in _label or "[3309/4000" in _label or "[3310/4000" in _label or "[3311/4000" in _label or "[3312/4000" in _label or "[3313/4000" in _label or "[3314/4000" in _label or "[3315/4000" in _label or "[3316/4000" in _label or "[3317/4000" in _label or "[3318/4000" in _label or "[3319/4000" in _label or "[3320/4000" in _label or "[3321/4000" in _label or "[3322/4000" in _label or "[3323/4000" in _label or "[3324/4000" in _label or "[3325/4000" in _label or "[3326/4000" in _label or "[3327/4000" in _label or "[3328/4000" in _label or "[3329/4000" in _label or "[3330/4000" in _label or "[3331/4000" in _label or "[3332/4000" in _label or "[3333/4000" in _label or "[3334/4000" in _label or "[3335/4000" in _label or "[3336/4000" in _label or "[3337/4000" in _label or "[3338/4000" in _label or "[3339/4000" in _label or "[3340/4000" in _label or "[3341/4000" in _label or "[3342/4000" in _label or "[3343/4000" in _label or "[3344/4000" in _label or "[3345/4000" in _label or "[3346/4000" in _label or "[3347/4000" in _label or "[3348/4000" in _label or "[3349/4000" in _label or "[3350/4000" in _label or "[3351/4000" in _label or "[3352/4000" in _label or "[3353/4000" in _label or "[3354/4000" in _label or "[3355/4000" in _label or "[3356/4000" in _label or "[3357/4000" in _label or "[3358/4000" in _label or "[3359/4000" in _label or "[3360/4000" in _label or "[3361/4000" in _label or "[3362/4000" in _label or "[3363/4000" in _label or "[3364/4000" in _label or "[3365/4000" in _label or "[3366/4000" in _label or "[3367/4000" in _label or "[3368/4000" in _label or "[3369/4000" in _label or "[3370/4000" in _label or "[3371/4000" in _label or "[3372/4000" in _label or "[3373/4000" in _label or "[3374/4000" in _label or "[3375/4000" in _label or "[3376/4000" in _label or "[3377/4000" in _label or "[3378/4000" in _label or "[3379/4000" in _label or "[3380/4000" in _label or "[3381/4000" in _label or "[3382/4000" in _label or "[3383/4000" in _label or "[3384/4000" in _label or "[3385/4000" in _label or "[3386/4000" in _label or "[3387/4000" in _label or "[3388/4000" in _label or "[3389/4000" in _label or "[3390/4000" in _label or "[3391/4000" in _label or "[3392/4000" in _label or "[3393/4000" in _label or "[3394/4000" in _label or "[3395/4000" in _label or "[3396/4000" in _label or "[3397/4000" in _label or "[3398/4000" in _label or "[3399/4000" in _label or "[3400/4000" in _label or "[3401/4000" in _label or "[3402/4000" in _label or "[3403/4000" in _label or "[3404/4000" in _label or "[3405/4000" in _label or "[3406/4000" in _label or "[3407/4000" in _label or "[3408/4000" in _label or "[3409/4000" in _label or "[3410/4000" in _label or "[3411/4000" in _label or "[3412/4000" in _label or "[3413/4000" in _label or "[3414/4000" in _label or "[3415/4000" in _label or "[3416/4000" in _label or "[3417/4000" in _label or "[3418/4000" in _label or "[3419/4000" in _label or "[3420/4000" in _label or "[3421/4000" in _label or "[3422/4000" in _label or "[3423/4000" in _label or "[3424/4000" in _label or "[3425/4000" in _label or "[3426/4000" in _label or "[3427/4000" in _label or "[3428/4000" in _label or "[3429/4000" in _label or "[3430/4000" in _label or "[3431/4000" in _label or "[3432/4000" in _label or "[3433/4000" in _label or "[3434/4000" in _label or "[3435/4000" in _label or "[3436/4000" in _label or "[3437/4000" in _label or "[3438/4000" in _label or "[3439/4000" in _label or "[3440/4000" in _label or "[3441/4000" in _label or "[3442/4000" in _label or "[3443/4000" in _label or "[3444/4000" in _label or "[3445/4000" in _label or "[3446/4000" in _label or "[3447/4000" in _label or "[3448/4000" in _label or "[3449/4000" in _label or "[3450/4000" in _label or "[3451/4000" in _label or "[3452/4000" in _label or "[3453/4000" in _label or "[3454/4000" in _label or "[3455/4000" in _label or "[3456/4000" in _label or "[3457/4000" in _label or "[3458/4000" in _label or "[3459/4000" in _label or "[3460/4000" in _label or "[3461/4000" in _label or "[3462/4000" in _label or "[3463/4000" in _label or "[3464/4000" in _label or "[3465/4000" in _label or "[3466/4000" in _label or "[3467/4000" in _label or "[3468/4000" in _label or "[3469/4000" in _label or "[3470/4000" in _label or "[3471/4000" in _label or "[3472/4000" in _label or "[3473/4000" in _label or "[3474/4000" in _label or "[3475/4000" in _label or "[3476/4000" in _label or "[3477/4000" in _label or "[3478/4000" in _label or "[3479/4000" in _label or "[3480/4000" in _label or "[3481/4000" in _label or "[3482/4000" in _label or "[3483/4000" in _label or "[3484/4000" in _label or "[3485/4000" in _label or "[3486/4000" in _label or "[3487/4000" in _label or "[3488/4000" in _label or "[3489/4000" in _label or "[3490/4000" in _label or "[3491/4000" in _label or "[3492/4000" in _label or "[3493/4000" in _label or "[3494/4000" in _label or "[3495/4000" in _label or "[3496/4000" in _label or "[3497/4000" in _label or "[3498/4000" in _label or "[3499/4000" in _label or "[3500/4000" in _label or "[3501/4000" in _label or "[3502/4000" in _label or "[3503/4000" in _label or "[3504/4000" in _label or "[3505/4000" in _label or "[3506/4000" in _label or "[3507/4000" in _label or "[3508/4000" in _label or "[3509/4000" in _label or "[3510/4000" in _label or "[3511/4000" in _label or "[3512/4000" in _label or "[3513/4000" in _label or "[3514/4000" in _label or "[3515/4000" in _label or "[3516/4000" in _label or "[3517/4000" in _label or "[3518/4000" in _label or "[3519/4000" in _label or "[3520/4000" in _label or "[3521/4000" in _label or "[3522/4000" in _label or "[3523/4000" in _label or "[3524/4000" in _label or "[3525/4000" in _label or "[3526/4000" in _label or "[3527/4000" in _label or "[3528/4000" in _label or "[3529/4000" in _label or "[3530/4000" in _label or "[3531/4000" in _label or "[3532/4000" in _label or "[3533/4000" in _label or "[3534/4000" in _label or "[3535/4000" in _label or "[3536/4000" in _label or "[3537/4000" in _label or "[3538/4000" in _label or "[3539/4000" in _label or "[3540/4000" in _label or "[3541/4000" in _label or "[3542/4000" in _label or "[3543/4000" in _label or "[3544/4000" in _label or "[3545/4000" in _label or "[3546/4000" in _label or "[3547/4000" in _label or "[3548/4000" in _label or "[3549/4000" in _label or "[3550/4000" in _label or "[3551/4000" in _label or "[3552/4000" in _label or "[3553/4000" in _label or "[3554/4000" in _label or "[3555/4000" in _label or "[3556/4000" in _label or "[3557/4000" in _label or "[3558/4000" in _label or "[3559/4000" in _label or "[3560/4000" in _label or "[3561/4000" in _label or "[3562/4000" in _label or "[3563/4000" in _label or "[3564/4000" in _label or "[3565/4000" in _label or "[3566/4000" in _label or "[3567/4000" in _label or "[3568/4000" in _label or "[3569/4000" in _label or "[3570/4000" in _label or "[3571/4000" in _label or "[3572/4000" in _label or "[3573/4000" in _label or "[3574/4000" in _label or "[3575/4000" in _label or "[3576/4000" in _label or "[3577/4000" in _label or "[3578/4000" in _label or "[3579/4000" in _label or "[3580/4000" in _label or "[3581/4000" in _label or "[3582/4000" in _label or "[3583/4000" in _label or "[3584/4000" in _label or "[3585/4000" in _label or "[3586/4000" in _label or "[3587/4000" in _label or "[3588/4000" in _label or "[3589/4000" in _label or "[3590/4000" in _label or "[3591/4000" in _label or "[3592/4000" in _label or "[3593/4000" in _label or "[3594/4000" in _label or "[3595/4000" in _label or "[3596/4000" in _label or "[3597/4000" in _label or "[3598/4000" in _label or "[3599/4000" in _label or "[3600/4000" in _label or "[3601/4000" in _label or "[3602/4000" in _label or "[3603/4000" in _label or "[3604/4000" in _label or "[3605/4000" in _label or "[3606/4000" in _label or "[3607/4000" in _label or "[3608/4000" in _label or "[3609/4000" in _label or "[3610/4000" in _label or "[3611/4000" in _label or "[3612/4000" in _label or "[3613/4000" in _label or "[3614/4000" in _label or "[3615/4000" in _label or "[3616/4000" in _label or "[3617/4000" in _label or "[3618/4000" in _label or "[3619/4000" in _label or "[3620/4000" in _label or "[3621/4000" in _label or "[3622/4000" in _label or "[3623/4000" in _label or "[3624/4000" in _label or "[3625/4000" in _label or "[3626/4000" in _label or "[3627/4000" in _label or "[3628/4000" in _label or "[3629/4000" in _label or "[3630/4000" in _label or "[3631/4000" in _label or "[3632/4000" in _label or "[3633/4000" in _label or "[3634/4000" in _label or "[3635/4000" in _label or "[3636/4000" in _label or "[3637/4000" in _label or "[3638/4000" in _label or "[3639/4000" in _label or "[3640/4000" in _label or "[3641/4000" in _label or "[3642/4000" in _label or "[3643/4000" in _label or "[3644/4000" in _label or "[3645/4000" in _label or "[3646/4000" in _label or "[3647/4000" in _label or "[3648/4000" in _label or "[3649/4000" in _label or "[3650/4000" in _label or "[3651/4000" in _label or "[3652/4000" in _label or "[3653/4000" in _label or "[3654/4000" in _label or "[3655/4000" in _label or "[3656/4000" in _label or "[3657/4000" in _label or "[3658/4000" in _label or "[3659/4000" in _label or "[3660/4000" in _label or "[3661/4000" in _label or "[3662/4000" in _label or "[3663/4000" in _label or "[3664/4000" in _label or "[3665/4000" in _label or "[3666/4000" in _label or "[3667/4000" in _label or "[3668/4000" in _label or "[3669/4000" in _label or "[3670/4000" in _label or "[3671/4000" in _label or "[3672/4000" in _label or "[3673/4000" in _label or "[3674/4000" in _label or "[3675/4000" in _label or "[3676/4000" in _label or "[3677/4000" in _label or "[3678/4000" in _label or "[3679/4000" in _label or "[3680/4000" in _label or "[3681/4000" in _label or "[3682/4000" in _label or "[3683/4000" in _label or "[3684/4000" in _label or "[3685/4000" in _label or "[3686/4000" in _label or "[3687/4000" in _label or "[3688/4000" in _label or "[3689/4000" in _label or "[3690/4000" in _label or "[3691/4000" in _label or "[3692/4000" in _label or "[3693/4000" in _label or "[3694/4000" in _label or "[3695/4000" in _label or "[3696/4000" in _label or "[3697/4000" in _label or "[3698/4000" in _label or "[3699/4000" in _label 
+        sysmsg "pack getting full consider recalling"
+        ## recallcharge
+        ## recall
+        overhead "recall to home"
+        say "All Follow Me"
+        whisper "[recall vHome"
+        wait 200
+        while casting 
+        endwhile
+        wait 200
+
+        if not hidden
+            skill Hiding
+        endif
+
+        menu _util__buy_shit_n_organize__stockpile_serial 0
+        wft 500
+        target  _util__buy_shit_n_organize__set_pack_animal
+        wait 200
+
+        wait 100
+        menu _util__buy_shit_n_organize__resupply_shelf_serial 1
+
+
+        foreach _itr in _util__buy_shit_n_organize__mages_rune_tome_chest_path
+            dclick _itr
+            wait 400
+        endfor
+        overhead "recall to NPCs"
+        say "All Follow Me"
+        #whisper "[recall"
+        cast "Recall"
+        wait 200
+        while casting
+        endwhile
+        wft 500
+        target _util__buy_shit_n_organize__mages_rune_tome_serial
+        wait 200
+        
+    endif
+    sysmsg "packer - {{_label}}" 99
+    
+    
+    @clearignore
+    ## buy from npc 8 tiles close
+    while findtype 400|401 ground -1 -1 8 as _npc
+        #overhead _npc 99 _npc
+        foreach _itr in _util__buy_shit_n_organize__buy_vendors
+            if _itr == _npc 
+                @getlabel _npc _npc_label
+                sysmsg "buy from {{_npc_label}}" 99
+                overhead "*** buying {{_npc_label}}" 55 _npc
+                menu _npc 1
+            endif
+        endfor
+        wait 200
+
+        ## organize
+        if weight > 80
+            sysmsg "_organizing pt1"
+            dclick _util__buy_shit_n_organize__set_pack_animal
+
+            @getlabel backpack _bp_before_org
+            organizer _util__buy_shit_n_organize__org_agent_num
+            wait 400
+            @getlabel backpack _bp_after_org
+            while _bp_before_org != _bp_after_org or weight > 80
+                sysmsg "_still organizing pt1"
+                @getlabel backpack _bp_before_org
+                organizer _util__buy_shit_n_organize__org_agent_num
+                wait 500
+                @getlabel backpack _bp_after_org
+            endwhile
+        endif
+        wait 200
+        
+        @ignore _npc
+    endwhile
+    ## overhead over npcs out of range
+    while findtype 400|401 ground -1 -1 18 as _npc
+        @ignore _npc
+        #overhead _npc 99 _npc
+        foreach _itr in _util__buy_shit_n_organize__buy_vendors
+            if _itr == _npc
+                @getlabel _npc _npc_label
+                overhead "out of range {{_npc_label}}" 33 _npc
+            endif
+        endfor
+    endwhile
+
+
+    ## organize 2nd attempt
+    if weight > 80
+        sysmsg "_organizing pt2"
+        dclick _util__buy_shit_n_organize__set_pack_animal
+
+        @getlabel backpack _bp_before_org
+        organizer _util__buy_shit_n_organize__org_agent_num
+        wait 400
+        @getlabel backpack _bp_after_org
+        while _bp_before_org != _bp_after_org or weight > 80
+            sysmsg "_still organizing pt2"
+            @getlabel backpack _bp_before_org
+            organizer _util__buy_shit_n_organize__org_agent_num
+            wait 500
+            @getlabel backpack _bp_after_org
+        endwhile
+    endif
+    
+    
+    
+    wait 150
+
+
+sysmsg "__done"
+
+
+
+endwhile
+
+
+stop
+#
+
+@getlabel backpack _bp
+if insysmsg "Container set successfully"
+overhead "_YAY"
+endif
+stop
+
+
+
+#while counttype 4233 > 0
+#    @getlabel! backpack _bp
+#    menu  _npc_serial  2
+#    wait 500
+    organizer _util__buy_shit_n_organize__org_agent_num
+#endwhile
+
+#
+
+    

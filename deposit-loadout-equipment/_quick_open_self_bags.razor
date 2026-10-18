@@ -1,0 +1,108 @@
+
+@clearignore
+dclick backpack
+@ignore backpack
+
+
+
+if not listexists _depth
+    createlist _depth
+
+    pushlist _depth 1
+    pushlist _depth 2
+    pushlist _depth 3
+    pushlist _depth 4
+    pushlist _depth 5
+    pushlist _depth 6
+    pushlist _depth 7
+    pushlist _depth 8
+    pushlist _depth 9
+    pushlist _depth 10
+    pushlist _depth 11
+    pushlist _depth 12
+    pushlist _depth 13
+    pushlist _depth 14
+    pushlist _depth 15
+    pushlist _depth 16
+    pushlist _depth 17
+    pushlist _depth 18
+    pushlist _depth 19
+    pushlist _depth 20
+    pushlist _depth 21
+    pushlist _depth 22
+    pushlist _depth 23
+    pushlist _depth 24
+    pushlist _depth 25
+    pushlist _depth 26
+    pushlist _depth 27
+    pushlist _depth 28
+    pushlist _depth 29
+    pushlist _depth 30
+endif
+
+
+
+@setvar _opener_done 2
+foreach _a_depth in _depth
+    @setvar! _found_to_open 0
+
+
+
+    ## pouch :: 3705
+    while @findtype! "pouch" backpack -1 -1 _a_depth as _this
+        @getlabel! _this _this_label
+        #sysmsg _this_label
+        if hue _this == 38
+        else
+            if "(0 items" in _this_label
+            else
+                @setvar! _found_to_open 1
+                dclick _this
+            endif
+        endif
+        @ignore _this
+    endwhile
+
+
+
+    ## backpack :: 3701
+    while @findtype! "backpack" backpack -1 -1 _a_depth as _this
+        @getlabel! _this _this_label
+        #sysmsg _this_label
+        if "(0 items" in _this_label
+        else
+            @setvar! _found_to_open 1
+            dclick _this
+        endif
+        @ignore _this
+    endwhile
+
+
+
+    ## bag :: 3702
+    while @findtype! "bag" backpack -1 -1 _a_depth as _this
+        @getlabel! _this _this_label
+        #sysmsg _this_label
+        if "(0 items" in _this_label
+        else
+            @setvar! _found_to_open 1
+            dclick _this
+        endif
+        @ignore _this
+    endwhile
+
+
+    if _found_to_open == 0
+        @setvar _opener_done 1
+        break
+    endif
+
+endfor
+
+
+
+
+
+
+
+## src hue quantity range

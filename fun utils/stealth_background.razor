@@ -1,0 +1,78 @@
+
+@clearignore
+
+if findlayer self head as _this
+    ## if equipped magic hat, re-use it
+    @getlabel! _this _label
+    if "magical" in _label
+        @setvar _stealth_bg__wizard_hat _this
+    endif
+endif
+
+
+if varexist _stealth_bg__wizard_hat
+    ## if cannot find the magic hat, unset it
+    if find _stealth_bg__wizard_hat self
+    else
+        @unsetvar _stealth_bg__wizard_hat
+    endif
+endif
+
+
+if not varexist _stealth_bg__wizard_hat
+    if findtype "5912|wizard's hat" backpack -1 -1 -1 as _this
+        @getlabel! _this _label
+        if "magical" in _label
+            @setvar _stealth_bg__wizard_hat _this
+        endif
+    endif
+endif
+
+
+
+#@setvar _stealth_bg__stam_spam__timer__cd  2269
+#@settimer _stealth_bg__stam_spam__timer  _stealth_bg__stam_spam__timer__cd
+@unsetvar _stealth_bg__stam_spam__overhead
+
+while not dead 
+
+
+    if not varexist _stealth_bg__stam_spam__overhead
+        @setvar _stealth_bg__stam_spam__overhead 2
+    endif
+    if diffstam == 2 and _stealth_bg__stam_spam__overhead == 2
+        overhead "stam almost full -2" 44
+        @setvar _stealth_bg__stam_spam__overhead 1 
+    elseif diffstam == 1 and _stealth_bg__stam_spam__overhead == 1
+        overhead "HALT FOR STAM" 33
+        @setvar _stealth_bg__stam_spam__overhead 2
+    endif
+        
+
+
+    if diffstam == 0 and not cooldown "Stealth"
+        dclick _stealth_bg__wizard_hat
+        wait 500
+        @getlabel! backpack _bp
+        if diffstam >= 5
+            overhead "STAM GOOD" 55
+        endif
+    endif
+    
+    
+    
+    @clearsysmsg
+    if insysmsg "You have 3 stealth steps" and not cooldown "Stealth"
+        overhead "3 STEPS" 44
+    elseif insysmsg "You have 2 stealth steps" and not cooldown "Stealth"
+        overhead "2 STEPS" 44
+    elseif insysmsg "You have 2 stealth steps" and cooldown "Stealth"
+        overhead "HALT 2 STEPS" 33
+    elseif insysmsg "You have 1 stealth steps" and not cooldown "Stealth"
+        overhead "1 STEPS" 44
+    elseif insysmsg "You have 1 stealth steps" and cooldown "Stealth"
+        overhead "HALT STEPS" 33
+    endif
+   
+endwhile
+#

@@ -1,0 +1,80 @@
+sysmsg "__start"
+
+@setvar _magical_hat__serial 0x537EBE9A
+
+@setvar _magical_hat__stam_good 1
+
+while 1 == 1
+    @clearignore
+
+    #hile not dead and not hidden
+    #    useskill "hide"
+    #endwhile
+
+    #### _util_um_spammer
+    if not varexist _util_um_spammer_spam__delay
+        @setvar  _util_um_spammer_spam__delay  2269
+    endif
+    if not timerexists _util_um_spammer_spam__timer
+        @settimer  _util_um_spammer_spam__timer  _util_um_spammer_spam__delay
+    endif
+    if varexist _this
+        @unsetvar _this
+    endif
+    @clearignore
+    while findtype 'blood altar|alchemical symbol' ground -1 -1 -1 as _this
+        if not dead and hidden
+            if diffstam == 1 or diffstam == 0 
+                if _magical_hat__stam_good == 1
+                    overhead "STOP - STAM" 33
+                    @setvar _magical_hat__stam_good 0
+                endif
+            endif
+        endif
+    
+        if timer _util_um_spammer_spam__timer >= _util_um_spammer_spam__delay
+            @getlabel!  _this  _label
+            #if "contested boss active" in _label
+                overhead "***** {{_label}}" 44 _this
+                #overhead "contested boss" 66
+                #overhead "contested boss" 66
+                @settimer _util_um_spammer_spam__timer 0
+            #endif
+        endif
+        @ignore _this
+    endwhile
+    ####
+    
+    while findtype '61441|book' ground 0 -1 -1 as _this
+        @ignore _this
+        @getlabel! _this _label
+        if "theurgist" in _label
+            overhead "***** {{_label}" 44 _this
+            overhead "hidden book found"
+        endif
+    endwhile
+    
+    
+    if  not dead and hidden
+        if diffstam == 1 or diffstam == 0 
+            if _magical_hat__stam_good == 1
+                overhead "STOP - STAM" 33
+                @setvar _magical_hat__stam_good 0
+            endif
+        endif
+        while diffstam == 0
+            dclick _magical_hat__serial
+            wait 500
+        endwhile
+        if _magical_hat__stam_good == 0 and diffstam > 1
+            overhead "STAM GOOD"
+            @setvar _magical_hat__stam_good 1
+        endif
+    endif
+
+    
+    
+endwhile
+#
+
+#

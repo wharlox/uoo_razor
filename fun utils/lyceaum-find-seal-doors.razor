@@ -1,0 +1,208 @@
+//- identifies the seal-d doors with an overhead and the seal which should get you through the door
+//- says the magic-words to let you into each door
+//  - the ones with `??` are there because i did not validate them to 100%
+//- uses detect hidden on self every 10s
+//- scans the ground for the hidden text and notifies via overheads if found
+
+
+//Seal of 
+//  Alchemy and Magic [blue] +
+//  Culture [white] +
+//  Diplomacy [red] +
+//  Ecology [green] +
+//  Geography and Exploration [light brown]
+//  History and Lore [bright orange]
+//  Research and Technology [light blue] +
+//  Shield [orange] +
+//  Virtue [white-blue]
+//  Underlibrary [black] +
+//  Knowledge [white]
+
+@setvar __wis_ylem_por__underlibrary 0
+@setvar __wis_ylem_por__alchemy_magic 0
+@setvar __wis_ylem_por__shield 0
+@setvar __wis_ylem_por__virtue 0
+@setvar __wis_ylem_por__diplomacy 0
+@setvar __wis_ylem_por__history_lore 0
+@setvar __wis_ylem_por__culture 0
+@setvar __wis_ylem_por__ecology 0
+@setvar __wis_ylem_por__research_tech 0
+@setvar __wis_ylem_por__knowledge 0
+
+@setvar __scan_backpack_for_seals__timer__cd 120000
+@settimer  __scan_backpack_for_seals__timer  __scan_backpack_for_seals__timer__cd 
+
+
+@unsetvar _this
+@removetimer _this
+@removelist _this
+while not dead
+    
+
+    @clearignore
+    while findtype "metal door|wooden door"   ground -1 -1 -1 as _this 
+        #sysmsg "_finding doors" 199
+        @getlabel! _this _label
+        if "'Wis Ylem Por'" in _label
+            if _this == 0x40C34636
+                overhead "underlibrary" 55  _this
+            elseif _this == 0x5097F9EF  or  _this == 0x5235A1B6
+                overhead "alchemy and magic" 55  _this
+            elseif _this == 0x52349567  or  _this == 0x509D6A2C  or  _this == 0x40817130  or  _this == 0x5234A59C
+                overhead "shield" 55  _this
+            elseif _this == 0x509D721A  or  _this == 0x5234AB6A
+                ## this door broken
+                # overhead "shield" 55  _this
+            elseif _this == 0x52346751  or  _this == 0x4089544E
+                overhead "virtue" 55  _this
+            elseif _this == 0x5233DA33
+                overhead "diplomacy" 55  _this
+            elseif _this == 0x5231BAF6  or  _this == 0x5231AF64
+                overhead "diplomacy??" 55  _this
+            elseif _this == 0x5232BFBE  or  _this == 0x4099BA68
+                overhead "History and Lore" 55  _this
+            elseif _this == 0x52331AA9  or  _this == 0x52330FD5
+                overhead "culture??" 55  _this
+            elseif _this == 0x52366381  or  _this == 0x5236543B  or  _this == 0x404C804A
+                overhead "ecology??" 55  _this
+            elseif _this == 0x52386252  or  _this == 0x408C67CE
+                overhead "research and tech" 55  _this
+            elseif _this == 0x52318592  or  _this == 0x5231923A  or  _this == 0x523507C9
+                overhead "knowledge??" 55  _this
+            
+            elseif _this == 0x52323230
+                overhead "WHERE AND WHAT IS THIS?? {{_this}}" 33 _this
+                overhead "WHERE AND WHAT IS THIS?? {{_this}}" 33 _this
+                overhead "WHERE AND WHAT IS THIS?? {{_this}}" 33 _this
+                overhead "WHERE AND WHAT IS THIS?? {{_this}}" 33 
+                overhead "WHERE AND WHAT IS THIS?? {{_this}}" 33 
+                overhead "WHERE AND WHAT IS THIS?? {{_this}}" 33 
+            else
+                overhead "****** {{_this}}" 55  _this
+                @settimer  _overheads  0 
+            endif
+        endif
+        @ignore _this
+        #wait 100
+    endwhile
+
+
+    
+    
+    if timer __scan_backpack_for_seals__timer  >= __scan_backpack_for_seals__timer__cd 
+        @clearignore
+        while findtype 'apostate seal' backpack -1 -1 -1 as _this
+            #sysmsg "_finding seals in backpack" 199
+            @ignore _this
+            @getlabel _this _label
+            if "underlibrary" in _label
+                @setvar __wis_ylem_por__underlibrary 1
+                sysmsg "found seal for underlibrary" 199
+            elseif "alchemy and magic" in _label
+                @setvar __wis_ylem_por__alchemy_magic 1
+                sysmsg "found seal for alchemy and magic" 199
+            elseif "shield" in _label
+                @setvar __wis_ylem_por__shield 1
+                sysmsg "found seal for shield" 199
+            elseif "virtue" in _label
+                @setvar __wis_ylem_por__virtue 1
+                sysmsg "found seal for virtue" 199
+            elseif "diplomacy" in _label
+                @setvar __wis_ylem_por__diplomacy 1
+                sysmsg "found seal for diplomacy" 199
+            elseif "history and lore" in _label
+                @setvar __wis_ylem_por__history_lore 1
+                sysmsg "found seal for history and lore" 199
+            elseif "culture" in _label
+                @setvar __wis_ylem_por__culture 1
+                sysmsg "found seal for culture" 199
+            elseif "ecology" in _label
+                @setvar __wis_ylem_por__ecology 1
+                sysmsg "found seal for ecology" 199
+            elseif "research and techno" in _label
+                @setvar __wis_ylem_por__research_tech 1
+                sysmsg "found seal for research and technology" 199
+            elseif "knowledge" in _label
+                @setvar __wis_ylem_por__knowledge 1
+            sysmsg "found seal for knowledge" 199
+            endif
+        endwhile
+        @settimer __scan_backpack_for_seals__timer 0
+    endif
+
+    
+    
+    
+    
+    #### say the magic words if idle for at least 2 seconds
+    if cooldown walk == 0
+        #sysmsg "NOT walk"
+        if not timerexists _quest_hidden_text__not_walking_timer
+            @settimer _quest_hidden_text__not_walking_timer 0
+        elseif timer _quest_hidden_text__not_walking_timer > 1000
+            whisper "Wis Ylem Por" 44
+
+            wait 2000
+            #### detect hidden every 10s
+            if not timerexists _quest_hidden_text__dh_timer
+                @settimer _quest_hidden_text__dh_timer 10100
+            endif
+            if timer _quest_hidden_text__dh_timer >= 10100
+                sysmsg "useing detect hidden"
+                overhead "useing detect hidden"
+                useskill 'detectinghidden'
+                wft 500
+                target self
+                @settimer _quest_hidden_text__dh_timer 0
+            endif
+
+            @settimer _quest_hidden_text__not_walking_timer 0
+        endif
+        
+    else
+        #sysmsg "walking"
+        if timerexists _quest_hidden_text__not_walking_timer
+            @removetimer _quest_hidden_text__not_walking_timer
+        endif
+    endif
+
+    
+
+    
+
+    ###### Time Quest - Waneta 2-4 The Hidden Text - start
+    #### a theurgists text - scroll - 61746 0hue
+    if not varexist _quest_hidden_text_spam__delay
+        @setvar  _quest_hidden_text_spam__delay  2269
+    endif
+    if not timerexists _quest_hidden_text_spam__timer
+        @settimer  _quest_hidden_text_spam__timer  _quest_hidden_text_spam__delay
+    endif
+    if varexist _this
+        @unsetvar _this
+    endif
+    @clearignore
+    while findtype 'scroll|61746' ground 0 -1 -1 as _this
+        #sysmsg "_finding scrolls on ground" 199
+        if timer _quest_hidden_text_spam__timer >= _quest_hidden_text_spam__delay
+            @getlabel!  _this  _label
+            if "a theurgists text" in _label
+                overhead "***** {{_label}}" 44 _this
+                overhead "hidden text found" 66
+                overhead "hidden text found" 66
+
+                #lift _this 6000
+                #drop backpack -1 -1 -1
+                
+                @settimer _quest_hidden_text_spam__timer 0
+            endif
+        endif
+        @ignore _this
+        
+    endwhile
+    ###### Time Quest - Waneta 2-4 The Hidden Text - end
+
+
+
+endwhile
+#
