@@ -1,13 +1,14 @@
+overhead "oakbard start"
 ## Settings ##
 #bard
-@setvar! AutoBardBuffs 1
-@setvar! AutoDisco 1
-@setvar! AutoPeace 1
-@setvar! AutoProvo 1
+@setvar! AutoBardBuffs 0
+@setvar! AutoDisco 0
+@setvar! AutoPeace 0
+@setvar! AutoProvo 0
 #potion 
 @setvar! EnableHealPots 1
 @setvar! EnableCurePots 1
-@setvar! EnableRefreshPots 1
+@setvar! EnableRefreshPotsThreshold 10
 @setvar! EnableStrengthPots 1
 @setvar! EnableAgilityPots  1
 @setvar! EnableMagResPots 1
@@ -23,15 +24,29 @@
 @setvar! castMushroom 1
 @setvar! MagicMushroomMIN 5
 @setvar! manaEatMushroom 30
+# auto buff
+@setvar! autoCastSelfBuffs 0
+@setvar! autoDropGoldAmount 0
+
+# autoMoveGoldToBackpack - requires var myLootBag
+@setvar! autoMoveGoldToBackpack 0
+
+
+
+
+
+if targetexists 
+    hotkey "Cancel Current Target"
+endif
 
 
 if not listexists "discordedCreatures"
-    createlist "discordedCreatures"
+    @createlist "discordedCreatures"
 endif
 
 // "== All Magic Items ==" - List of All Magic Items
 if not listexists "AllItems"
-    createlist "AllItems"
+    @createlist "AllItems"
 endif
 clearlist AllItems
 pushlist AllItems 3568|3570|3571|3572|3573|3713|3719|3721|3740|3742|3762|3763|3834|3909|3911|3913|3915|3917|3920|3922|3932|3934|3937|3938|5040|5042|5044|5046|5049|5112|5115|5117|5119|5121|5123|5125|5127|5177|5179|5181|5182|5185|5187|7026|7027|7029|7031|7033|7034|7035|7107|7109|10245|20006|20008|20010|20012|20014|20016|22187|30988|30989|30990|30991|30992|30993|30994|30995|30996|30997|30998|30999|31000|31001|31002|31014|31017|31019|31021|31023|31025|31027|31029|31031|31033|31035|31037|31038|31041|31043|31045|31047|31049|31051|31053|31055|31128|31130|31141|31142|31176|31178|31180|31182|31184|31186|31188|31190
@@ -50,6 +65,8 @@ endif
 if findlayer self lefthand as item
     @setvar my_lefthand item
 endif
+
+
 
 
 ## Beginning of Loop ##
@@ -182,7 +199,7 @@ while not dead
 
  
 ## Auto Skinning ##    
-    if AutoSkinning = 1
+    if AutoSkinning = 1 and not hidden
         if findtype "Elven Spellblade" backpack
             if findtype "corpse" ground -1 -1 2  as rip
                 dclicktype "Elven Spellblade" backpack
@@ -197,67 +214,84 @@ while not dead
     endif    
 
 ## Overweight ##
-    if weight > maxweight 
-        if findtype "gold coin" backpack as item
-            lift item 2468
-            drop ground
-            wait minWait
-            if insysmsg "cannot drop anything"
-                drop backpack -1 -1 -1
+    if autoDropGoldAmount != 0
+        if weight > maxweight and not hidden
+            if findtype "gold coin" backpack as item
+                lift item autoDropGoldAmount
+                drop ground
+                wait minWait
+                if insysmsg "cannot drop anything"
+                    drop backpack -1 -1 -1
+                endif
+                wait minWait
+            else
+                overhead "We are overweight and cannot drop anything" 34
             endif
-            wait minWait
-        else
-            overhead "We are overweight and cannot drop anything" 34
         endif
     endif
-    
 ## Buffs ##
     if not findbuff "food" and findtype "tray" backpack as MyFood
         dclick MyFood
         wait minWait
     endif
 
-    if not findbuff "Magic Reflection" and not cooldown "MagicReflect" and not casting and not targetexists    
-        cast "Magic Reflection"
-        wait minWait
-        if insysmsg "You must wait another 2"
-            cooldown "MagicReflect" 30000
-        elseif insysmsg "You must wait another 1"
-            cooldown "MagicReflect" 20000
-        elseif insysmsg "You must wait another"
-            cooldown "MagicReflect" 10000
+    if autoCastSelfBuffs == 1 and not hidden
+        if not findbuff "Magic Reflection" and not cooldown "MagicReflect" and not casting and not targetexists    
+            cast "Magic Reflection"
+            wait minWait
+            if insysmsg "You must wait another 2"
+                cooldown "MagicReflect" 30000
+            elseif insysmsg "You must wait another 1"
+                cooldown "MagicReflect" 20000
+            elseif insysmsg "You must wait another"
+                cooldown "MagicReflect" 10000
+            endif
+        endif
+        if not findbuff "Reactive Armor" and not cooldown "ReactiveArmor" and not casting and not targetexists   
+            cast "Reactive Armor"
+            wait minWait
+            if insysmsg "You must wait another 2"
+                cooldown "ReactiveArmor" 30000
+            elseif insysmsg "You must wait another 1"
+                cooldown "ReactiveArmor" 20000
+            elseif insysmsg "You must wait another"
+                cooldown "ReactiveArmor" 10000
+            endif        
+        endif
+        if not findbuff "Protection" and not casting and not targetexists   
+            cast "Protection"
+            wait minWait
         endif
     endif
-    if not findbuff "Reactive Armor" and not cooldown "ReactiveArmor" and not casting and not targetexists   
-        cast "Reactive Armor"
-        wait minWait
-        if insysmsg "You must wait another 2"
-            cooldown "ReactiveArmor" 30000
-        elseif insysmsg "You must wait another 1"
-            cooldown "ReactiveArmor" 20000
-        elseif insysmsg "You must wait another"
-            cooldown "ReactiveArmor" 10000
-        endif        
-    endif
-    if not findbuff "Protection" and not casting and not targetexists   
-        cast "Protection"
-        wait minWait
-    endif
 
-
-    if EnableStrengthPots = 1 and not findbuff "Strength"
-        hotkey "Drink Strength"
+    if EnableStrengthPots = 1 and not hidden
+        if not findbuff "Strength" and findtype 'White Potion' backpack -1 -1 -1
+            hotkey "Drink Strength"
+        endif
     endif
     
-    if EnableAgilityPots = 1 and not findbuff "Agility"
-        hotkey "Drink Agility"
+    if EnableAgilityPots = 1 and not hidden 
+        if not findbuff "Agility"  and findtype 'Blue Potion' backpack -1 -1 -1
+            hotkey "Drink Agility"
+        endif
     endif
     
-    if EnableMagResPots = 1 and not findbuff "Magic Resist Potion"
-        hotkey "Drink Magic Resist"
+    if EnableMagResPots = 1 and not hidden
+        if not findbuff "Magic Resist Potion"  and findtype 'Black Potion' backpack -1 -1 -1
+            hotkey "Drink Magic Resist"
+        endif
     endif
     
-    if AutoBardBuffs = 1 and not cooldown "BardBuffs"
+    // === stamina check
+    if diffstam > EnableRefreshPotsThreshold and not hidden and findtype 'Red Potion' self  
+        @getlabel! backpack _bp
+        overhead 'Refresh'
+        #dclicktype 'Red Potion'
+        potion "refresh"
+        wait 200
+    endif     
+    
+    if AutoBardBuffs = 1 and not cooldown "BardBuffs" and not hidden
         if not findbuff "Song of Provocation" and skill "Provocation" >= 80 and not cooldown "Peace-Provo" and not casting and not targetexists
             skill "Provocation"
             waitfortarget 2000
@@ -274,7 +308,7 @@ while not dead
     endif
  
          
-    if mana < manaEatMushroom
+    if mana < manaEatMushroom and not hidden
         if findtype 2963 backpack as shroom
             dclick shroom
         elseif EnableOverheadMessages = 1
@@ -282,7 +316,7 @@ while not dead
         endif
     endif
     
-    if counttype 29012 < MagicMushroomMIN
+    if counttype 29012 < MagicMushroomMIN and not hidden
         for 10
             if hp < 25
                 break
@@ -316,7 +350,7 @@ if warmode
 # AUTO-PROVOKE/PEACE #
 @setvar! foundFirstTarget 0
 @setvar! foundSecondTarget 0 
-    if not cooldown "Peace-Provo" and not casting and not targetexists
+    if not cooldown "Peace-Provo" and not casting and not targetexists and not hidden
         hotkey "Target Closest Grey Monster"
         if not find lasttarget ground -1 -1 10
             // nothing
@@ -411,7 +445,7 @@ if warmode
         endif
 
             #********* PROVO IF TARGETS FOUND *********
-        if not casting and not targetexists
+        if not casting and not targetexists and not hidden
             if 1 = foundFirstTarget and 1 = foundSecondTarget and AutoProvo = 1
                 hotkey "Provocation"
                 waitfortarget 1000 
@@ -466,73 +500,80 @@ if warmode
     endif
 
 # AUTO-DISCO #    
-    @setvar! foundTarget 0
-    if not casting and not targetexists and not cooldown "Disco"
-        settimer testTimer 0
-        hotkey 'target closest non-friendly monster'
-        wait minWait
-        if not find lasttarget ground -1 -1 12
-            // nothing
-        else
-            while index != 6
-                @setvar! tempTarget lasttarget 
-                if index != 0 
-                    hotkey "next non-friendly monster target"
-                    @setvar! tempTarget lasttarget 
-                    #overhead "*{{index}}*" 34 tempTarget
-                    if index = 1
-                        @setvar! firstTarget lasttarget
-                    elseif firstTarget = tempTarget
-                        @setvar! foundTarget 2
-                        break
-                    endif
-                endif
-                
-                if find tempTarget ground -1 -1 12
-                    getlabel tempTarget targetLabel
-                    if "discord" in targetLabel
-                        #next
-                    pushlist discordedCreatures tempTarget
-                    elseif "summoned" in targetLabel or "tame" in targetLabel or "bonded" in targetLabel
-                        #@ignore!
-                    elseif "-" in targetLabel
-                        sysmsg "Label error, replaying search.." 34
-                        replay
-                    else 
-                        @setvar! foundTarget 1 
-                        @setvar! currentTarget tempTarget
-                        getlabel currentTarget myLabel
-                        sysmsg "Disco: {{myLabel}}" 55 currentTarget
-                        break
-                    endif
-                endif
-            endwhile
-        endif
-
-        #********* DISCO IF TARGET FOUND *********
-
-        if foundTarget = 1 and not casting and not targetexists
-            skill 'discordance'
-            waitfortarget  1500
-            if insysmsg "What instrument"    
-                targettype 3740|3742|3762|3763|10245|20006|20008|20010|20012|20014|20016 backpack
-                replay
-            else 
-                target currentTarget
-            endif
+    if AutoDisco == 1
+        @setvar! foundTarget 0
+        if not casting and not targetexists and not cooldown "Disco" and not hidden
+            settimer testTimer 0
+            hotkey 'target closest non-friendly monster'
             wait minWait
-            getlabel backpack xxx
-            if insysmsg 'You fail to discord'
-                @overhead "Discord FAILED" 44 currentTarget
-            elseif insysmsg "You play successfully, disrupting" 
-                getlabel currentTarget myLabel
-                @overhead "Discorded: {{myLabel}}" 88 currentTarget
+            if not find lasttarget ground -1 -1 12
+                // nothing
+            else
+                while index != 6
+                    @setvar! tempTarget lasttarget 
+                    if index != 0 
+                        hotkey "next non-friendly monster target"
+                        @setvar! tempTarget lasttarget 
+                        #overhead "*{{index}}*" 34 tempTarget
+                        if index = 1
+                            @setvar! firstTarget lasttarget
+                        elseif firstTarget = tempTarget
+                            @setvar! foundTarget 2
+                            break
+                        endif
+                    endif
+                    
+                    if find tempTarget ground -1 -1 12
+                        getlabel tempTarget targetLabel
+                        if "discord" in targetLabel
+                            #next
+                        pushlist discordedCreatures tempTarget
+                        elseif "summoned" in targetLabel or "tame" in targetLabel or "bonded" in targetLabel
+                            #@ignore!
+                        elseif "-" in targetLabel
+                            sysmsg "Label error, replaying search.." 34
+                            replay
+                        else 
+                            @setvar! foundTarget 1 
+                            @setvar! currentTarget tempTarget
+                            getlabel currentTarget myLabel
+                            sysmsg "Disco: {{myLabel}}" 55 currentTarget
+                            break
+                        endif
+                    endif
+                endwhile
             endif
-        endif        
+
+            #********* DISCO IF TARGET FOUND *********
+
+            if foundTarget = 1 and not casting and not targetexists and not hidden
+                skill 'discordance'
+                waitfortarget  1500
+                if insysmsg "What instrument"    
+                    targettype 3740|3742|3762|3763|10245|20006|20008|20010|20012|20014|20016 backpack
+                    replay
+                else 
+                    target currentTarget
+                endif
+                wait minWait
+                getlabel backpack xxx
+                if insysmsg 'You fail to discord'
+                    @overhead "Discord FAILED" 44 currentTarget
+                elseif insysmsg "You play successfully, disrupting" 
+                    getlabel currentTarget myLabel
+                    @overhead "Discorded: {{myLabel}}" 88 currentTarget
+                endif
+            endif  
+        ## AutoDisco
+        endif
+        
     endif
 endif
 
-if AutoID = 1 and not targetexists and not casting
+if AutoID = 1 and not targetexists and not casting and not hidden
+    @unsetvar item
+    @removelist item
+    @removetimer item
     foreach item in AllItems
         while findtype item backpack as unidentifiedItem
             if diffhits > 50
@@ -540,7 +581,7 @@ if AutoID = 1 and not targetexists and not casting
             elseif targetexists or casting 
                 break
             endif
-            getlabel unidentifiedItem itemDesc
+            @getlabel unidentifiedItem itemDesc
             if "unidentified" in itemDesc
                 if idMethod = 3
                     for 5
@@ -568,30 +609,55 @@ if AutoID = 1 and not targetexists and not casting
                 endif
                 wait minWait
             else 
-                ignore unidentifiedItem
+                @ignore unidentifiedItem
             endif
         endwhile
     endfor
 endif
 
-    if not timerexists "moveGold"
-        createtimer "moveGold"
-        settimer "moveGold" 30000
+
+
+    ###### Contested Boss Active spam - start
+    if not varexist _contested_boss_active_spam__delay
+        @setvar  _contested_boss_active_spam__delay  2269
     endif
-    if timer "moveGold" > 30000
-        organizer 1
-        settimer "moveGold" 0
-        if findtype "gold coin" myLootBag as foundCoin
-            lift foundCoin 60000
-            drop backpack -1 -1 -1
-            wait minWait
+    if not timerexists _contested_boss_active_spam__timer
+        @settimer  _contested_boss_active_spam__timer  _contested_boss_active_spam__delay
+    endif
+    if varexist _this
+        @unsetvar _this
+    endif
+    @clearignore
+    while findtype 28016 ground 2940 -1 -1 as _this
+        if timer _contested_boss_active_spam__timer >= _contested_boss_active_spam__delay
+            @getlabel!  _this  _label
+            if "contested boss active" in _label
+                overhead "***** {{_label}}" 44 _this
+                overhead "contested boss" 66
+                overhead "contested boss" 66
+                @settimer _contested_boss_active_spam__timer 0
+            endif
+        endif
+        @ignore _this
+    endwhile
+    ###### Contested Boss Active spam - end
+
+
+    if varexist myLootBag and autoMoveGoldToBackpack == 1
+        if not timerexists "moveGold"
+            createtimer "moveGold"
+            settimer "moveGold" 30000
+        endif
+        if timer "moveGold" > 30000
+            organizer 1
+            settimer "moveGold" 0
+            if findtype "gold coin" myLootBag as foundCoin
+                lift foundCoin 60000
+                drop backpack -1 -1 -1
+                wait minWait
+            endif
         endif
     endif
-
 endwhile
 
-lift 0x5167AE4E 1
-drop 0xDDA9A LeftHand
-
 #
-
