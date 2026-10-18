@@ -171,6 +171,158 @@ endwhile
 
 ################################### Main Loop
 while not dead    
+
+#    if findtype "shepherd's crook" backpack -1 -1 -1 as _this
+# '
+#        if not timerexists _train_herding
+#            @settimer _train_herding 10100
+#        endif
+#        if timer _train_herding >= 10100
+#            sysmsg "dclick {{_this}}"
+#            dclick _this
+#            @settimer _train_herding 0
+#        endif
+#    endif
+
+
+
+
+
+    if 1 == 2 and name = "_toon_name__main"
+        #### CHANGE SKILLS AROUND - set to 200 to DISABLE
+        ## time healer
+            ##
+            @setvar! __train_focus 200
+            @setvar! __train_Parrying 200
+            @setvar! __train_resistspells 200
+            @setvar! __train_Arcane 200
+            @setvar! __train_Wrestling 200
+            @setvar! __train_Tactics 200
+            @setvar! __train_Tailoring 200
+            @setvar! __train_Tracking 100
+            
+            @setvar! __train_Tinkering 200
+            @setvar! __train_Meditation 80
+            
+        ## Tinkering
+        if __train_Tinkering != 200
+            if skill Tinkering  == __train_Tinkering
+                setskill Tinkering  lock
+            elseif skill Tinkering  > __train_Tinkering
+                setskill Tinkering  down
+            elseif skill Tinkering  < __train_Tinkering
+                setskill Tinkering  up
+            endif
+        endif
+            
+        ## focus
+        if __train_focus != 200
+            if skill Focus  == __train_focus
+                setskill Focus  lock
+            elseif skill Focus  > __train_focus
+                setskill Focus  down
+            elseif skill Focus  < __train_focus
+                setskill Focus  up
+            endif
+        endif
+
+        ## Parrying
+        if __train_Parrying != 200
+            if skill Parrying  == __train_Parrying
+                setskill Parrying  lock
+            elseif skill Parrying  > __train_Parrying
+                setskill Parrying  down
+            elseif skill Parrying  < __train_Parrying
+                setskill Parrying  up
+            endif
+        endif
+
+        ## Resisting Spells
+        if __train_resistspells != 200
+            if skill 'Resisting Spells'  == __train_resistspells
+                setskill 'Resisting Spells'  lock
+            elseif skill 'Resisting Spells'  > __train_resistspells
+                setskill 'Resisting Spells'  down
+            elseif skill 'Resisting Spells'  < __train_resistspells
+                setskill 'Resisting Spells'  up
+            endif
+        endif
+
+        ## Arcane
+        if __train_Arcane != 200
+            if skill Arcane  == __train_Arcane
+                setskill Arcane  lock
+            elseif skill Arcane  > __train_Arcane
+                setskill Arcane  down
+            elseif skill Arcane  < __train_Arcane
+                setskill Arcane  up
+            endif
+        endif
+
+        ## Wrestling
+        if __train_Wrestling != 200
+            if skill Wrestling  == __train_Wrestling
+                setskill Wrestling  lock
+            elseif skill Wrestling  > __train_Wrestling
+                setskill Wrestling  down
+            elseif skill Wrestling  < __train_Wrestling
+                setskill Wrestling  up
+            endif
+        endif
+        
+        ## Tactics
+        if __train_Tactics != 200
+            if skill Tactics  == __train_Tactics
+                setskill Tactics  lock
+            elseif skill Tactics  > __train_Tactics
+                setskill Tactics  down
+            elseif skill Tactics  < __train_Tactics
+                setskill Tactics  up
+            endif
+        endif
+        
+        ## Tailoring
+        if __train_Tailoring != 200
+            if skill Tailoring  == __train_Tailoring
+                setskill Tailoring  lock
+            elseif skill Tailoring  > __train_Tailoring
+                setskill Tailoring  down
+            elseif skill Tailoring  < __train_Tailoring
+                setskill Tailoring  up
+            endif
+        endif
+        
+        ## Tracking
+        if __train_Tracking != 200
+            if skill Tracking  == __train_Tracking
+                setskill Tracking  lock
+            elseif skill Tracking  > __train_Tracking
+                setskill Tracking  down
+            elseif skill Tracking  < __train_Tracking
+                setskill Tracking  up
+            endif
+        endif
+        
+        ## Meditation
+        if __train_Meditation != 200
+            if skill Meditation  == __train_Meditation
+                setskill Meditation  lock
+            elseif skill Meditation  > __train_Meditation
+                setskill Meditation  down
+            elseif skill Meditation  < __train_Meditation
+                setskill Meditation  up
+            endif
+        endif
+        
+        
+
+    #### END CHANGE SKILLS AROUND
+    endif
+
+
+
+
+
     // ================================ Health and Wellness Portion    
     // === Cure - Potion 
     if not hidden and poisoned and not cooldown 'Cure Potion' and findtype 'Orange Potion' self
@@ -297,6 +449,146 @@ while not dead
         wait 200
     endif     
     
+    
+    
+    ###### recycle fun
+
+    #### ID whole backpack
+    if 1 == 2
+    if not casting and not targetexists
+        if skill 'Item Identification' >= 50  or  skill 'itemidentification' >= 50 
+            if not timerexists _item_id_timer
+                @settimer _item_id_timer 30000
+            endif
+            
+            if not listexists _this_background__ider__keep
+                @createlist _this_background__ider__keep
+            endif
+
+            if not varexist _item_id_timer__use_warning 
+                @setvar _item_id_timer__use_warning 0
+            endif
+            
+            if timer _item_id_timer >= 4000  and  _item_id_timer__use_warning == 0
+                @setvar _item_id_timer__use_warning 1
+                overhead "about to auto item-id" 55
+                sysmsg "about to auto item-id" 55
+            endif
+            
+            if timer _item_id_timer >= 6000
+                if not targetexists and not casting and not cooldown 'skill'
+                    useskill 'itemidentification'
+                    wft 500
+                    target backpack
+                    @settimer _item_id_timer 0
+                    @setvar _item_id_timer__use_warning 0
+                endif
+            endif
+        endif
+    endif
+    
+    if not casting and not targetexists
+        if not varexist _recycle_tool
+            @setvar _recycle_tool 0
+        endif
+        if _recycle_tool == 0 or not find _recylce_tool backpack -1 -1 -1
+            if findtype "sewing kit|saw|pen and ink|tongs|tool kit" backpack  -1 -1 -1 as _this
+                @setvar _recycle_tool _this
+            else
+                @setvar _recycle_tool 0
+            endif
+        endif
+        
+        ## if recycle tool exists, ensure gump is open and to right page
+        if _recycle_tool != 0
+            while not gumpexists 949095101
+                while queued
+                endwhile
+                dclick _recycle_tool
+                waitforgump 949095101 1000
+            endwhile
+            while not ingump "Recycle Single Item" 949095101
+                gumpresponse 2 949095101
+                waitforgump 949095101 1000
+            endwhile
+        endif
+        
+        if not timerexists _background__recycle_item
+            @settimer _background__recycle_item 1000
+        endif
+
+        if not listexists _background__recycle_item__keeping_items
+            @createlist _background__recycle_item__keeping_items
+        endif
+        
+
+        @unsetvar _this
+        @removelist _this
+        if  findtype '5056|5059|5060|5061|5063|5070|5074|5075|5076|5078|5085|5089|5090|5101|5103|5105|5106|5129|5131|5132|5135|5138|5139|5142|5143|5144|5146|5201|5203|5204|5205|5207|7169|7170|7173|7175|7177|7179|7181|7610|7947|31003|31004|31005|31006|31007|31008|31009|31010|31011|31012|31015|31191|31017|31019|31021|31023|31025|31027|31029|31031|31033|31035|31037|31038|31041|31043|31045|31047|31049|31051|31053|31055|3834|3740|3742|3762|3763|10245|20006|20008|20010|20012|20014|20016|7026|7027|7029|7031|7033|7034|7035|7107|7109|31002|31130|3920|5042|5117|30990|30993|30994|30995|31184|31186|3719|3938|5121|5123|5125|30989|30992|30996|30997|30998|31176|31188|3568|3713|3721|3932|5040|5044|5112|5127|5177|5179|5181|30991|30999|31000|31001|31014|31178|31180|31182|3909|3911|3913|3915|3917|3934|3937|5046|5049|5115|5119|5182|5185|5187|30988|31128|31190|22187|31141|31142|31169|31172|throwing star|throwing knife|chakram|hurlbat|francisca|javelin|dual wield tracker knife|dual wield rapier|dual wield sabre|duel wield katana|dual wield scimitar|dual wield norse axe' backpack as _this
+            if not inlist _background__recycle_item__keeping_items  _this
+                ## throwing star - throwing star - 67764
+                ## throwing dagger - throwing knife - 67754
+                ## chakram - chakram - 67713
+                ## hurlbat - hurlbat - 67734
+                ## francisca axe - francisca - 67723
+                ## javelin - javelin - 67744
+                ## dual hunting knives - dual wield tracker knife - 67778
+                ## dual rapiers - dual wield rapier - 67775
+                ## dual sabres - dual wield sabre - 67776
+                ## dual katanas - duel wield katana - 67773
+                ## dual scimitars - dual wield scimitar - 67777
+                ## dual norse axes - dual wield norse axe - 67774
+                @getlabel _this desc
+
+                if "blessed" in desc
+                    @ignore _this
+                    @pushlist _background__recycle_item__keeping_items  _this
+                elseif  "unidentified" in desc
+                    sysmsg desc 99
+                    while queued
+                    endwhile
+                    
+                    if "unidentified" in desc
+
+                    endif
+                endif
+            endif
+        endif
+        
+        
+    endif
+    ## 1 == 2
+    endif
+
+    ### NEW IDEA
+    ## script-button- 
+    ## if RECYCLE GUMP IS OPEN THEN RECYCLE SHIT
+    ## do the item-id in there, also do the recycle
+    ## check for HP and do basic healing !!
+    ## use jaseowns recycle while farming??? - then call back main script - but only if gump open
+    
+    
+    
+    
+    
+    
+    
+    if 1 == 2
+    if skill 'Item Identification' >= 50 and timer _item_id_timer >= 6000 and not targetexists  and not casting and not hidden
+        useskill 'itemidentification'
+        wft 500
+        target backpack
+        @settimer _item_id_timer 0
+        #@setvar! _break_id_loop 0
+        #@clearignore
+        #while _something_to_id == 0 and findtype '5056|5059|5060|5061|5063|5070|5074|5075|5076|5078|5085|5089|5090|5101|5103|5105|5106|5129|5131|5132|5135|5138|5139|5142|5143|5144|5146|5201|5203|5204|5205|5207|7169|7170|7173|7175|7177|7179|7181|7610|7947|31003|31004|31005|31006|31007|31008|31009|31010|31011|31012|31015|31191|31017|31019|31021|31023|31025|31027|31029|31031|31033|31035|31037|31038|31041|31043|31045|31047|31049|31051|31053|31055|3834|3740|3742|3762|3763|10245|20006|20008|20010|20012|20014|20016|7026|7027|7029|7031|7033|7034|7035|7107|7109|31002|31130|3920|5042|5117|30990|30993|30994|30995|31184|31186|3719|3938|5121|5123|5125|30989|30992|30996|30997|30998|31176|31188|3568|3713|3721|3932|5040|5044|5112|5127|5177|5179|5181|30991|30999|31000|31001|31014|31178|31180|31182|3909|3911|3913|3915|3917|3934|3937|5046|5049|5115|5119|5182|5185|5187|30988|31128|31190|22187|31141|31142|31169|31172|throwing star|throwing knife|chakram|hurlbat|francisca|javelin|dual wield tracker knife|dual wield rapier|dual wield sabre|duel wield katana|dual wield scimitar|dual wield norse axe' backpack as _this
+        #    @ignore _this
+        #    @getlabel! _this _label
+        #    if "unidentified" in _label
+        #    endif
+        #endwhile
+    endif
+    endif
     // ================================ MAGERY TOOL SET
     if skill 'magery' >= 30 
         if _auto_cast_summons == 1 and skill 'magery' >= 100 and skill 'meditation' >= 80 and skill 'spirit speak' >= 80 and not cooldown 'move' and not cooldown 'Setting Trap' and not hidden and not casting and not targetexists
@@ -1201,7 +1493,33 @@ while not dead
     endwhile
     ###### Contested Boss Active spam - end
     
-    
+
+
+    //###### Time Quest - Waneta 2-4 The Hidden Text - start
+    //#### a theurgists text - scroll - 61746 0hue
+    //if not varexist _quest_hidden_text_spam__delay
+    //    @setvar  _quest_hidden_text_spam__delay  2269
+    //endif
+    //if not timerexists _quest_hidden_text_spam__timer
+    //    @settimer  _quest_hidden_text_spam__timer  _quest_hidden_text_spam__delay
+    //endif
+    //if varexist _this
+    //    @unsetvar _this
+    //endif
+    //@clearignore
+    //while findtype 'scroll|61746' ground 0 -1 -1 as _this
+    //    if timer _quest_hidden_text_spam__timer >= _quest_hidden_text_spam__delay
+    //        @getlabel!  _this  _label
+    //        if "a theurgists text" in _label
+    //            overhead "***** {{_label}}" 44 _this
+    //            overhead "hidden text found" 66
+    //            overhead "hidden text found" 66
+    //            @settimer _quest_hidden_text_spam__timer 0
+    //        endif
+    //    endif
+    //    @ignore _this
+    //endwhile
+    //###### Time Quest - Waneta 2-4 The Hidden Text - end
     
 #    // ================================ SEASONAL
 #    // --- Barbarian Plants, field of souls

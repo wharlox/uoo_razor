@@ -17,6 +17,32 @@ if timer _util_id_lantern__time_since_last_id >= 3000
             @poplist!  _script_chain  "Play Script: deposit-loadout\functions\_util_id_lantern_controller_off"
             @poplist!  _script_chain  "Play Script: deposit-loadout\functions\_util_id_minimal" 
 
+
+            ## if about to turn off the lantern, and this-user is supposed to recycle
+            ##   then recycle and deposit stuff
+            if _tmp == _id_loop_recycler_lantern 
+                #@setvar!  _whoami  name
+                #if _whoami == _deposit_loadout__user_to_recycle
+                if _deposit_loadout__recycle_with_current_user == 1
+                    #overhead "deposit item recycler inner 1"
+                    ## recycle items
+                    dclick _deposit_loadout__recycler
+                    waitforgump 4045111101
+                    gumpresponse 6 4045111101
+                    waitforgump 4045111101
+                    gumpresponse 6 4045111101
+                    @getlabel! backpack _bp
+                    gumpclose 4045111101
+                    @getlabel! backpack _bp
+                    ## magic item vault
+                    menu _deposit_loadout__magic_item_vault 0
+                    waitfortarget _deposit_loadout__magic_item_vault
+                    target _deposit_loadout__recycler
+                    @getlabel! backpack _bp
+                endif
+            endif
+
+            
             dclick _tmp
             @getlabel! _tmp _tmp_label
             @settimer  _util_id_lantern__time_since_last_id 0

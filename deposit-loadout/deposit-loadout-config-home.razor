@@ -44,7 +44,7 @@ endif
 ## 0 to disable, 1 to enable
 
 ## 0, 1, 2, 3, 4, 5, 6 
-@setvar! __deposit_loadout__shelf_withdrawal__skinning__commodities__1_2_3_4_5_6  0
+@setvar! __deposit_loadout__shelf_withdrawal__skinning__commodities__1_2_3_4_5_6  6
 #2
 
 ## get a basic skinning knife
@@ -66,9 +66,18 @@ endif
 @setvar!  _deposit_loadout__stockpile  0x56E3DC06
 @setvar!  _deposit_loadout__shelf  0x4B41ED97
 
+
+if name == "_toon_name__house_bitch"
+    @setvar! _deposit_loadout__shelf__force_resupply 1
+else
+    @setvar! _deposit_loadout__shelf__force_resupply 0
+endif
+
+
 #@setvar!  _deposit_loadout__user_to_recycle  "_toon_name__main"
 @setvar! _deposit_loadout__recycle_with_current_user 0
-if name == "_toon_name__main"
+#if name == "_toon_name__main"
+if name == "_toon_name__house_bitch"
     @setvar! _deposit_loadout__recycle_with_current_user 1
 endif
 

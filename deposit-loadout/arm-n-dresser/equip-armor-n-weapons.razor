@@ -135,8 +135,10 @@ foreach _a_layer in _util__armorer__layers
         endif
     elseif _a_layer == quiver and varexist _util__hotkey_armorer__equipped__quiver
         @setvar  _util__hotkey_armorer__equipped__this  _util__hotkey_armorer__equipped__quiver
+        @setvar  _util__hotkey_armorer__equip_this__dclick_or_liftdrop 2
     elseif _a_layer == outerbody and varexist _util__hotkey_armorer__equipped__satchel
         @setvar  _util__hotkey_armorer__equipped__this  _util__hotkey_armorer__equipped__satchel
+        @setvar  _util__hotkey_armorer__equip_this__dclick_or_liftdrop 2
     else
         @unsetvar _util__hotkey_armorer__equipped__this
     endif
