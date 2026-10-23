@@ -40,10 +40,11 @@ if _this_shelf__do_resupply != 0 or _deposit_loadout__shelf__force_resupply == 1
     foreach _a_shelf in _this_self_serials
         ## shelf Resupply
         if find _a_shelf ground  -1 -1 2
-            #wait 25
-            menu _a_shelf 1
-            #wait 150
-            @getlabel!  _a_shelf  _tmp_label
+            wait 25
+            menu _a_shelf 1 true
+            wait 200
+            #@ wait 150 + getlabel ?
+            #@getlabel!  _a_shelf  _tmp_label
         endif
     endfor
     #@getlabel! backpack _tmp_label
